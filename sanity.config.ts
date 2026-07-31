@@ -7,6 +7,7 @@ const SINGLETON_TYPES = ['siteSettings']
 
 export default defineConfig({
   name: 'default',
+  basePath: '/studio',
   title: 'HOVAZ',
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
