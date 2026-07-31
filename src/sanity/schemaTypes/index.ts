@@ -7,6 +7,7 @@ import { blockContent } from './objects/blockContent'
 import { wine } from './documents/wine'
 import { tour } from './documents/tour'
 import { event } from './documents/event'
+import { blogPost } from './documents/blogPost'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   localizedString,
@@ -17,4 +18,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   wine,
   tour,
   event,
+  blogPost,
 ]
