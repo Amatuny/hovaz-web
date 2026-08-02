@@ -3,17 +3,41 @@ import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
 import { schemaTypes } from './src/sanity/schemaTypes'
 
+const SINGLETON_TYPES = ['siteSettings']
+
 export default defineConfig({
   name: 'default',
   basePath: '/studio',
-  title: 'hovaz-web',
-
+  title: 'HOVAZ',
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  plugins: [
+    structureTool({
+      structure: (S) =>
+        S.list()
+          .title('Content')
+          .items([
+            // Singleton — Site Settings appears once, no list view
+            S.listItem()
+              .title('Site Settings')
+              .id('siteSettings')
+              .child(S.document().schemaType('siteSettings').documentId('siteSettings')),
 
-  plugins: [structureTool(), visionTool()],
+            S.divider(),
 
+            // Regular document types
+            S.documentTypeListItem('wine').title('Wines'),
+            S.documentTypeListItem('tour').title('Tours'),
+            S.documentTypeListItem('event').title('Events'),
+            S.documentTypeListItem('blogPost').title('Blog Posts'),
+          ]),
+    }),
+    visionTool(),
+  ],
   schema: {
     types: schemaTypes,
+    // Prevent creating more than one siteSettings document
+    templates: (templates) =>
+      templates.filter(({ schemaType }) => !SINGLETON_TYPES.includes(schemaType)),
   },
 })
