@@ -9,6 +9,9 @@ import { tour } from './documents/tour'
 import { event } from './documents/event'
 import { blogPost } from './documents/blogPost'
 import { siteSettings } from './documents/siteSettings'
+import { page } from './documents/page'
+import { faqItem } from './documents/faqItem'
+import { newsItem } from './documents/newsItem'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   localizedString,
@@ -21,4 +24,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   event,
   blogPost,
   siteSettings,
+  page,
+  faqItem,
+  newsItem,
 ]

@@ -30,6 +30,12 @@ export default defineConfig({
             S.documentTypeListItem('tour').title('Tours'),
             S.documentTypeListItem('event').title('Events'),
             S.documentTypeListItem('blogPost').title('Blog Posts'),
+
+            S.divider(),
+
+            S.documentTypeListItem('newsItem').title('News & Awards'),
+            S.documentTypeListItem('page').title('Pages'),
+            S.documentTypeListItem('faqItem').title('FAQ'),
           ]),
     }),
     visionTool(),
