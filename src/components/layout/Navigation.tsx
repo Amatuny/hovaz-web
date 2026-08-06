@@ -16,6 +16,7 @@ const navLinks = [
   { label: 'Events', href: '/events' },
   { label: 'About', href: '/about/our-story' },
   { label: 'News', href: '/news/awards' },
+  { label: 'Journal', href: '/blog' },
   { label: 'Contact', href: '/contact' },
 ]
 

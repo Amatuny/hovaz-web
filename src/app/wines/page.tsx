@@ -1,7 +1,7 @@
-// src/app/wines/page.tsx
 import type { Metadata } from 'next'
 import { getAllWines } from '@/lib/sanity/queries'
 import { WineCard } from '@/components/ui/WineCard'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Our Wines',
@@ -113,9 +113,9 @@ export default async function WinesPage() {
           <p className="text-body max-w-md mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
             Taste our collection with an expert guide at our Wine Rooms in Dilijan or Proshyan.
           </p>
-          <a href="/events/guided-tasting" className="btn-white">
+          <Link href="/events/guided-tasting" className="btn-white">
             Reserve a Tasting
-          </a>
+          </Link>
         </div>
       </div>
     </>

@@ -1,4 +1,3 @@
-// src/components/layout/Footer.tsx
 import Link from 'next/link'
 
 interface FooterProps {
@@ -14,6 +13,7 @@ interface FooterProps {
 
 const footerLinks = {
   Wines: [
+    { label: 'Journal', href: '/blog' },
     { label: 'Areni Reserve', href: '/wines/areni-reserve' },
     { label: 'Areni Red', href: '/wines/areni-red' },
     { label: 'Areni Rosé', href: '/wines/areni-rose' },

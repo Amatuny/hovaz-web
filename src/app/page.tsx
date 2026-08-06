@@ -1,10 +1,17 @@
 import type { Metadata } from 'next'
-import { getSiteSettings, getAllWines, getUpcomingEvents, getAllNews } from '@/lib/sanity/queries'
+import {
+  getSiteSettings,
+  getAllWines,
+  getUpcomingEvents,
+  getAllNews,
+  getAllBlogPosts,
+} from '@/lib/sanity/queries'
 import { HeroSection } from '@/components/sections/HeroSection'
 import { EventsStrip } from '@/components/sections/EventsStrip'
 import { WinePreview } from '@/components/sections/WinePreview'
 import { WineRoomsBlock } from '@/components/sections/WineRoomsBlock'
 import { AwardsStrip } from '@/components/sections/AwardsStrip'
+import { BlogPreview } from '@/components/sections/BlogPreview'
 import type { NewsItem } from '@/types/sanity'
 
 export const metadata: Metadata = {
@@ -21,11 +28,12 @@ export const metadata: Metadata = {
 export const revalidate = 3600
 
 export default async function HomePage() {
-  const [settings, wines, events, news] = await Promise.all([
+  const [settings, wines, events, news, posts] = await Promise.all([
     getSiteSettings(),
     getAllWines(),
     getUpcomingEvents(),
     getAllNews(),
+    getAllBlogPosts(),
   ])
 
   const awards = ((news as NewsItem[]) ?? []).filter((item: NewsItem) => item.category === 'award')
@@ -42,6 +50,7 @@ export default async function HomePage() {
       <WinePreview wines={wines ?? []} />
       <WineRoomsBlock />
       <AwardsStrip awards={awards} />
+      <BlogPreview posts={posts ?? []} />
     </>
   )
 }
