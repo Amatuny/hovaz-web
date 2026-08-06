@@ -1,7 +1,18 @@
+// src/lib/sanity/queries.ts
 import { client } from '@/sanity/lib/client'
+import type {
+  Wine,
+  Tour,
+  Event,
+  BlogPost,
+  NewsItem,
+  FaqItem,
+  Page,
+  SiteSettings,
+} from '@/types/sanity'
 
 // ── Site Settings ──
-export async function getSiteSettings() {
+export async function getSiteSettings(): Promise<SiteSettings | null> {
   return client.fetch(`
     *[_type == "siteSettings"][0] {
       heroHeadline, heroSubheadline, heroImage, heroCtaText,
@@ -25,7 +36,7 @@ export async function getSiteSettings() {
 }
 
 // ── Wines ──
-export async function getAllWines() {
+export async function getAllWines(): Promise<Wine[]> {
   return client.fetch(`
     *[_type == "wine" && available == true] | order(vintage desc) {
       _id, name, slug, grapeVariety, vintage,
@@ -35,7 +46,7 @@ export async function getAllWines() {
   `)
 }
 
-export async function getWineBySlug(slug: string) {
+export async function getWineBySlug(slug: string): Promise<Wine | null> {
   return client.fetch(
     `
     *[_type == "wine" && slug.current == $slug][0] {
@@ -49,14 +60,14 @@ export async function getWineBySlug(slug: string) {
   )
 }
 
-export async function getAllWineSlugs() {
+export async function getAllWineSlugs(): Promise<{ slug: string }[]> {
   return client.fetch(`
     *[_type == "wine" && available == true] { "slug": slug.current }
   `)
 }
 
 // ── Tours ──
-export async function getAllTours() {
+export async function getAllTours(): Promise<Tour[]> {
   return client.fetch(`
     *[_type == "tour" && active == true] | order(_createdAt asc) {
       _id, title, slug, description, duration,
@@ -67,7 +78,7 @@ export async function getAllTours() {
   `)
 }
 
-export async function getTourBySlug(slug: string) {
+export async function getTourBySlug(slug: string): Promise<Tour | null> {
   return client.fetch(
     `
     *[_type == "tour" && slug.current == $slug][0] {
@@ -83,14 +94,14 @@ export async function getTourBySlug(slug: string) {
   )
 }
 
-export async function getAllTourSlugs() {
+export async function getAllTourSlugs(): Promise<{ slug: string }[]> {
   return client.fetch(`
     *[_type == "tour" && active == true] { "slug": slug.current }
   `)
 }
 
 // ── Events ──
-export async function getUpcomingEvents() {
+export async function getUpcomingEvents(): Promise<Event[]> {
   return client.fetch(`
     *[_type == "event" && status == "upcoming"] | order(startDate asc) {
       _id, title, slug, eventType, startDate, endDate,
@@ -100,7 +111,7 @@ export async function getUpcomingEvents() {
   `)
 }
 
-export async function getEventBySlug(slug: string) {
+export async function getEventBySlug(slug: string): Promise<Event | null> {
   return client.fetch(
     `
     *[_type == "event" && slug.current == $slug][0] {
@@ -115,8 +126,14 @@ export async function getEventBySlug(slug: string) {
   )
 }
 
+export async function getAllEventSlugs(): Promise<{ slug: string }[]> {
+  return client.fetch(`
+    *[_type == "event"] { "slug": slug.current }
+  `)
+}
+
 // ── Blog Posts ──
-export async function getAllBlogPosts() {
+export async function getAllBlogPosts(): Promise<BlogPost[]> {
   return client.fetch(`
     *[_type == "blogPost"] | order(publishedAt desc) {
       _id, title, slug, excerpt, featuredImage,
@@ -125,7 +142,7 @@ export async function getAllBlogPosts() {
   `)
 }
 
-export async function getBlogPostBySlug(slug: string) {
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   return client.fetch(
     `
     *[_type == "blogPost" && slug.current == $slug][0] {
@@ -139,14 +156,51 @@ export async function getBlogPostBySlug(slug: string) {
   )
 }
 
-export async function getAllBlogSlugs() {
+export async function getAllBlogSlugs(): Promise<{ slug: string }[]> {
   return client.fetch(`
     *[_type == "blogPost"] { "slug": slug.current }
   `)
 }
 
+// ── News & Awards ──
+export async function getAllNews(): Promise<NewsItem[]> {
+  return client.fetch(`
+    *[_type == "newsItem"] | order(date desc) {
+      _id, title, slug, category, date, excerpt,
+      featuredImage, awardOrganization, publication,
+      externalUrl, featured
+    }
+  `)
+}
+
+export async function getNewsByCategory(category: string): Promise<NewsItem[]> {
+  return client.fetch(
+    `
+    *[_type == "newsItem" && category == $category] | order(date desc) {
+      _id, title, slug, category, date, excerpt,
+      featuredImage, awardOrganization, publication,
+      externalUrl, featured
+    }
+  `,
+    { category }
+  )
+}
+
+export async function getNewsItemBySlug(slug: string): Promise<NewsItem | null> {
+  return client.fetch(
+    `
+    *[_type == "newsItem" && slug.current == $slug][0] {
+      _id, title, slug, category, date, excerpt,
+      body, featuredImage, awardOrganization, awardYear,
+      publication, externalUrl, featured, seo
+    }
+  `,
+    { slug }
+  )
+}
+
 // ── Pages (About section) ──
-export async function getPageBySlug(slug: string) {
+export async function getPageBySlug(slug: string): Promise<Page | null> {
   return client.fetch(
     `
     *[_type == "page" && slug.current == $slug][0] {
@@ -160,7 +214,7 @@ export async function getPageBySlug(slug: string) {
   )
 }
 
-export async function getPagesBySection(section: string) {
+export async function getPagesBySection(section: string): Promise<Page[]> {
   return client.fetch(
     `
     *[_type == "page" && section == $section] | order(_createdAt asc) {
@@ -171,32 +225,8 @@ export async function getPagesBySection(section: string) {
   )
 }
 
-// ── News & Awards ──
-export async function getNewsByCategory(category: string) {
-  return client.fetch(
-    `
-    *[_type == "newsItem" && category == $category] | order(date desc) {
-      _id, title, slug, category, date, excerpt,
-      featuredImage, awardOrganization, publication,
-      externalUrl, featured
-    }
-  `,
-    { category }
-  )
-}
-
-export async function getAllNews() {
-  return client.fetch(`
-    *[_type == "newsItem"] | order(date desc) {
-      _id, title, slug, category, date, excerpt,
-      featuredImage, awardOrganization, publication,
-      externalUrl, featured
-    }
-  `)
-}
-
 // ── FAQ ──
-export async function getFaqByCategory(category?: string) {
+export async function getFaqByCategory(category?: string): Promise<FaqItem[]> {
   const filter = category
     ? `*[_type == "faqItem" && category == $category]`
     : `*[_type == "faqItem"]`
