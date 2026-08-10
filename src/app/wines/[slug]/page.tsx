@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getWineBySlug, getAllWineSlugs } from '@/lib/sanity/queries'
 import { urlFor } from '@/lib/sanity/image'
+import { JsonLd } from '@/components/sanity/JsonLd'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -252,6 +253,19 @@ export default async function WineDetailPage({ params }: Props) {
           </Link>
         </div>
       </div>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: wine.name,
+          description: wine.description,
+          brand: {
+            '@type': 'Brand',
+            name: 'HOVAZ',
+          },
+          category: wine.wineType,
+        }}
+      />
     </>
   )
 }

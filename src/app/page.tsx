@@ -13,6 +13,7 @@ import { WineRoomsBlock } from '@/components/sections/WineRoomsBlock'
 import { AwardsStrip } from '@/components/sections/AwardsStrip'
 import { BlogPreview } from '@/components/sections/BlogPreview'
 import type { NewsItem } from '@/types/sanity'
+import { JsonLd } from '@/components/sanity/JsonLd'
 
 export const metadata: Metadata = {
   title: 'HOVAZ Wine Rooms — Premium Armenian Wine Experience',
@@ -51,6 +52,24 @@ export default async function HomePage() {
       <WineRoomsBlock />
       <AwardsStrip awards={awards} />
       <BlogPreview posts={posts ?? []} />
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Winery',
+          name: 'HOVAZ Wine Rooms',
+          url: 'https://hovazwines.com',
+          description: 'Premium Armenian winery and hospitality experience.',
+          address: {
+            '@type': 'PostalAddress',
+            addressCountry: 'AM',
+            addressLocality: 'Armenia',
+          },
+          sameAs: [
+            'https://www.instagram.com/hovazwinerooms/',
+            'https://www.instagram.com/hovaz_wines/',
+          ],
+        }}
+      />
     </>
   )
 }
