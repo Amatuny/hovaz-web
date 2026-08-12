@@ -9,6 +9,8 @@ import {
   getAllEventSlugs,
 } from '@/lib/sanity/queries'
 import { urlFor } from '@/lib/sanity/image'
+import { BookingForm } from '@/components/ui/BookingForm'
+import type { BookingInput } from '@/lib/validations/booking'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -55,6 +57,19 @@ export default async function ExperienceDetailPage({ params }: Props) {
 
   // Format event date
   const eventDate = isEvent && event?.startDate ? new Date(event.startDate) : null
+
+  const experienceTypeMap: Record<string, BookingInput['experienceType']> = {
+    wine_tasting: 'wine_tasting',
+    vineyard_walk: 'vineyard_walk',
+    private_tour: 'private_tour',
+    group_tour: 'group_tour',
+    winemaking_experience: 'winemaking_experience',
+    harvest_experience: 'harvest_experience',
+    wine_dinner: 'wine_dinner',
+  }
+
+  const mappedExperienceType =
+    isTour && tour?.tourType ? (experienceTypeMap[tour.tourType] ?? 'custom') : 'custom'
 
   return (
     <>
@@ -245,75 +260,22 @@ export default async function ExperienceDetailPage({ params }: Props) {
 
             {/* Right — inline booking form */}
             <div className="lg:col-span-1">
-              <div className="sticky top-24 p-8" style={{ backgroundColor: 'white' }}>
-                {/* Price */}
-                <div className="mb-6 pb-6 divider-cream">
-                  {(isTour && tour?.pricePerPerson) || (isEvent && event?.price) ? (
-                    <>
-                      <p className="text-label mb-1">From</p>
-                      <p
-                        className="font-serif text-4xl"
-                        style={{ color: 'var(--color-brand-burgundy)' }}
-                      >
-                        ${isTour ? tour?.pricePerPerson : event?.price}
-                        <span className="text-label text-lg ml-1">/ person</span>
-                      </p>
-                      {isTour && tour?.priceNote && (
-                        <p className="text-caption mt-1">{tour.priceNote}</p>
-                      )}
-                    </>
-                  ) : (
-                    <p
-                      className="font-serif text-2xl"
-                      style={{ color: 'var(--color-brand-burgundy)' }}
-                    >
-                      Price on request
-                    </p>
-                  )}
-                </div>
-
-                {/* Quick info */}
-                {isTour && tour && (
-                  <div className="mb-6 flex flex-col gap-3">
-                    {tour.duration && (
-                      <div className="flex justify-between">
-                        <p className="text-label">Duration</p>
-                        <p className="text-caption">{tour.duration}</p>
-                      </div>
-                    )}
-                    {tour.minGroupSize && tour.maxGroupSize && (
-                      <div className="flex justify-between">
-                        <p className="text-label">Group size</p>
-                        <p className="text-caption">
-                          {tour.minGroupSize}–{tour.maxGroupSize} guests
-                        </p>
-                      </div>
-                    )}
-                    {tour.privateAvailable && (
-                      <div className="flex justify-between">
-                        <p className="text-label">Private booking</p>
-                        <p className="text-caption">Available</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* CTA — booking form in Phase 5 */}
-                <Link
-                  href={`/contact/form?experience=${encodeURIComponent(content.title)}`}
-                  className="btn-primary w-full text-center block"
-                >
-                  {isTour
-                    ? (tour?.ctaText ?? 'Book This Experience')
-                    : (event?.ctaText ?? 'Reserve Your Spot')}
-                </Link>
-
-                <p
-                  className="text-caption text-center mt-4"
-                  style={{ color: 'var(--color-brand-stone)' }}
-                >
-                  We&apos;ll confirm your booking within 24 hours
-                </p>
+              <div className="sticky top-24">
+                <BookingForm
+                  experienceTitle={content.title}
+                  experienceType={mappedExperienceType}
+                  pricePerPerson={isTour ? tour?.pricePerPerson : event?.price}
+                  priceNote={isTour ? tour?.priceNote : undefined}
+                  duration={isTour ? tour?.duration : undefined}
+                  minGroupSize={isTour ? tour?.minGroupSize : undefined}
+                  maxGroupSize={isTour ? tour?.maxGroupSize : undefined}
+                  privateAvailable={isTour ? tour?.privateAvailable : undefined}
+                  ctaText={
+                    isTour
+                      ? (tour?.ctaText ?? 'Book This Experience')
+                      : (event?.ctaText ?? 'Reserve Your Spot')
+                  }
+                />
               </div>
             </div>
           </div>
