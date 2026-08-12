@@ -17,7 +17,7 @@ const navLinks = [
   { label: 'About', href: '/about/our-story' },
   { label: 'News', href: '/news/awards' },
   { label: 'Journal', href: '/blog' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Contact', href: '/contact/form' },
 ]
 
 export function Navigation({ settings }: NavigationProps) {
