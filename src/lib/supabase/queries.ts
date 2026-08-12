@@ -103,3 +103,14 @@ export async function insertEmailLog(data: {
     console.error('Failed to insert email log:', error.message)
   }
 }
+
+export async function getEmailLogs() {
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from('email_logs')
+    .select('*')
+    .order('sent_at', { ascending: false })
+
+  if (error) throw new Error(`Failed to fetch email logs: ${error.message}`)
+  return data
+}
