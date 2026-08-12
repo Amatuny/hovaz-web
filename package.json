@@ -13,6 +13,7 @@
     "db:types": "supabase gen types typescript --project-id kjvlxgowyjarifbfqhbb --schema public > src/types/database.ts"
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.6.0",
     "@portabletext/react": "^7.0.1",
     "@react-email/components": "^1.0.12",
     "@react-email/render": "^2.1.0",
@@ -30,7 +31,8 @@
     "react-icons": "^5.7.0",
     "resend": "^6.18.0",
     "sanity": "^6.6.0",
-    "styled-components": "^6.4.4"
+    "styled-components": "^6.4.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
