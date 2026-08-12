@@ -4,6 +4,8 @@ import type { Database } from '@/types/database'
 type BookingInsert = Database['public']['Tables']['bookings']['Insert']
 type ContactInsert = Database['public']['Tables']['contact_submissions']['Insert']
 type EmailLogInsert = Database['public']['Tables']['email_logs']['Insert']
+type EmailStatus = Database['public']['Enums']['email_status']
+type EmailType = Database['public']['Enums']['email_type']
 
 // ── BOOKINGS ──
 
@@ -84,7 +86,16 @@ export async function markContactAsRead(id: string) {
 
 // ── EMAIL LOGS ──
 
-export async function insertEmailLog(data: EmailLogInsert) {
+export async function insertEmailLog(data: {
+  booking_id?: string | null
+  contact_id?: string | null
+  type: EmailType
+  recipient: string
+  subject?: string | null
+  status: EmailStatus
+  resend_id?: string | null
+  error?: string | null
+}) {
   const supabase = createAdminClient()
   const { error } = await supabase.from('email_logs').insert(data)
 
