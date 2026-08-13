@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { getBlogPostBySlug, getAllBlogSlugs } from '@/lib/sanity/queries'
 import { urlFor } from '@/lib/sanity/image'
 import { PortableText } from '@/components/sanity/PortableText'
+import { PageTracker } from '@/components/analytics/PageTracker'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -206,6 +207,13 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </div>
       </div>
+      <PageTracker
+        eventName="blog_post_read"
+        parameters={{
+          post_title: post.title,
+          category: post.categories?.[0],
+        }}
+      />
     </>
   )
 }

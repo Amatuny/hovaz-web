@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { TurnstileWidget } from './TurnstileWidget'
 import type { BookingInput } from '@/lib/validations/booking'
+import { trackEvent } from '@/lib/analytics'
 
 interface BookingFormProps {
   experienceTitle: string
@@ -84,6 +85,10 @@ export function BookingForm({
       }
 
       setFormState('success')
+      trackEvent('booking_inquiry_submitted', {
+        experience_type: experienceType,
+        group_size: payload.groupSize,
+      })
     } catch (err) {
       setErrorMessage(
         err instanceof Error ? err.message : 'Something went wrong. Please try again.'

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { getWineBySlug, getAllWineSlugs } from '@/lib/sanity/queries'
 import { urlFor } from '@/lib/sanity/image'
 import { JsonLd } from '@/components/sanity/JsonLd'
+import { PageTracker } from '@/components/analytics/PageTracker'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -264,6 +265,14 @@ export default async function WineDetailPage({ params }: Props) {
             name: 'HOVAZ',
           },
           category: wine.wineType,
+        }}
+      />
+      <PageTracker
+        eventName="wine_viewed"
+        parameters={{
+          wine_name: wine.name,
+          wine_type: wine.wineType,
+          vintage: wine.vintage,
         }}
       />
     </>

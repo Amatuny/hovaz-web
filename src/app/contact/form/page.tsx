@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { TurnstileWidget } from '@/components/ui/TurnstileWidget'
+import { trackEvent } from '@/lib/analytics'
 
 type FormState = 'idle' | 'loading' | 'success' | 'error'
 
@@ -51,6 +52,7 @@ export default function ContactFormPage() {
         throw new Error(data.error ?? 'Something went wrong')
       }
       setFormState('success')
+      trackEvent('contact_form_submitted')
     } catch (err) {
       setErrorMessage(
         err instanceof Error ? err.message : 'Something went wrong. Please try again.'

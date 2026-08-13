@@ -11,6 +11,7 @@ import {
 import { urlFor } from '@/lib/sanity/image'
 import { BookingForm } from '@/components/ui/BookingForm'
 import type { BookingInput } from '@/lib/validations/booking'
+import { PageTracker } from '@/components/analytics/PageTracker'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -281,6 +282,13 @@ export default async function ExperienceDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+      <PageTracker
+        eventName="experience_viewed"
+        parameters={{
+          experience_title: content.title,
+          experience_type: isTour ? tour?.tourType : event?.eventType,
+        }}
+      />
     </>
   )
 }
