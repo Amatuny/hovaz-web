@@ -1,4 +1,3 @@
-// src/components/admin/BookingActions.tsx
 'use client'
 
 import { useState } from 'react'
@@ -18,6 +17,7 @@ export function BookingActions({
   guestEmail,
 }: BookingActionsProps) {
   const [loading, setLoading] = useState<string | null>(null)
+  const [status, setStatus] = useState(currentStatus)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const router = useRouter()
 
@@ -38,9 +38,13 @@ export function BookingActions({
         throw new Error(data.error ?? 'Failed to update status')
       }
 
+      // Update local status immediately — don't wait for router.refresh()
+      setStatus(newStatus)
       setMessage({
         type: 'success',
-        text: `Booking ${newStatus} successfully. Guest notified by email.`,
+        text: `Booking ${newStatus} successfully.${
+          newStatus === 'confirmed' || newStatus === 'cancelled' ? ' Guest notified by email.' : ''
+        }`,
       })
       router.refresh()
     } catch (err) {
@@ -59,25 +63,36 @@ export function BookingActions({
       label: 'Confirm Booking',
       color: '#2D6A4F',
       bg: '#F0F7F4',
-      show: currentStatus === 'pending',
+      show: status === 'pending',
     },
     {
       status: 'cancelled',
       label: 'Cancel Booking',
       color: '#dc2626',
       bg: '#FFF0F0',
-      show: ['pending', 'confirmed'].includes(currentStatus),
+      show: status === 'pending', // ← only show cancel when pending
     },
     {
       status: 'completed',
       label: 'Mark Completed',
       color: '#6B7280',
       bg: '#F5F5F5',
-      show: currentStatus === 'confirmed',
+      show: status === 'confirmed',
     },
   ].filter((a) => a.show)
 
-  if (actions.length === 0) return null
+  if (actions.length === 0) {
+    return (
+      <div
+        className="rounded p-6"
+        style={{ backgroundColor: 'white', border: '1px solid #E5E0D8' }}
+      >
+        <p className="text-caption" style={{ color: 'var(--color-brand-stone)' }}>
+          No actions available for {status} bookings.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="rounded p-6" style={{ backgroundColor: 'white', border: '1px solid #E5E0D8' }}>
@@ -85,7 +100,7 @@ export function BookingActions({
         Actions
       </h2>
       <p className="text-caption mb-4" style={{ color: 'var(--color-brand-stone)' }}>
-        Guest will be notified by email when status changes.
+        Guest will be notified by email when confirmed or cancelled.
       </p>
 
       <div className="flex flex-wrap gap-3">
