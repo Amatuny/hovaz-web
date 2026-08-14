@@ -83,7 +83,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID
 
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
+    <html lang="en" className={`${serif.variable} ${sans.variable}`} suppressHydrationWarning>
       <head>
         {GTM_ID && (
           <Script
