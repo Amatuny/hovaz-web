@@ -9,6 +9,17 @@ import { sendContactEmails } from '@/lib/email/sendContactEmails'
 import { logger } from '@/lib/logger'
 
 export async function POST(request: Request) {
+  const origin = request.headers.get('origin')
+  const allowedOrigins = [
+    'https://hovazwines.com',
+    'https://staging.hovazwines.com',
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ]
+
+  if (origin && !allowedOrigins.includes(origin)) {
+    return NextResponse.json({ error: 'Not allowed' }, { status: 403 })
+  }
   const headersList = await headers()
   const ip =
     headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ??
