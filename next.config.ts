@@ -20,7 +20,11 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        // Negative lookahead excludes /studio so it doesn't also get
+        // the strict CSP below — Next.js applies ALL matching header
+        // blocks cumulatively, it does not let a later, more specific
+        // match override an earlier one.
+        source: '/((?!studio).*)',
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
@@ -45,12 +49,27 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Don't apply CSP to studio — Sanity needs more permissive settings
+      // Studio gets its own, more permissive CSP — Sanity's Studio UI
+      // needs to reach its API/CDN, its core bridge script, and (in
+      // some setups) Vercel's live preview toolbar.
       {
         source: '/studio/:path*',
         headers: [
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.sanity-cdn.com https://vercel.live",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com data:",
+              "img-src 'self' data: blob: https://cdn.sanity.io https://*.sanity.io",
+              "connect-src 'self' https://*.sanity.io https://*.api.sanity.io https://*.sanity-cdn.com wss://*.sanity.io https://*.supabase.co wss://*.supabase.co https://vercel.live",
+              "frame-src 'self' https://vercel.live",
+              "worker-src 'self' blob:",
+            ].join('; '),
+          },
         ],
       },
     ]
