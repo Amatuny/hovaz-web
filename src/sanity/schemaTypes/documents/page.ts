@@ -95,6 +95,34 @@ export const page = defineType({
       ],
     }),
 
+    // Featured image badge caption — for The Leopard page
+    defineField({
+      name: 'imageBadgeTitle',
+      title: 'Featured Image Badge Title',
+      type: 'string',
+      group: 'content',
+      description: 'e.g. Rescued 2021 — overlaid on the featured image where supported',
+    }),
+    defineField({
+      name: 'imageBadgeSubtitle',
+      title: 'Featured Image Badge Subtitle',
+      type: 'string',
+      group: 'content',
+      description: 'e.g. Found injured, now thriving under full-time care.',
+    }),
+
+    // Extra gallery — for The Leopard page
+    defineField({
+      name: 'gallery',
+      title: 'Gallery',
+      type: 'array',
+      group: 'content',
+      of: [{ type: 'imageWithAlt' }],
+      options: { layout: 'grid' },
+      description:
+        'Fill in only where extra photos are shown alongside the body (e.g. The Leopard page)',
+    }),
+
     // Team members — for The Team page
     defineField({
       name: 'teamMembers',

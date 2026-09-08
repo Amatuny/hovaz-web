@@ -82,6 +82,11 @@ export interface Wine {
   seo?: SeoMetadata
 }
 
+export interface EstateRef {
+  _id: string
+  name: string
+}
+
 export interface Tour {
   _id: string
   title: string
@@ -97,6 +102,8 @@ export interface Tour {
   featured?: boolean
   active?: boolean
   includedServices?: string[]
+  estate?: EstateRef
+  tags?: string[]
   ctaText?: string
   mainImage?: SanityImage
   gallery?: SanityImage[]
@@ -114,6 +121,8 @@ export interface Event {
   startDate?: string
   endDate?: string
   location?: string
+  estate?: EstateRef
+  tags?: string[]
   capacity?: number
   price?: number
   priceNote?: string
@@ -156,6 +165,7 @@ export interface NewsItem {
   body?: SanityBlock[]
   awardOrganization?: string
   awardYear?: number
+  awardTier?: string
   publication?: string
   externalUrl?: string
   featured?: boolean
@@ -172,6 +182,16 @@ export interface FaqItem {
   answer_i18n?: LocalizedText
 }
 
+export interface Estate {
+  _id: string
+  name: string
+  description: string
+  mainImage: SanityImage
+  eventsCount: number
+  link: string
+  order?: number
+}
+
 export interface Page {
   _id: string
   title: string
@@ -182,6 +202,9 @@ export interface Page {
   body?: SanityBlock[]
   ctaText?: string
   ctaLink?: string
+  imageBadgeTitle?: string
+  imageBadgeSubtitle?: string
+  gallery?: SanityImage[]
   location?: {
     address?: string
     phone?: string
@@ -203,7 +226,8 @@ export interface Page {
 export interface SiteSettings {
   heroHeadline?: string
   heroSubheadline?: string
-  heroImage?: SanityImage
+  heroLocation?: string
+  heroGallery?: SanityImage[]
   heroCtaText?: string
   featuredWines?: Wine[]
   featuredTours?: Tour[]

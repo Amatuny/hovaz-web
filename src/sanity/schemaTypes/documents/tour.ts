@@ -92,6 +92,23 @@ export const tour = defineType({
       description: 'e.g. Wine tasting, Vineyard walk, Light snacks, Transportation',
     }),
     defineField({
+      name: 'estate',
+      title: 'Estate',
+      type: 'reference',
+      to: [{ type: 'estate' }],
+      group: 'details',
+      description: 'Which estate hosts this tour — shown as a badge on the homepage journal strip',
+    }),
+    defineField({
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [{ type: 'string' }],
+      group: 'details',
+      options: { layout: 'tags' },
+      description: 'e.g. Tasting, Seasonal, Tours — shown as pills on the homepage journal strip',
+    }),
+    defineField({
       name: 'ctaText',
       title: 'CTA Button Text',
       type: 'string',

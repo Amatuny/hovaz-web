@@ -12,6 +12,7 @@ import { siteSettings } from './documents/siteSettings'
 import { page } from './documents/page'
 import { faqItem } from './documents/faqItem'
 import { newsItem } from './documents/newsItem'
+import { estate } from './documents/estate'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   localizedString,
@@ -27,4 +28,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   page,
   faqItem,
   newsItem,
+  estate,
 ]

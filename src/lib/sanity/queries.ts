@@ -9,27 +9,45 @@ import type {
   FaqItem,
   Page,
   SiteSettings,
+  Estate,
 } from '@/types/sanity'
+
+// `imageWithAlt` stores the actual image one level deeper (`asset.asset._ref`)
+// than a plain Sanity `image` field — this projection flattens it back to
+// `{alt, caption, asset: {_ref, _type}}` so every component's `image.asset._ref`
+// / `urlFor(image)` calls resolve correctly.
+const IMAGE_FIELDS = `alt, caption, "asset": asset.asset`
+
+// ── Estates ──
+export async function getAllEstates(): Promise<Estate[]> {
+  return client.fetch(`
+    *[_type == "estate"] | order(order asc) {
+      _id, name, description, "mainImage": mainImage{${IMAGE_FIELDS}},
+      eventsCount, link, order
+    }
+  `)
+}
 
 // ── Site Settings ──
 export async function getSiteSettings(): Promise<SiteSettings | null> {
   return client.fetch(`
     *[_type == "siteSettings"][0] {
-      heroHeadline, heroSubheadline, heroImage, heroCtaText,
+      heroHeadline, heroSubheadline, heroLocation, heroCtaText,
+      "heroGallery": heroGallery[]{${IMAGE_FIELDS}},
       email, phone, address,
       instagramWineRooms, instagramWines, facebook,
       siteName, siteDescription, defaultOgImage,
       "featuredWines": featuredWines[]->{
-        _id, name, slug, mainImage, grapeVariety, vintage, wineType
+        _id, name, slug, "mainImage": mainImage{${IMAGE_FIELDS}}, grapeVariety, vintage, wineType
       },
       "featuredTours": featuredTours[]->{
-        _id, title, slug, mainImage, pricePerPerson, duration, tourType
+        _id, title, slug, "mainImage": mainImage{${IMAGE_FIELDS}}, pricePerPerson, duration, tourType
       },
       "featuredEvents": featuredEvents[]->{
-        _id, title, slug, mainImage, startDate, status, eventType
+        _id, title, slug, "mainImage": mainImage{${IMAGE_FIELDS}}, startDate, status, eventType
       },
       "featuredPosts": featuredBlogPosts[]->{
-        _id, title, slug, featuredImage, publishedAt, excerpt, author
+        _id, title, slug, "featuredImage": featuredImage{${IMAGE_FIELDS}}, publishedAt, excerpt, author
       }
     }
   `)
@@ -40,7 +58,7 @@ export async function getAllWines(): Promise<Wine[]> {
   return client.fetch(`
     *[_type == "wine" && available == true] | order(vintage desc) {
       _id, name, slug, grapeVariety, vintage,
-      region, wineType, featured, mainImage,
+      region, wineType, featured, "mainImage": mainImage{${IMAGE_FIELDS}},
       description, tastingNotes
     }
   `)
@@ -52,7 +70,9 @@ export async function getWineBySlug(slug: string): Promise<Wine | null> {
     *[_type == "wine" && slug.current == $slug][0] {
       _id, name, slug, grapeVariety, vintage, region,
       wineType, description, tastingNotes, pairingNotes,
-      alcohol, servingTemp, featured, mainImage, gallery,
+      alcohol, servingTemp, featured,
+      "mainImage": mainImage{${IMAGE_FIELDS}},
+      "gallery": gallery[]{${IMAGE_FIELDS}},
       name_i18n, description_i18n, tastingNotes_i18n, seo
     }
   `,
@@ -73,7 +93,8 @@ export async function getAllTours(): Promise<Tour[]> {
       _id, title, slug, description, duration,
       tourType, pricePerPerson, priceNote,
       minGroupSize, maxGroupSize, featured,
-      mainImage, includedServices, ctaText
+      "mainImage": mainImage{${IMAGE_FIELDS}}, includedServices, ctaText,
+      "estate": estate->{_id, name}, tags
     }
   `)
 }
@@ -85,7 +106,9 @@ export async function getTourBySlug(slug: string): Promise<Tour | null> {
       _id, title, slug, description, duration,
       tourType, pricePerPerson, priceNote,
       minGroupSize, maxGroupSize, privateAvailable,
-      featured, mainImage, gallery,
+      featured,
+      "mainImage": mainImage{${IMAGE_FIELDS}},
+      "gallery": gallery[]{${IMAGE_FIELDS}},
       includedServices, ctaText,
       title_i18n, description_i18n, seo
     }
@@ -106,7 +129,20 @@ export async function getUpcomingEvents(): Promise<Event[]> {
     *[_type == "event" && status == "upcoming"] | order(startDate asc) {
       _id, title, slug, eventType, startDate, endDate,
       location, capacity, price, priceNote,
-      status, featured, mainImage, description
+      status, featured, "mainImage": mainImage{${IMAGE_FIELDS}}, description
+    }
+  `)
+}
+
+// Mixes upcoming and recently-completed events for the homepage journal strip,
+// where past events are shown alongside what's coming next.
+export async function getJournalEvents(): Promise<Event[]> {
+  return client.fetch(`
+    *[_type == "event" && status in ["upcoming", "completed"]] | order(startDate desc) [0...8] {
+      _id, title, slug, eventType, startDate, endDate,
+      location, capacity, price, priceNote,
+      status, featured, "mainImage": mainImage{${IMAGE_FIELDS}}, description,
+      "estate": estate->{_id, name}, tags
     }
   `)
 }
@@ -118,7 +154,9 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
       _id, title, slug, description, eventType,
       startDate, endDate, location, capacity,
       price, priceNote, status, featured,
-      mainImage, gallery, ctaText, ctaEmail,
+      "mainImage": mainImage{${IMAGE_FIELDS}},
+      "gallery": gallery[]{${IMAGE_FIELDS}},
+      ctaText, ctaEmail,
       title_i18n, description_i18n, seo
     }
   `,
@@ -136,7 +174,7 @@ export async function getAllEventSlugs(): Promise<{ slug: string }[]> {
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   return client.fetch(`
     *[_type == "blogPost"] | order(publishedAt desc) {
-      _id, title, slug, excerpt, featuredImage,
+      _id, title, slug, excerpt, "featuredImage": featuredImage{${IMAGE_FIELDS}},
       author, publishedAt, categories, readingTime, featured
     }
   `)
@@ -146,7 +184,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
   return client.fetch(
     `
     *[_type == "blogPost" && slug.current == $slug][0] {
-      _id, title, slug, excerpt, featuredImage,
+      _id, title, slug, excerpt, "featuredImage": featuredImage{${IMAGE_FIELDS}},
       body, author, publishedAt, categories,
       readingTime, featured,
       title_i18n, excerpt_i18n, seo
@@ -167,8 +205,8 @@ export async function getAllNews(): Promise<NewsItem[]> {
   return client.fetch(`
     *[_type == "newsItem"] | order(date desc) {
       _id, title, slug, category, date, excerpt,
-      featuredImage, awardOrganization, publication,
-      externalUrl, featured
+      "featuredImage": featuredImage{${IMAGE_FIELDS}}, awardOrganization, awardYear, awardTier,
+      publication, externalUrl, featured
     }
   `)
 }
@@ -178,7 +216,7 @@ export async function getNewsByCategory(category: string): Promise<NewsItem[]> {
     `
     *[_type == "newsItem" && category == $category] | order(date desc) {
       _id, title, slug, category, date, excerpt,
-      featuredImage, awardOrganization, publication,
+      "featuredImage": featuredImage{${IMAGE_FIELDS}}, awardOrganization, publication,
       externalUrl, featured
     }
   `,
@@ -191,7 +229,7 @@ export async function getNewsItemBySlug(slug: string): Promise<NewsItem | null> 
     `
     *[_type == "newsItem" && slug.current == $slug][0] {
       _id, title, slug, category, date, excerpt,
-      body, featuredImage, awardOrganization, awardYear,
+      body, "featuredImage": featuredImage{${IMAGE_FIELDS}}, awardOrganization, awardYear,
       publication, externalUrl, featured, seo
     }
   `,
@@ -205,8 +243,11 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
     `
     *[_type == "page" && slug.current == $slug][0] {
       _id, title, slug, section, subtitle,
-      featuredImage, body, ctaText, ctaLink,
-      location, teamMembers,
+      "featuredImage": featuredImage{${IMAGE_FIELDS}}, body, ctaText, ctaLink,
+      imageBadgeTitle, imageBadgeSubtitle,
+      "gallery": gallery[]{${IMAGE_FIELDS}},
+      location,
+      "teamMembers": teamMembers[]{name, role, bio, "photo": photo{${IMAGE_FIELDS}}},
       title_i18n, subtitle_i18n, seo
     }
   `,
@@ -218,7 +259,7 @@ export async function getPagesBySection(section: string): Promise<Page[]> {
   return client.fetch(
     `
     *[_type == "page" && section == $section] | order(_createdAt asc) {
-      _id, title, slug, subtitle, featuredImage
+      _id, title, slug, subtitle, "featuredImage": featuredImage{${IMAGE_FIELDS}}
     }
   `,
     { section }

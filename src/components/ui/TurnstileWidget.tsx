@@ -1,16 +1,32 @@
 // src/components/ui/TurnstileWidget.tsx
 'use client'
 
+import { useEffect } from 'react'
 import { Turnstile } from '@marsidev/react-turnstile'
 
 interface TurnstileWidgetProps {
   onSuccess: (token: string) => void
   onError?: () => void
   onExpire?: () => void
+  size?: 'normal' | 'compact' | 'invisible'
 }
 
-export function TurnstileWidget({ onSuccess, onError, onExpire }: TurnstileWidgetProps) {
+export function TurnstileWidget({
+  onSuccess,
+  onError,
+  onExpire,
+  size = 'normal',
+}: TurnstileWidgetProps) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  const devBypass = !siteKey && size === 'invisible'
+
+  // Invisible mode has no UI even in dev — auto-bypass on mount so forms stay usable
+  useEffect(() => {
+    if (devBypass) onSuccess('dev-bypass')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [devBypass])
+
+  if (devBypass) return null
 
   // Development fallback — no real Turnstile in dev
   if (!siteKey) {
@@ -45,7 +61,7 @@ export function TurnstileWidget({ onSuccess, onError, onExpire }: TurnstileWidge
       onExpire={onExpire}
       options={{
         theme: 'light',
-        size: 'normal',
+        size,
       }}
     />
   )

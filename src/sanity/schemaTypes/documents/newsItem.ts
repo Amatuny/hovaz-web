@@ -84,6 +84,13 @@ export const newsItem = defineType({
       type: 'number',
       group: 'content',
     }),
+    defineField({
+      name: 'awardTier',
+      title: 'Award Tier',
+      type: 'string',
+      group: 'content',
+      description: 'e.g. Gold, Silver, Medal, Trophy — shown alongside the award year',
+    }),
 
     // Press specific fields
     defineField({

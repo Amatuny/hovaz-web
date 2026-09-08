@@ -2,8 +2,11 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
 
 interface NavigationProps {
   settings: {
@@ -11,23 +14,25 @@ interface NavigationProps {
   } | null
 }
 
-const navLinks = [
-  { label: 'Wines', href: '/wines' },
-  { label: 'Events', href: '/events' },
-  { label: 'About', href: '/about/our-story' },
-  { label: 'News', href: '/news/awards' },
-  { label: 'Journal', href: '/blog' },
-  { label: 'Contact', href: '/contact/form' },
-]
-
 export function Navigation({ settings }: NavigationProps) {
+  const t = useTranslations('Navigation')
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [prevPathname, setPrevPathname] = useState(pathname)
 
+  const navLinks = [
+    { label: t('events'), href: '/events' },
+    { label: t('experiences'), href: '/events/whats-on' },
+    { label: t('ourWines'), href: '/wines' },
+    { label: t('ourStory'), href: '/about/our-story' },
+    { label: t('newsAwards'), href: '/news/awards' },
+    { label: t('contactUs'), href: '/contact/form' },
+    { label: t('twoEstates'), href: '#' },
+  ]
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40)
+    const handleScroll = () => setScrolled(window.scrollY > 12)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -38,85 +43,42 @@ export function Navigation({ settings }: NavigationProps) {
     setMenuOpen(false)
   }
 
-  const isHeroPage = pathname === '/'
-
   return (
     <header
-      className={`
-        fixed top-0 left-0 right-0 z-50
-        transition-all duration-400
-        ${
-          scrolled || menuOpen || !isHeroPage
-            ? 'bg-brand-cream/95 backdrop-blur-sm shadow-sm'
-            : 'bg-transparent'
-        }
-      `}
-      style={{
-        backgroundColor:
-          scrolled || menuOpen || !isHeroPage
-            ? 'color-mix(in srgb, var(--color-brand-cream) 95%, transparent)'
-            : 'transparent',
-      }}
+      className={`sticky top-0 z-50 transition-shadow duration-300 ${scrolled ? 'shadow-sm' : ''}`}
+      style={{ backgroundColor: 'var(--color-brand-cream)' }}
     >
       <div className="container-content">
-        <div className="flex items-center justify-between h-18">
+        <div className="flex items-center justify-between py-3 lg:py-4">
           {/* Logo */}
-          <Link
-            href="/"
-            className="font-serif text-2xl tracking-widest"
-            style={{
-              color: scrolled || !isHeroPage ? 'var(--color-brand-burgundy)' : 'white',
-            }}
-          >
-            HOVAZ
+          <Link href="/" className="shrink-0">
+            <Image
+              src="/logo.png"
+              alt="Hovaz"
+              width={101}
+              height={120}
+              className="h-16 w-auto lg:h-22"
+              priority
+            />
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`nav-link ${pathname.startsWith(link.href) ? 'nav-link-active' : ''}`}
-                style={{
-                  color:
-                    scrolled || !isHeroPage
-                      ? undefined
-                      : pathname.startsWith(link.href)
-                        ? 'white'
-                        : 'rgba(255,255,255,0.8)',
-                }}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="hidden lg:flex flex-1 items-center justify-center">
+            <nav className="flex items-center gap-5">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`header-nav-link ${link.href !== '#' && pathname.startsWith(link.href) ? 'header-nav-link-active' : ''}`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
 
-          {/* Right side — language + CTA */}
-          <div className="hidden lg:flex items-center gap-6">
-            {/* Language switcher — Phase 2 (Armenian) and Phase 3 (Russian) */}
-            <button
-              className="text-label"
-              style={{ color: scrolled || !isHeroPage ? undefined : 'rgba(255,255,255,0.7)' }}
-            >
-              EN
-            </button>
-
-            <Link
-              href="/events"
-              className="btn-primary"
-              style={
-                !scrolled && isHeroPage
-                  ? {
-                      backgroundColor: 'transparent',
-                      border: '1px solid white',
-                      color: 'white',
-                    }
-                  : {}
-              }
-            >
-              Reserve
-            </Link>
+          <div className="hidden lg:block shrink-0">
+            <LanguageSwitcher />
           </div>
 
           {/* Mobile menu button */}
@@ -128,24 +90,21 @@ export function Navigation({ settings }: NavigationProps) {
             <span
               className="block w-6 h-px transition-all duration-300"
               style={{
-                backgroundColor:
-                  scrolled || !isHeroPage || menuOpen ? 'var(--color-brand-charcoal)' : 'white',
+                backgroundColor: 'var(--color-brand-charcoal)',
                 transform: menuOpen ? 'rotate(45deg) translate(3px, 3px)' : 'none',
               }}
             />
             <span
               className="block w-6 h-px transition-all duration-300"
               style={{
-                backgroundColor:
-                  scrolled || !isHeroPage || menuOpen ? 'var(--color-brand-charcoal)' : 'white',
+                backgroundColor: 'var(--color-brand-charcoal)',
                 opacity: menuOpen ? 0 : 1,
               }}
             />
             <span
               className="block w-6 h-px transition-all duration-300"
               style={{
-                backgroundColor:
-                  scrolled || !isHeroPage || menuOpen ? 'var(--color-brand-charcoal)' : 'white',
+                backgroundColor: 'var(--color-brand-charcoal)',
                 transform: menuOpen ? 'rotate(-45deg) translate(3px, -3px)' : 'none',
               }}
             />
@@ -167,16 +126,12 @@ export function Navigation({ settings }: NavigationProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`nav-link ${pathname.startsWith(link.href) ? 'nav-link-active' : ''}`}
+                className={`header-nav-link ${link.href !== '#' && pathname.startsWith(link.href) ? 'header-nav-link-active' : ''}`}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="divider-cream pt-2">
-              <Link href="/events" className="btn-primary w-full text-center mt-4">
-                Reserve an Experience
-              </Link>
-            </div>
+            <LanguageSwitcher />
           </div>
         </div>
       )}
