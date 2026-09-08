@@ -1,69 +1,119 @@
-import Link from 'next/link'
 import type { NewsItem } from '@/types/sanity'
 
 interface AwardsStripProps {
   awards: NewsItem[]
 }
 
-export function AwardsStrip({ awards }: AwardsStripProps) {
+interface RecognitionItem {
+  key: string
+  icon: 'star' | 'pin'
+  label: string
+  meta?: string
+}
+
+const FALLBACK_AWARDS: RecognitionItem[] = [
+  { key: 'decanter', icon: 'star', label: 'Decanter World Wine Awards' },
+  { key: 'wine-spectator', icon: 'star', label: 'Wine Spectator' },
+]
+
+const BRAND_FACT: RecognitionItem = {
+  key: 'women-led',
+  icon: 'pin',
+  label: 'Women-led Winery',
+  meta: 'Since 2018',
+}
+
+function StarIcon() {
   return (
-    <section className="section-padding-sm" style={{ backgroundColor: 'var(--color-brand-dark)' }}>
-      <div className="container-content">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="text-center md:text-left">
-            <p className="text-label mb-2" style={{ color: 'var(--color-brand-gold)' }}>
-              Recognition
-            </p>
-            <h2
-              className="heading-card"
-              style={{ color: 'white', fontFamily: 'var(--font-serif)' }}
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 3.5l2.47 5.18 5.71.66-4.2 3.93 1.13 5.67-5.11-2.86-5.11 2.86 1.13-5.67-4.2-3.93 5.71-.66L12 3.5z"
+      />
+    </svg>
+  )
+}
+
+function PinIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 21s7-6.4 7-11.5A7 7 0 0 0 5 9.5C5 14.6 12 21 12 21z"
+      />
+      <circle cx="12" cy="9.5" r="2.3" />
+    </svg>
+  )
+}
+
+export function AwardsStrip({ awards }: AwardsStripProps) {
+  const realAwards: RecognitionItem[] = (awards ?? []).slice(0, 2).map((item) => ({
+    key: item._id,
+    icon: 'star',
+    label: item.awardOrganization ?? item.publication ?? item.title,
+    meta: [item.awardTier?.toUpperCase(), item.awardYear].filter(Boolean).join(' · '),
+  }))
+
+  const items: RecognitionItem[] = [
+    ...(realAwards.length > 0 ? realAwards : FALLBACK_AWARDS),
+    BRAND_FACT,
+  ]
+
+  return (
+    <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
+      <div className="container-content text-center">
+        <p className="text-label mb-3" style={{ color: 'var(--color-brand-stone)' }}>
+          Recognition
+        </p>
+        <h2 className="heading-section mb-14">Quietly Awarded</h2>
+
+        <div className="flex flex-wrap justify-center gap-x-16 gap-y-10">
+          {items.map((item) => (
+            <div
+              key={item.key}
+              className="flex flex-col items-center"
+              style={{ maxWidth: '180px' }}
             >
-              Awards & Press
-            </h2>
-          </div>
-
-          {/* Awards list */}
-          <div className="flex flex-wrap justify-center md:justify-end gap-8">
-            {awards?.length > 0
-              ? awards.slice(0, 4).map((item) => (
-                  <div key={item._id} className="text-center">
-                    <p
-                      className="font-serif text-3xl mb-1"
-                      style={{ color: 'var(--color-brand-gold)' }}
-                    >
-                      ★
-                    </p>
-                    <p
-                      className="font-sans text-xs text-center max-w-24"
-                      style={{ color: 'rgba(255,255,255,0.6)', lineHeight: '1.4' }}
-                    >
-                      {item.awardOrganization ?? item.publication ?? item.title}
-                    </p>
-                  </div>
-                ))
-              : // Placeholder awards before real content exists
-                ['Decanter', 'Wine Spectator', 'Robert Parker', 'Vivino'].map((name) => (
-                  <div key={name} className="text-center">
-                    <p
-                      className="font-serif text-3xl mb-1"
-                      style={{ color: 'var(--color-brand-gold)' }}
-                    >
-                      ★
-                    </p>
-                    <p className="font-sans text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                      {name}
-                    </p>
-                  </div>
-                ))}
-          </div>
-
-          <Link
-            href="/news/awards"
-            className="btn-secondary"
-            style={{ borderColor: 'rgba(255,255,255,0.3)', color: 'white' }}
-          >
-            View Awards
-          </Link>
+              <div
+                className="mb-4 flex items-center justify-center rounded-full"
+                style={{
+                  width: '56px',
+                  height: '56px',
+                  border: '1px solid color-mix(in srgb, var(--color-brand-stone) 35%, transparent)',
+                  color: 'var(--color-brand-stone)',
+                }}
+              >
+                {item.icon === 'star' ? <StarIcon /> : <PinIcon />}
+              </div>
+              <p className="font-sans text-base" style={{ color: 'var(--color-brand-charcoal)' }}>
+                {item.label}
+              </p>
+              {item.meta && (
+                <p
+                  className="text-label mt-2"
+                  style={{ fontSize: '0.7rem', color: 'var(--color-brand-stone)' }}
+                >
+                  {item.meta}
+                </p>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </section>

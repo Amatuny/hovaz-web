@@ -26,6 +26,7 @@ export default defineConfig({
             S.divider(),
 
             // Regular document types
+            S.documentTypeListItem('estate').title('Estates'),
             S.documentTypeListItem('wine').title('Wines'),
             S.documentTypeListItem('tour').title('Tours'),
             S.documentTypeListItem('event').title('Events'),

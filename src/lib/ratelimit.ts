@@ -22,3 +22,11 @@ export const contactRatelimit = new Ratelimit({
   analytics: true,
   prefix: 'hovaz:contact',
 })
+
+// Newsletter signups: 5 per hour per IP
+export const newsletterRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, '60 m'),
+  analytics: true,
+  prefix: 'hovaz:newsletter',
+})

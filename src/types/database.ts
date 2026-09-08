@@ -89,6 +89,30 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_subscribers: {
+        Row: {
+          email: string
+          id: string
+          source: string
+          subscribed_at: string
+          unsubscribed_at: string | null
+        }
+        Insert: {
+          email: string
+          id?: string
+          source?: string
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+        }
+        Update: {
+          email?: string
+          id?: string
+          source?: string
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+        }
+        Relationships: []
+      }
       email_logs: {
         Row: {
           booking_id: string | null
@@ -159,6 +183,7 @@ export type Database = {
         | 'booking_status_update'
         | 'contact_admin_notification'
         | 'contact_user_confirmation'
+        | 'newsletter_welcome'
       experience_type:
         | 'wine_tasting'
         | 'vineyard_walk'
@@ -297,6 +322,7 @@ export const Constants = {
         'booking_status_update',
         'contact_admin_notification',
         'contact_user_confirmation',
+        'newsletter_welcome',
       ],
       experience_type: [
         'wine_tasting',

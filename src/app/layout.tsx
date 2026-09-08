@@ -1,5 +1,14 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, Inter } from 'next/font/google'
+import {
+  Cormorant_Garamond,
+  Inter,
+  Hanken_Grotesk,
+  Montserrat,
+  Noto_Sans_Armenian,
+  Playfair_Display,
+} from 'next/font/google'
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale } from 'next-intl/server'
 import './globals.css'
 import { Navigation } from '@/components/layout/Navigation'
 import { Footer } from '@/components/layout/Footer'
@@ -16,6 +25,34 @@ const serif = Cormorant_Garamond({
 const sans = Inter({
   variable: '--font-sans',
   subsets: ['latin'],
+  display: 'swap',
+})
+
+const hankenGrotesk = Hanken_Grotesk({
+  variable: '--font-hanken',
+  subsets: ['latin'],
+  weight: ['500', '600'],
+  display: 'swap',
+})
+
+const playfairDisplay = Playfair_Display({
+  variable: '--font-playfair',
+  subsets: ['latin'],
+  weight: ['600'],
+  display: 'swap',
+})
+
+const montserrat = Montserrat({
+  variable: '--font-montserrat',
+  subsets: ['latin', 'cyrillic'],
+  weight: ['600'],
+  display: 'swap',
+})
+
+const notoSansArmenian = Noto_Sans_Armenian({
+  variable: '--font-armenian',
+  subsets: ['armenian'],
+  weight: ['500', '600'],
   display: 'swap',
 })
 
@@ -79,11 +116,15 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSiteSettings()
+  const [settings, locale] = await Promise.all([getSiteSettings(), getLocale()])
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID
 
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable}`} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${serif.variable} ${sans.variable} ${hankenGrotesk.variable} ${montserrat.variable} ${notoSansArmenian.variable} ${playfairDisplay.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {GTM_ID && (
           <Script
@@ -110,9 +151,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             />
           </noscript>
         )}
-        <Navigation settings={settings} />
-        <main>{children}</main>
-        <Footer settings={settings} />
+        <NextIntlClientProvider>
+          <Navigation settings={settings} />
+          <main>{children}</main>
+          <Footer settings={settings} />
+        </NextIntlClientProvider>
       </body>
     </html>
   )

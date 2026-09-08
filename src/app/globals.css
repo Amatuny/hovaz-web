@@ -9,10 +9,16 @@
   --color-brand-stone:    #8C8279;
   --color-brand-blush:    #F0E6E6;
   --color-brand-dark:     #1A0A0D;
+  --color-brand-forest:   #3F5B3F;
+  --color-brand-sand:     #D4D0C0;
+  --color-brand-offwhite: #FDFCF8;
+  --color-brand-ink:      #1F281B;
+  --color-brand-olive:    #2E3A28;
 
   /* ── Typography ── */
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans:  'Inter', system-ui, sans-serif;
+  --font-playfair: 'Playfair Display', Georgia, serif;
 
   /* ── Font Sizes ── */
   --font-size-display-xl: 4.5rem;
@@ -196,8 +202,56 @@
 
   .btn-white:hover { background-color: var(--color-brand-cream); }
 
+  .btn-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 3.25rem;
+    border-radius: 9999px;
+    background-color: var(--color-brand-offwhite);
+    color: var(--color-brand-ink);
+    font-family: var(--font-hanken);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: 1.25px;
+    text-transform: capitalize;
+    white-space: nowrap;
+    transition: background-color 300ms;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-pill:hover { background-color: var(--color-brand-gold); color: white; }
+
+  .btn-pill-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 3.25rem;
+    border-radius: 9999px;
+    border: 1.5px solid white;
+    background: transparent;
+    color: white;
+    font-family: var(--font-hanken);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: 1.25px;
+    text-transform: capitalize;
+    white-space: nowrap;
+    transition: all 300ms;
+    cursor: pointer;
+  }
+
+  .btn-pill-outline:hover { background-color: rgba(255, 255, 255, 0.15); border-color: white; }
+
+  @media (max-width: 640px) {
+    .btn-pill, .btn-pill-outline { padding: 0.625rem 1.25rem; font-size: 0.8125rem; }
+  }
+
   /* ── Typography ── */
-  .heading-hero    { font-family: var(--font-serif); font-size: var(--font-size-display-xl); color: white; line-height: 1.05; }
+  .heading-hero    { font-family: var(--font-playfair); font-weight: 600; font-size: var(--font-size-display-xl); color: var(--color-brand-offwhite); letter-spacing: 1px; line-height: 1.05; }
+
+  .text-eyebrow    { font-family: var(--font-montserrat); font-weight: 600; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--color-brand-sand); }
   .heading-display { font-family: var(--font-serif); font-size: var(--font-size-display-lg); color: var(--color-brand-burgundy); line-height: 1.1; }
   .heading-section { font-family: var(--font-serif); font-size: var(--font-size-display-md); color: var(--color-brand-burgundy); }
   .heading-card    { font-family: var(--font-serif); font-size: var(--font-size-display-sm); color: var(--color-brand-charcoal); }
@@ -299,6 +353,58 @@
   .nav-link:hover::after { width: 100%; }
   .nav-link-active { color: var(--color-brand-burgundy); }
   .nav-link-active::after { width: 100%; }
+
+  /* ── Header (Figma: node 785:9369) ── */
+  .header-nav-link {
+    font-family: var(--font-hanken);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.75px;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.9);
+    transition: color 200ms;
+    position: relative;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  :lang(hy) .header-nav-link {
+    font-family: var(--font-armenian);
+    letter-spacing: normal;
+  }
+
+  :lang(ru) .header-nav-link {
+    font-family: var(--font-sans);
+    letter-spacing: 0.25px;
+  }
+
+  .header-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-brand-gold);
+    transition: width 300ms;
+  }
+
+  .header-nav-link:hover { color: var(--color-brand-burgundy); }
+  .header-nav-link:hover::after { width: 100%; }
+  .header-nav-link-active { color: var(--color-brand-burgundy); }
+  .header-nav-link-active::after { width: 100%; }
+
+  .header-lang-link {
+    font-family: var(--font-montserrat);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #4f4542;
+    transition: color 200ms;
+  }
+
+  .header-lang-link[aria-current='true'] { color: #231814; }
 }
 
 /* ─────────────────────────────────────────

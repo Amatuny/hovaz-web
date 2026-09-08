@@ -3,6 +3,7 @@ import type { Database } from '@/types/database'
 
 type BookingInsert = Database['public']['Tables']['bookings']['Insert']
 type ContactInsert = Database['public']['Tables']['contact_submissions']['Insert']
+type NewsletterInsert = Database['public']['Tables']['newsletter_subscribers']['Insert']
 type EmailLogInsert = Database['public']['Tables']['email_logs']['Insert']
 type EmailStatus = Database['public']['Enums']['email_status']
 type EmailType = Database['public']['Enums']['email_type']
@@ -82,6 +83,27 @@ export async function markContactAsRead(id: string) {
   const { error } = await supabase.from('contact_submissions').update({ read: true }).eq('id', id)
 
   if (error) throw new Error(`Failed to mark contact as read: ${error.message}`)
+}
+
+// ── NEWSLETTER SUBSCRIBERS ──
+
+export async function insertNewsletterSubscriber(data: NewsletterInsert) {
+  const supabase = createAdminClient()
+  const { data: subscriber, error } = await supabase
+    .from('newsletter_subscribers')
+    .insert(data)
+    .select()
+    .single()
+
+  if (error) {
+    // Unique violation — already subscribed, not a failure
+    if (error.code === '23505') {
+      return { alreadySubscribed: true as const }
+    }
+    throw new Error(`Failed to insert newsletter subscriber: ${error.message}`)
+  }
+
+  return { alreadySubscribed: false as const, subscriber }
 }
 
 // ── EMAIL LOGS ──

@@ -29,18 +29,29 @@ export const siteSettings = defineType({
       description: 'Subtitle shown below the main headline',
     }),
     defineField({
-      name: 'heroImage',
-      title: 'Hero Background Image',
-      type: 'imageWithAlt',
+      name: 'heroLocation',
+      title: 'Hero Location Label',
+      type: 'string',
       group: 'homepage',
-      validation: (Rule) => Rule.required(),
+      description: 'Small eyebrow label above the headline, e.g. "Proshyan Valley, Armenia"',
+    }),
+    defineField({
+      name: 'heroGallery',
+      title: 'Hero Gallery',
+      type: 'array',
+      group: 'homepage',
+      of: [{ type: 'imageWithAlt' }],
+      description:
+        'Images shown in the homepage hero carousel. The active slide carries the headline and CTAs — add at least 3 for the full carousel effect.',
+      validation: (Rule) =>
+        Rule.required().min(3).error('Add at least 3 images for the hero carousel'),
     }),
     defineField({
       name: 'heroCtaText',
       title: 'Hero CTA Button Text',
       type: 'string',
       group: 'homepage',
-      initialValue: 'Explore Our Wines',
+      initialValue: 'Book Your Experience',
     }),
     defineField({
       name: 'featuredWines',
