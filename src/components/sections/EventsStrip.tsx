@@ -94,11 +94,41 @@ export function EventsStrip({ tours, events }: EventsStripProps) {
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div className="container-content">
-        <p className="text-label mb-3" style={{ color: 'var(--color-brand-gold)' }}>
+        <p
+          className="mb-2 uppercase"
+          style={{
+            fontFamily: 'var(--font-montserrat)',
+            fontWeight: 600,
+            fontSize: '10px',
+            letterSpacing: '1.5px',
+            color: 'rgba(93,110,82,0.92)',
+          }}
+        >
           Upcoming
         </p>
-        <h2 className="heading-section mb-3">Discover All Events</h2>
-        <p className="mb-10 max-w-xl text-base" style={{ color: 'var(--color-brand-stone)' }}>
+        <h2
+          className="mb-3 capitalize"
+          style={{
+            fontFamily: 'var(--font-playfair)',
+            fontWeight: 600,
+            fontSize: '26px',
+            color: '#1a1d17',
+            letterSpacing: '0.3px',
+            lineHeight: 1.15,
+          }}
+        >
+          Discover All Events
+        </h2>
+        <p
+          className="mb-10 max-w-xl"
+          style={{
+            fontFamily: 'var(--font-hanken)',
+            fontWeight: 400,
+            fontSize: '13px',
+            lineHeight: '20px',
+            color: '#4f4542',
+          }}
+        >
           Small-group tastings and dinners in the cellar and among the vines — see what&apos;s
           coming next, or look back at what we&apos;ve hosted across both estates.
         </p>
@@ -112,8 +142,8 @@ export function EventsStrip({ tours, events }: EventsStripProps) {
         <div className="mt-8">
           <Link
             href="/events/whats-on"
-            className="group inline-flex items-center gap-2 font-sans text-base"
-            style={{ color: 'var(--color-brand-charcoal)' }}
+            className="group inline-flex items-center gap-2"
+            style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', color: '#1a1d17' }}
           >
             <span
               className="border-b pb-1 transition-colors group-hover:text-[var(--color-brand-gold)]"
@@ -140,17 +170,22 @@ function JournalCardItem({ card }: { card: JournalCard }) {
   return (
     <Link
       href={card.href}
-      className="group relative block shrink-0 snap-start overflow-hidden rounded-2xl"
-      style={{ width: '280px', height: '400px', backgroundColor: 'var(--color-brand-dark)' }}
+      className="group relative block shrink-0 snap-start overflow-hidden"
+      style={{
+        width: '240px',
+        height: '300px',
+        borderRadius: '18px',
+        backgroundColor: 'var(--color-brand-dark)',
+      }}
     >
       {/* Image */}
       {card.image?.asset?._ref ? (
         <Image
-          src={urlFor(card.image).width(560).height(800).url()}
+          src={urlFor(card.image).width(480).height(600).url()}
           alt={card.image.alt ?? card.title}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
-          sizes="280px"
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
+          sizes="240px"
         />
       ) : (
         <div
@@ -168,13 +203,43 @@ function JournalCardItem({ card }: { card: JournalCard }) {
         }}
       />
 
+      {/* Soft glow behind the CTA, revealed on hover */}
+      <div
+        className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{
+          background:
+            'radial-gradient(circle at 50% 48%, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.16) 25%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0) 70%)',
+        }}
+      />
+
+      {/* Reserve CTA — revealed on hover */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <span
+          className="pointer-events-auto inline-flex items-center gap-1.5 whitespace-nowrap bg-[#fdfcf8] text-[#1a1d17] opacity-0 transition-all duration-300 hover:bg-[rgba(63,91,63,0.92)] hover:text-white group-hover:opacity-100"
+          style={{
+            fontFamily: 'var(--font-hanken)',
+            fontWeight: 600,
+            fontSize: '10px',
+            letterSpacing: '0.3px',
+            lineHeight: 1,
+            padding: '8px 26px',
+            borderRadius: '999px',
+          }}
+        >
+          Reserve Your Seat
+          <span aria-hidden="true">→</span>
+        </span>
+      </div>
+
       {/* Badges */}
       <div className="absolute left-0 top-0 flex flex-col items-start gap-1.5 p-3">
         {card.estateName && (
           <span
-            className="text-label px-2.5 py-1"
+            className="px-2.5 py-1 uppercase"
             style={{
-              fontSize: '0.6rem',
+              fontFamily: 'var(--font-hanken)',
+              fontSize: '9px',
+              letterSpacing: '1px',
               color: 'white',
               backgroundColor: badgeColor,
               borderRadius: '999px',
@@ -185,9 +250,11 @@ function JournalCardItem({ card }: { card: JournalCard }) {
         )}
         {card.isPast && (
           <span
-            className="text-label px-2.5 py-1"
+            className="px-2.5 py-1 uppercase"
             style={{
-              fontSize: '0.6rem',
+              fontFamily: 'var(--font-hanken)',
+              fontSize: '9px',
+              letterSpacing: '1px',
               color: 'white',
               backgroundColor: 'rgba(0,0,0,0.6)',
               borderRadius: '999px',
@@ -200,12 +267,23 @@ function JournalCardItem({ card }: { card: JournalCard }) {
 
       {/* Content */}
       <div className="absolute inset-x-0 bottom-0 p-5">
-        <h3 className="mb-1.5 font-serif text-white" style={{ fontSize: '1.15rem' }}>
+        <h3
+          className="mb-1.5 text-white"
+          style={{ fontFamily: 'var(--font-playfair)', fontWeight: 600, fontSize: '1.15rem' }}
+        >
           {card.title}
         </h3>
 
         {card.description && (
-          <p className="mb-3 text-xs text-white/75 line-clamp-2" style={{ lineHeight: 1.6 }}>
+          <p
+            className="mb-3 overflow-hidden text-white/75 line-clamp-2 transition-all duration-300 group-hover:mb-0 group-hover:max-h-0 group-hover:opacity-0"
+            style={{
+              fontFamily: 'var(--font-hanken)',
+              fontSize: '12px',
+              lineHeight: 1.6,
+              maxHeight: '2.6em',
+            }}
+          >
             {card.description}
           </p>
         )}
@@ -215,9 +293,11 @@ function JournalCardItem({ card }: { card: JournalCard }) {
             {card.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="text-label px-2 py-0.5"
+                className="px-2 py-0.5 uppercase"
                 style={{
-                  fontSize: '0.55rem',
+                  fontFamily: 'var(--font-hanken)',
+                  fontSize: '9px',
+                  letterSpacing: '1px',
                   color: 'white',
                   borderRadius: '999px',
                   border: '1px solid rgba(255,255,255,0.4)',
@@ -232,7 +312,7 @@ function JournalCardItem({ card }: { card: JournalCard }) {
         {card.dateLabel && (
           <p
             className="mt-1 text-white/55"
-            style={{ fontSize: '0.65rem', letterSpacing: '0.15em' }}
+            style={{ fontFamily: 'var(--font-hanken)', fontSize: '10px', letterSpacing: '0.15em' }}
           >
             {card.dateLabel}
           </p>

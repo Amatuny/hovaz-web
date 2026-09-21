@@ -53,7 +53,13 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
 
   if (formState === 'success') {
     return (
-      <p className="text-sm" style={{ color: 'var(--color-brand-forest)' }}>
+      <p
+        style={{
+          fontFamily: 'var(--font-hanken)',
+          fontSize: '14px',
+          color: 'var(--color-brand-forest)',
+        }}
+      >
         {message}
       </p>
     )
@@ -76,14 +82,24 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your email address"
-          className="flex-1 bg-transparent font-sans text-sm outline-none"
-          style={{ color: 'var(--color-brand-charcoal)' }}
+          className="flex-1 bg-transparent outline-none"
+          style={{
+            fontFamily: 'var(--font-hanken)',
+            fontSize: '14px',
+            color: 'var(--color-brand-charcoal)',
+          }}
         />
         <button
           type="submit"
           disabled={isLoading}
-          className="text-label shrink-0 transition-colors hover:text-[var(--color-brand-gold)]"
-          style={{ opacity: isLoading ? 0.6 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}
+          className="shrink-0 uppercase transition-colors hover:text-[var(--color-brand-gold)]"
+          style={{
+            fontFamily: 'var(--font-hanken)',
+            fontSize: '10px',
+            letterSpacing: '1.5px',
+            opacity: isLoading ? 0.6 : 1,
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+          }}
         >
           {isLoading ? 'Subscribing…' : 'Subscribe'}
         </button>
@@ -96,7 +112,7 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
       />
 
       {formState === 'error' && message && (
-        <p className="text-caption" style={{ color: '#dc2626' }}>
+        <p style={{ fontFamily: 'var(--font-hanken)', fontSize: '12px', color: '#dc2626' }}>
           {message}
         </p>
       )}

@@ -31,7 +31,7 @@ const sans = Inter({
 const hankenGrotesk = Hanken_Grotesk({
   variable: '--font-hanken',
   subsets: ['latin'],
-  weight: ['500', '600'],
+  weight: ['300', '400', '500', '600'],
   display: 'swap',
 })
 
@@ -39,6 +39,7 @@ const playfairDisplay = Playfair_Display({
   variable: '--font-playfair',
   subsets: ['latin'],
   weight: ['600'],
+  style: ['normal', 'italic'],
   display: 'swap',
 })
 
