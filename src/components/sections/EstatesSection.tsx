@@ -18,10 +18,31 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div className="container-content">
-        <p className="text-label mb-3" style={{ color: 'var(--color-brand-gold)' }}>
+        <p
+          className="mb-2 uppercase"
+          style={{
+            fontFamily: 'var(--font-montserrat)',
+            fontWeight: 600,
+            fontSize: '10px',
+            letterSpacing: '1.5px',
+            color: 'rgba(93,110,82,0.92)',
+          }}
+        >
           Two Estates
         </p>
-        <h2 className="heading-section mb-10">Proshyan &amp; Dilijan</h2>
+        <h2
+          className="mb-10 capitalize"
+          style={{
+            fontFamily: 'var(--font-playfair)',
+            fontWeight: 600,
+            fontSize: '26px',
+            color: '#1a1d17',
+            letterSpacing: '0.3px',
+            lineHeight: 1.15,
+          }}
+        >
+          Proshyan &amp; Dilijan
+        </h2>
 
         <div
           className="flex flex-col gap-4 md:flex-row"
@@ -73,15 +94,24 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
                 {/* Stat */}
                 <div className="absolute left-6 top-8 lg:left-9 lg:top-10">
                   <p
-                    className="font-serif leading-none text-white"
+                    className="leading-none text-white"
                     style={{
+                      fontFamily: 'var(--font-playfair)',
+                      fontWeight: 600,
                       fontSize: 'clamp(2.75rem, 5.5vw, 5rem)',
                       textShadow: '0 2px 16px rgba(0,0,0,0.4)',
                     }}
                   >
                     {estate.eventsCount}
                   </p>
-                  <p className="mt-2 flex items-center gap-1.5 text-xs font-sans uppercase tracking-widest text-white">
+                  <p
+                    className="mt-2 flex items-center gap-1.5 uppercase text-white"
+                    style={{
+                      fontFamily: 'var(--font-hanken)',
+                      fontSize: '10px',
+                      letterSpacing: '1.5px',
+                    }}
+                  >
                     Events <span aria-hidden="true">→</span>
                   </p>
                   <div
@@ -93,12 +123,19 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
                 {/* Name & description */}
                 <div className="absolute inset-x-0 bottom-0 p-6 lg:p-9">
                   <h3
-                    className="mb-2 font-serif text-white"
-                    style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2rem)' }}
+                    className="mb-2 text-white"
+                    style={{
+                      fontFamily: 'var(--font-playfair)',
+                      fontWeight: 600,
+                      fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
+                    }}
                   >
                     {estate.name}
                   </h3>
-                  <p className="max-w-sm text-sm text-white/80" style={{ lineHeight: 1.6 }}>
+                  <p
+                    className="max-w-sm text-white/80"
+                    style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', lineHeight: 1.6 }}
+                  >
                     {estate.description}
                   </p>
                 </div>
@@ -110,8 +147,8 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
         <div className="mt-10">
           <Link
             href="/about/our-story"
-            className="group inline-flex items-center gap-2 font-sans text-base"
-            style={{ color: 'var(--color-brand-charcoal)' }}
+            className="group inline-flex items-center gap-2"
+            style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', color: '#1a1d17' }}
           >
             <span
               className="border-b pb-1 transition-colors group-hover:text-[var(--color-brand-gold)]"

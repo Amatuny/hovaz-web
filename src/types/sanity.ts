@@ -67,13 +67,26 @@ export interface Wine {
   vintage?: number
   region?: string
   wineType?: 'red' | 'white' | 'rose' | 'sparkling' | 'orange' | 'dessert'
+  collection?: 'hovaz' | 'gooneh'
   description?: string
   tastingNotes?: string
+  tastingTags?: string[]
   pairingNotes?: string
   alcohol?: number
   servingTemp?: string
   featured?: boolean
   available?: boolean
+  award?: string
+  pairWith?: string[]
+  perfectFor?: string[]
+  agingNotes?: string
+  bottleSize?: string
+  relatedEvents?: Event[]
+  storyIntro?: string
+  grapeStoryText?: string
+  howWeDecidedTitle?: string
+  howWeDecidedText?: string
+  storyOutro?: string[]
   mainImage?: SanityImage
   gallery?: SanityImage[]
   name_i18n?: LocalizedString
@@ -228,6 +241,7 @@ export interface SiteSettings {
   heroSubheadline?: string
   heroLocation?: string
   heroGallery?: SanityImage[]
+  wineTourGallery?: SanityImage[]
   heroCtaText?: string
   featuredWines?: Wine[]
   featuredTours?: Tour[]

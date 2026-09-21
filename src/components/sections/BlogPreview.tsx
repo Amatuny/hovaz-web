@@ -14,11 +14,41 @@ export function BlogPreview({ posts }: BlogPreviewProps) {
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div className="container-content">
-        <p className="text-label mb-3" style={{ color: 'var(--color-brand-gold)' }}>
+        <p
+          className="mb-2 uppercase"
+          style={{
+            fontFamily: 'var(--font-montserrat)',
+            fontWeight: 600,
+            fontSize: '10px',
+            letterSpacing: '1.5px',
+            color: 'rgba(93,110,82,0.92)',
+          }}
+        >
           The Journal
         </p>
-        <h2 className="heading-section mb-3">A Taste Of What&apos;s New</h2>
-        <p className="mb-10 max-w-xl text-base" style={{ color: 'var(--color-brand-stone)' }}>
+        <h2
+          className="mb-3 capitalize"
+          style={{
+            fontFamily: 'var(--font-playfair)',
+            fontWeight: 600,
+            fontSize: '26px',
+            color: '#1a1d17',
+            letterSpacing: '0.3px',
+            lineHeight: 1.15,
+          }}
+        >
+          A Taste Of What&apos;s New
+        </h2>
+        <p
+          className="mb-10 max-w-xl"
+          style={{
+            fontFamily: 'var(--font-hanken)',
+            fontWeight: 400,
+            fontSize: '13px',
+            lineHeight: '20px',
+            color: '#4f4542',
+          }}
+        >
           New releases, harvest updates, and the small things worth knowing between visits — written
           by the people actually making the wine.
         </p>
@@ -68,17 +98,35 @@ export function BlogPreview({ posts }: BlogPreviewProps) {
                 <div className="absolute inset-x-0 bottom-0 p-5">
                   {(category || year) && (
                     <p
-                      className="text-label mb-2 text-white/70"
-                      style={{ fontSize: '0.65rem', letterSpacing: '0.15em' }}
+                      className="mb-2 uppercase text-white/70"
+                      style={{
+                        fontFamily: 'var(--font-hanken)',
+                        fontSize: '10px',
+                        letterSpacing: '0.15em',
+                      }}
                     >
                       {[category, year].filter(Boolean).join(' · ')}
                     </p>
                   )}
-                  <h3 className="mb-1.5 font-serif text-white" style={{ fontSize: '1.15rem' }}>
+                  <h3
+                    className="mb-1.5 text-white"
+                    style={{
+                      fontFamily: 'var(--font-playfair)',
+                      fontWeight: 600,
+                      fontSize: '1.15rem',
+                    }}
+                  >
                     {post.title}
                   </h3>
                   {post.excerpt && (
-                    <p className="text-xs text-white/75 line-clamp-1" style={{ lineHeight: 1.6 }}>
+                    <p
+                      className="text-white/75 line-clamp-1"
+                      style={{
+                        fontFamily: 'var(--font-hanken)',
+                        fontSize: '12px',
+                        lineHeight: 1.6,
+                      }}
+                    >
                       {post.excerpt}
                     </p>
                   )}
@@ -91,8 +139,8 @@ export function BlogPreview({ posts }: BlogPreviewProps) {
         <div className="mt-8">
           <Link
             href="/blog"
-            className="group inline-flex items-center gap-2 font-sans text-base"
-            style={{ color: 'var(--color-brand-charcoal)' }}
+            className="group inline-flex items-center gap-2"
+            style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', color: '#1a1d17' }}
           >
             <span
               className="border-b pb-1 transition-colors group-hover:text-[var(--color-brand-gold)]"

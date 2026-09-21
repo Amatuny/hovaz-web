@@ -34,6 +34,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
     *[_type == "siteSettings"][0] {
       heroHeadline, heroSubheadline, heroLocation, heroCtaText,
       "heroGallery": heroGallery[]{${IMAGE_FIELDS}},
+      "wineTourGallery": wineTourGallery[]{${IMAGE_FIELDS}},
       email, phone, address,
       instagramWineRooms, instagramWines, facebook,
       siteName, siteDescription, defaultOgImage,
@@ -58,8 +59,8 @@ export async function getAllWines(): Promise<Wine[]> {
   return client.fetch(`
     *[_type == "wine" && available == true] | order(vintage desc) {
       _id, name, slug, grapeVariety, vintage,
-      region, wineType, featured, "mainImage": mainImage{${IMAGE_FIELDS}},
-      description, tastingNotes
+      region, wineType, collection, featured, "mainImage": mainImage{${IMAGE_FIELDS}},
+      description, tastingNotes, tastingTags
     }
   `)
 }
@@ -69,14 +70,33 @@ export async function getWineBySlug(slug: string): Promise<Wine | null> {
     `
     *[_type == "wine" && slug.current == $slug][0] {
       _id, name, slug, grapeVariety, vintage, region,
-      wineType, description, tastingNotes, pairingNotes,
+      wineType, collection, description, tastingNotes, tastingTags, pairingNotes,
       alcohol, servingTemp, featured,
+      award, pairWith, perfectFor, agingNotes, bottleSize,
+      storyIntro, grapeStoryText, howWeDecidedTitle, howWeDecidedText, storyOutro,
+      "relatedEvents": relatedEvents[]->{
+        _id, title, slug, startDate, location, status
+      },
       "mainImage": mainImage{${IMAGE_FIELDS}},
       "gallery": gallery[]{${IMAGE_FIELDS}},
       name_i18n, description_i18n, tastingNotes_i18n, seo
     }
   `,
     { slug }
+  )
+}
+
+// Other available wines, for the "Wines of the Valley" teaser on a wine's own detail page
+export async function getOtherWines(excludeSlug: string): Promise<Wine[]> {
+  return client.fetch(
+    `
+    *[_type == "wine" && available == true && slug.current != $excludeSlug] | order(vintage desc) {
+      _id, name, slug, grapeVariety, vintage,
+      region, wineType, collection, featured, "mainImage": mainImage{${IMAGE_FIELDS}},
+      description, tastingNotes, tastingTags
+    }
+  `,
+    { excludeSlug }
   )
 }
 

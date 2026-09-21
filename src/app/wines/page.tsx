@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { getAllWines } from '@/lib/sanity/queries'
 import { WineCard } from '@/components/ui/WineCard'
-import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Our Wines',
   description:
-    'Discover the HOVAZ wine collection — six expressions of Armenian terroir crafted from indigenous grape varieties.',
+    'Discover the HOVAZ wine collection — expressions of Armenian terroir crafted from indigenous grape varieties, across the Hovaz and Gooneh lines.',
   openGraph: {
     title: 'Our Wines — HOVAZ',
     description: 'Discover the HOVAZ wine collection.',
@@ -16,108 +16,172 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600
 
+interface SectionHeaderProps {
+  as?: 'h1' | 'h2'
+  eyebrow: string
+  eyebrowColor: string
+  heading: string
+  paragraph: string
+  paragraphSize?: string
+  paragraphLineHeight?: string
+  headingTracking?: string
+}
+
+function SectionHeader({
+  as: Heading = 'h2',
+  eyebrow,
+  eyebrowColor,
+  heading,
+  paragraph,
+  paragraphSize = '12px',
+  paragraphLineHeight = '19px',
+  headingTracking = '0px',
+}: SectionHeaderProps) {
+  return (
+    <div className="flex max-w-[860px] flex-col gap-2">
+      <p
+        className="uppercase"
+        style={{
+          fontFamily: 'var(--font-montserrat)',
+          fontWeight: 600,
+          fontSize: '10px',
+          letterSpacing: '1.5px',
+          color: eyebrowColor,
+        }}
+      >
+        {eyebrow}
+      </p>
+      <Heading
+        className="capitalize"
+        style={{
+          fontFamily: 'var(--font-playfair)',
+          fontWeight: 600,
+          fontSize: '26px',
+          color: '#1a1d17',
+          letterSpacing: headingTracking,
+          lineHeight: 1.15,
+        }}
+      >
+        {heading}
+      </Heading>
+      <p
+        style={{
+          fontFamily: 'var(--font-hanken)',
+          fontWeight: 400,
+          fontSize: paragraphSize,
+          lineHeight: paragraphLineHeight,
+          color: '#4f4542',
+        }}
+      >
+        {paragraph}
+      </p>
+    </div>
+  )
+}
+
+function ComingSoon() {
+  return (
+    <p
+      style={{
+        fontFamily: 'var(--font-hanken)',
+        fontWeight: 400,
+        fontSize: '12px',
+        color: 'var(--color-brand-stone)',
+      }}
+    >
+      Coming soon.
+    </p>
+  )
+}
+
 export default async function WinesPage() {
   const wines = await getAllWines()
 
-  // Group by wine type for filtering display
-  const redWines = wines.filter((w) => w.wineType === 'red')
-  const whiteWines = wines.filter((w) => w.wineType === 'white')
-  const otherWines = wines.filter((w) => !['red', 'white'].includes(w.wineType ?? ''))
+  const hovazWines = wines.filter((w) => (w.collection ?? 'hovaz') === 'hovaz')
+  const goonehWines = wines.filter((w) => w.collection === 'gooneh')
 
   return (
-    <>
-      {/* Page header */}
-      <div className="pt-32 pb-16" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
-        <div className="container-content text-center">
-          <p className="text-label mb-4" style={{ color: 'var(--color-brand-gold)' }}>
-            The Collection
-          </p>
-          <h1 className="heading-display mb-6">Our Wines</h1>
-          <p
-            className="text-body max-w-prose mx-auto"
-            style={{ color: 'var(--color-brand-stone)' }}
-          >
-            Ten expressions of Armenian terroir, crafted from indigenous grape varieties grown in
-            the ancient highlands of Vayots Dzor and the Ararat Valley.
-          </p>
-        </div>
-      </div>
+    <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
+      <div className="container-content flex flex-col gap-10 pt-12 pb-12 lg:gap-[82px] lg:pb-[82px]">
+        <SectionHeader
+          as="h1"
+          eyebrow="The Cellar"
+          eyebrowColor="rgba(93,110,82,0.92)"
+          heading="Wines of the Valley"
+          paragraph="Estate-grown across Vayots Dzor, Aragatsotn and the Ararat Valley — small lots, made slowly."
+          paragraphSize="13px"
+          paragraphLineHeight="20px"
+          headingTracking="0.3px"
+        />
 
-      {/* Wine grid */}
-      <div className="section-padding" style={{ backgroundColor: 'white' }}>
-        <div className="container-content">
-          {wines.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-body" style={{ color: 'var(--color-brand-stone)' }}>
-                Our wine collection is coming soon.
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* All wines grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {wines.map((wine) => (
-                  <WineCard key={wine._id} wine={wine} />
-                ))}
-              </div>
+        {wines.length === 0 ? (
+          <ComingSoon />
+        ) : (
+          <>
+            {/* Hovaz Collection */}
+            <div className="flex flex-col gap-8 lg:gap-12">
+              <SectionHeader
+                eyebrow="Elegant · Characterful · Structured"
+                eyebrowColor="#8a9572"
+                heading="Hovaz Collection"
+                paragraph="Our signature wines, made from Armenian grape varieties and created for discovery, good food and special moments."
+              />
 
-              {/* Wine type breakdown */}
-              {(redWines.length > 0 || whiteWines.length > 0) && (
-                <div className="mt-20 pt-16 divider-cream grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                  <div>
-                    <p
-                      className="font-serif text-4xl mb-2"
-                      style={{ color: 'var(--color-brand-burgundy)' }}
-                    >
-                      {redWines.length}
-                    </p>
-                    <p className="text-label">Red Wines</p>
-                  </div>
-                  <div>
-                    <p
-                      className="font-serif text-4xl mb-2"
-                      style={{ color: 'var(--color-brand-burgundy)' }}
-                    >
-                      {whiteWines.length}
-                    </p>
-                    <p className="text-label">White Wines</p>
-                  </div>
-                  <div>
-                    <p
-                      className="font-serif text-4xl mb-2"
-                      style={{ color: 'var(--color-brand-burgundy)' }}
-                    >
-                      {otherWines.length}
-                    </p>
-                    <p className="text-label">Rosé & Sparkling</p>
-                  </div>
+              {hovazWines.length > 0 ? (
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {hovazWines.map((wine) => (
+                    <WineCard key={wine._id} wine={wine} />
+                  ))}
                 </div>
+              ) : (
+                <ComingSoon />
               )}
-            </>
-          )}
-        </div>
-      </div>
+            </div>
 
-      {/* Book a tasting CTA — Flow 2 */}
-      <div
-        className="section-padding-sm"
-        style={{ backgroundColor: 'var(--color-brand-burgundy)' }}
-      >
-        <div className="container-content text-center">
-          <p className="text-label mb-4" style={{ color: 'rgba(184,146,74,0.8)' }}>
-            Experience them in person
-          </p>
-          <h2 className="heading-section mb-6" style={{ color: 'white' }}>
-            Book a Wine Tasting
-          </h2>
-          <p className="text-body max-w-md mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
-            Taste our collection with an expert guide at our Wine Rooms in Dilijan or Proshyan.
-          </p>
-          <Link href="/events/guided-tasting" className="btn-white">
-            Reserve a Tasting
-          </Link>
-        </div>
+            {/* Divider */}
+            <div className="flex items-center justify-center overflow-hidden">
+              <Image
+                src="/wines/vine-divider.svg"
+                alt=""
+                width={677}
+                height={78}
+                className="h-auto w-full max-w-[420px]"
+              />
+            </div>
+
+            {/* Gooneh Collection */}
+            <div className="flex flex-col gap-8 lg:gap-12">
+              <SectionHeader
+                eyebrow="Fresh · Fruity · Playful"
+                eyebrowColor="#8a9572"
+                heading="Gooneh Collection"
+                paragraph="Easy-going wines made for relaxed moments, parties, picnics and spontaneous gatherings."
+              />
+
+              {goonehWines.length > 0 ? (
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {goonehWines.map((wine) => (
+                    <WineCard key={wine._id} wine={wine} />
+                  ))}
+                </div>
+              ) : (
+                <ComingSoon />
+              )}
+            </div>
+
+            {/* Closing symbol */}
+            <div className="flex items-center justify-center overflow-hidden">
+              <Image
+                src="/wines/collection-symbol.svg"
+                alt=""
+                width={667}
+                height={83}
+                className="h-auto w-full max-w-[380px]"
+              />
+            </div>
+          </>
+        )}
       </div>
-    </>
+    </div>
   )
 }

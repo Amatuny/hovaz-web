@@ -111,12 +111,12 @@
     .container-content { padding-inline: 2rem; }
   }
 
-  .section-padding    { padding-block: 5rem; }
-  .section-padding-sm { padding-block: 3rem; }
+  .section-padding    { padding-block: 2.75rem; }
+  .section-padding-sm { padding-block: 2rem; }
 
   @media (min-width: 1024px) {
-    .section-padding    { padding-block: var(--spacing-30); }
-    .section-padding-sm { padding-block: 5rem; }
+    .section-padding    { padding-block: 3.75rem; }
+    .section-padding-sm { padding-block: 2.75rem; }
   }
 
   /* ── Buttons ── */

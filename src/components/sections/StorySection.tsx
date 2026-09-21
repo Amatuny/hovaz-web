@@ -22,12 +22,42 @@ export function StorySection({ page }: StorySectionProps) {
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div className="container-content">
-        <p className="text-label mb-3" style={{ color: 'var(--color-brand-gold)' }}>
+        <p
+          className="mb-2 uppercase"
+          style={{
+            fontFamily: 'var(--font-montserrat)',
+            fontWeight: 600,
+            fontSize: '10px',
+            letterSpacing: '1.5px',
+            color: 'rgba(93,110,82,0.92)',
+          }}
+        >
           Our Story
         </p>
-        <h2 className="heading-section mb-4 max-w-2xl">{page.title}</h2>
+        <h2
+          className="mb-4 max-w-2xl capitalize"
+          style={{
+            fontFamily: 'var(--font-playfair)',
+            fontWeight: 600,
+            fontSize: '26px',
+            color: '#1a1d17',
+            letterSpacing: '0.3px',
+            lineHeight: 1.15,
+          }}
+        >
+          {page.title}
+        </h2>
         {page.subtitle && (
-          <p className="mb-10 max-w-2xl text-base" style={{ color: 'var(--color-brand-stone)' }}>
+          <p
+            className="mb-10 max-w-2xl"
+            style={{
+              fontFamily: 'var(--font-hanken)',
+              fontWeight: 400,
+              fontSize: '13px',
+              lineHeight: '20px',
+              color: '#4f4542',
+            }}
+          >
             {page.subtitle}
           </p>
         )}
@@ -59,12 +89,25 @@ export function StorySection({ page }: StorySectionProps) {
             className="relative flex h-full flex-col justify-center overflow-hidden rounded-2xl p-8 lg:rounded-3xl lg:p-12"
             style={{ backgroundColor: 'var(--color-brand-dark)' }}
           >
-            <p className="text-label mb-5" style={{ color: 'var(--color-brand-gold)' }}>
+            <p
+              className="mb-5 uppercase"
+              style={{
+                fontFamily: 'var(--font-montserrat)',
+                fontWeight: 600,
+                fontSize: '10px',
+                letterSpacing: '1.5px',
+                color: 'var(--color-brand-gold)',
+              }}
+            >
               Our Story
             </p>
             <div className="flex flex-col gap-4">
               {paragraphs.map((paragraph, i) => (
-                <p key={i} className="text-sm text-white/80" style={{ lineHeight: 1.75 }}>
+                <p
+                  key={i}
+                  className="text-white/80"
+                  style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', lineHeight: 1.75 }}
+                >
                   {paragraph}
                 </p>
               ))}
@@ -75,8 +118,8 @@ export function StorySection({ page }: StorySectionProps) {
         <div className="mt-8">
           <Link
             href="/about/our-story"
-            className="group inline-flex items-center gap-2 font-sans text-base"
-            style={{ color: 'var(--color-brand-charcoal)' }}
+            className="group inline-flex items-center gap-2"
+            style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', color: '#1a1d17' }}
           >
             <span
               className="border-b pb-1 transition-colors group-hover:text-[var(--color-brand-gold)]"

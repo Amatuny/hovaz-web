@@ -72,6 +72,16 @@ export const siteSettings = defineType({
       description: 'Select tours to feature on the homepage — max 3',
     }),
     defineField({
+      name: 'wineTourGallery',
+      title: 'Wine Tour Gallery',
+      type: 'array',
+      group: 'homepage',
+      of: [{ type: 'imageWithAlt' }],
+      description:
+        'Photos for the homepage "Wine Tour" section — one large image plus 4 smaller ones (5 total).',
+      validation: (Rule) => Rule.min(5).warning('Add 5 images: 1 large + 4 smaller'),
+    }),
+    defineField({
       name: 'featuredEvents',
       title: 'Featured Events',
       type: 'array',

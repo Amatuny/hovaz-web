@@ -78,10 +78,31 @@ export function AwardsStrip({ awards }: AwardsStripProps) {
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div className="container-content text-center">
-        <p className="text-label mb-3" style={{ color: 'var(--color-brand-stone)' }}>
+        <p
+          className="mb-2 uppercase"
+          style={{
+            fontFamily: 'var(--font-montserrat)',
+            fontWeight: 600,
+            fontSize: '10px',
+            letterSpacing: '1.5px',
+            color: 'rgba(93,110,82,0.92)',
+          }}
+        >
           Recognition
         </p>
-        <h2 className="heading-section mb-14">Quietly Awarded</h2>
+        <h2
+          className="mb-14 capitalize"
+          style={{
+            fontFamily: 'var(--font-playfair)',
+            fontWeight: 600,
+            fontSize: '26px',
+            color: '#1a1d17',
+            letterSpacing: '0.3px',
+            lineHeight: 1.15,
+          }}
+        >
+          Quietly Awarded
+        </h2>
 
         <div className="flex flex-wrap justify-center gap-x-16 gap-y-10">
           {items.map((item) => (
@@ -101,13 +122,24 @@ export function AwardsStrip({ awards }: AwardsStripProps) {
               >
                 {item.icon === 'star' ? <StarIcon /> : <PinIcon />}
               </div>
-              <p className="font-sans text-base" style={{ color: 'var(--color-brand-charcoal)' }}>
+              <p
+                style={{
+                  fontFamily: 'var(--font-hanken)',
+                  fontSize: '14px',
+                  color: 'var(--color-brand-charcoal)',
+                }}
+              >
                 {item.label}
               </p>
               {item.meta && (
                 <p
-                  className="text-label mt-2"
-                  style={{ fontSize: '0.7rem', color: 'var(--color-brand-stone)' }}
+                  className="mt-2 uppercase"
+                  style={{
+                    fontFamily: 'var(--font-hanken)',
+                    fontSize: '10px',
+                    letterSpacing: '1px',
+                    color: 'var(--color-brand-stone)',
+                  }}
                 >
                   {item.meta}
                 </p>

@@ -27,7 +27,38 @@ export default defineConfig({
 
             // Regular document types
             S.documentTypeListItem('estate').title('Estates'),
-            S.documentTypeListItem('wine').title('Wines'),
+
+            S.listItem()
+              .title('Wines')
+              .child(
+                S.list()
+                  .title('Wines')
+                  .items([
+                    S.listItem()
+                      .title('Hovaz Collection')
+                      .child(
+                        S.documentList()
+                          .title('Hovaz Collection')
+                          .schemaType('wine')
+                          .filter(
+                            '_type == "wine" && (collection == "hovaz" || !defined(collection))'
+                          )
+                      ),
+                    S.listItem()
+                      .title('Gooneh Collection')
+                      .child(
+                        S.documentList()
+                          .title('Gooneh Collection')
+                          .schemaType('wine')
+                          .filter('_type == "wine" && collection == "gooneh"')
+                      ),
+                    S.divider(),
+                    S.listItem()
+                      .title('All Wines')
+                      .child(S.documentTypeList('wine').title('All Wines')),
+                  ])
+              ),
+
             S.documentTypeListItem('tour').title('Tours'),
             S.documentTypeListItem('event').title('Events'),
             S.documentTypeListItem('blogPost').title('Blog Posts'),

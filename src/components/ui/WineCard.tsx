@@ -9,69 +9,180 @@ interface WineCardProps {
 }
 
 const wineTypeLabels: Record<string, string> = {
-  red: 'Red Wine',
-  white: 'White Wine',
-  rose: 'Rosé',
-  sparkling: 'Sparkling',
-  orange: 'Orange Wine',
-  dessert: 'Dessert Wine',
+  red: 'Red · Dry',
+  white: 'White · Dry',
+  rose: 'Rosé · Dry',
+  sparkling: 'White · Sparkling',
+  orange: 'Orange · Dry',
+  dessert: 'Dessert · Sweet',
 }
 
 export function WineCard({ wine }: WineCardProps) {
+  const tagLine = wine.tastingTags?.length ? wine.tastingTags.join(' · ') : undefined
+  const typeLabel = wine.wineType ? (wineTypeLabels[wine.wineType] ?? wine.wineType) : undefined
+
   return (
-    <Link href={`/wines/${wine.slug.current}`} className="card-wine group block">
-      {/* Image area */}
+    <Link
+      href={`/wines/${wine.slug.current}`}
+      className="group relative flex w-full flex-col overflow-hidden rounded-[24px]"
+      style={{ aspectRatio: '350 / 529' }}
+    >
+      {/* Photo — fills exactly whatever height the panel below doesn't use, so there's never a gap */}
       <div
-        className="relative flex items-center justify-center overflow-hidden"
-        style={{ height: '280px', backgroundColor: 'var(--color-brand-blush)' }}
+        className="relative min-h-0 flex-1 overflow-hidden"
+        style={{
+          background: 'linear-gradient(to bottom, rgba(53,63,48,0.12), rgba(160,174,152,0.12))',
+        }}
       >
         {wine.mainImage?.asset?._ref ? (
           <Image
-            src={urlFor(wine.mainImage).width(300).height(500).url()}
+            src={urlFor(wine.mainImage).width(700).height(812).url()}
             alt={wine.mainImage.alt ?? wine.name}
             fill
-            className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
+            className="object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
         ) : (
-          <div
-            className="w-20 h-48 rounded-sm"
-            style={{ backgroundColor: 'var(--color-brand-burgundy)' }}
-          />
-        )}
-
-        {/* Wine type badge */}
-        {wine.wineType && (
-          <div className="absolute top-4 right-4 px-3 py-1" style={{ backgroundColor: 'white' }}>
-            <p className="text-label" style={{ fontSize: '0.6rem' }}>
-              {wineTypeLabels[wine.wineType] ?? wine.wineType}
-            </p>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div
+              className="h-48 w-20 rounded-sm"
+              style={{ backgroundColor: 'var(--color-brand-burgundy)' }}
+            />
           </div>
         )}
       </div>
 
-      {/* Info area */}
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-2">
-          <div>
-            <p className="text-label mb-1" style={{ color: 'var(--color-brand-gold)' }}>
-              {wine.vintage} · {wine.region}
-            </p>
-            <h3 className="heading-card" style={{ fontSize: '1.25rem' }}>
-              {wine.name}
-            </h3>
-          </div>
-        </div>
-
-        {wine.grapeVariety && <p className="text-caption mt-1 mb-4">{wine.grapeVariety}</p>}
-
-        {wine.description && (
-          <p className="text-body mb-6 line-clamp-2" style={{ fontSize: '0.875rem' }}>
-            {wine.description}
+      {/* Default state — cream body panel; collapses away on hover so the photo above grows to fill the card */}
+      <div
+        className="flex max-h-[220px] flex-col gap-1 overflow-hidden p-5 opacity-100 transition-[max-height,opacity,padding] duration-300 ease-out group-hover:max-h-0 group-hover:p-0 group-hover:opacity-0"
+        style={{ backgroundColor: '#f2eddd' }}
+      >
+        {typeLabel && (
+          <p
+            className="uppercase"
+            style={{
+              fontFamily: 'var(--font-hanken)',
+              fontWeight: 400,
+              fontSize: '9px',
+              letterSpacing: '1.5px',
+              color: '#581009',
+            }}
+          >
+            {typeLabel}
           </p>
         )}
 
-        <span className="btn-ghost text-xs">Discover →</span>
+        <p
+          className="capitalize italic"
+          style={{
+            fontFamily: 'var(--font-playfair)',
+            fontWeight: 600,
+            fontSize: '16px',
+            letterSpacing: '0.3px',
+            color: '#3d4a38',
+          }}
+        >
+          {wine.name}
+        </p>
+
+        {tagLine && (
+          <p
+            className="truncate capitalize"
+            style={{
+              fontFamily: 'var(--font-hanken)',
+              fontWeight: 300,
+              fontSize: '12px',
+              color: '#4a4e44',
+            }}
+          >
+            {tagLine}
+          </p>
+        )}
+
+        <div
+          className="flex flex-wrap items-start gap-3"
+          style={{
+            fontFamily: 'var(--font-hanken)',
+            fontSize: '11px',
+            letterSpacing: '0.3px',
+            color: '#4a4e44',
+          }}
+        >
+          {wine.grapeVariety && (
+            <span className="capitalize" style={{ fontWeight: 500 }}>
+              {wine.grapeVariety}
+            </span>
+          )}
+          {wine.vintage && (
+            <span className="italic" style={{ fontWeight: 600 }}>
+              {wine.vintage}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Hover state — full-bleed dark scrim + Discover action */}
+      <div
+        className="absolute inset-0 flex flex-col justify-end gap-1.5 p-7 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.66) 55%, rgba(0,0,0,0.78) 100%)',
+        }}
+      >
+        {typeLabel && (
+          <p
+            className="uppercase text-white"
+            style={{
+              fontFamily: 'var(--font-hanken)',
+              fontWeight: 400,
+              fontSize: '10px',
+              letterSpacing: '1.5px',
+            }}
+          >
+            {typeLabel}
+          </p>
+        )}
+
+        <p
+          className="capitalize italic text-white"
+          style={{
+            fontFamily: 'var(--font-playfair)',
+            fontWeight: 600,
+            fontSize: '24px',
+            letterSpacing: '0.4px',
+            lineHeight: 1.15,
+          }}
+        >
+          {wine.name}
+        </p>
+
+        {tagLine && (
+          <p
+            className="text-white"
+            style={{
+              fontFamily: 'var(--font-hanken)',
+              fontWeight: 300,
+              fontSize: '12px',
+            }}
+          >
+            {tagLine}
+          </p>
+        )}
+
+        <span
+          className="inline-flex w-fit items-center gap-2 border-b-2 pb-1 capitalize"
+          style={{
+            fontFamily: 'var(--font-hanken)',
+            fontWeight: 600,
+            fontSize: '12px',
+            letterSpacing: '1.5px',
+            color: '#fdfcf8',
+            borderColor: '#fdfcf8',
+          }}
+        >
+          Discover
+          <Image src="/wines/discover-arrow.svg" alt="" width={15} height={7} />
+        </span>
       </div>
     </Link>
   )

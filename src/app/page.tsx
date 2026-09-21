@@ -11,6 +11,7 @@ import {
 } from '@/lib/sanity/queries'
 import { HeroSection } from '@/components/sections/HeroSection'
 import { EstatesSection } from '@/components/sections/EstatesSection'
+import { WineTourSection } from '@/components/sections/WineTourSection'
 import { EventsStrip } from '@/components/sections/EventsStrip'
 import { WinePreview } from '@/components/sections/WinePreview'
 import { StorySection } from '@/components/sections/StorySection'
@@ -18,6 +19,7 @@ import { AwardsStrip } from '@/components/sections/AwardsStrip'
 import { MascotSection } from '@/components/sections/MascotSection'
 import { BlogPreview } from '@/components/sections/BlogPreview'
 import { NewsletterSection } from '@/components/sections/NewsletterSection'
+import { SectionDivider } from '@/components/ui/SectionDivider'
 import type { NewsItem } from '@/types/sanity'
 import { JsonLd } from '@/components/sanity/JsonLd'
 
@@ -60,10 +62,14 @@ export default async function HomePage() {
         gallery={settings?.heroGallery}
       />
       <EstatesSection estates={estates ?? []} />
+      <SectionDivider variant="vine" />
+      <WineTourSection images={settings?.wineTourGallery ?? []} />
       <WinePreview wines={wines ?? []} />
+      <SectionDivider variant="symbol" />
       <StorySection page={storyPage} />
       <AwardsStrip awards={awards} />
       <EventsStrip tours={tours ?? []} events={events ?? []} />
+      <SectionDivider variant="symbol" />
       <MascotSection page={leopardPage} />
       <BlogPreview posts={posts ?? []} />
       <NewsletterSection />
