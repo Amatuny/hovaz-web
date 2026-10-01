@@ -45,15 +45,24 @@ export async function POST(request: Request) {
 
       case 'tour':
         revalidatePath('/events')
+        revalidatePath('/experiences')
         revalidatePath('/')
-        if (slug) revalidatePath(`/events/${slug}`)
+        if (slug) revalidatePath(`/experiences/${slug}`)
         break
 
       case 'event':
         revalidatePath('/events')
-        revalidatePath('/events/whats-on')
         revalidatePath('/')
         if (slug) revalidatePath(`/events/${slug}`)
+        // Events appear as add-ons and journal cards on experience pages.
+        revalidatePath('/experiences/[slug]', 'page')
+        break
+
+      case 'estate':
+        revalidatePath('/experiences')
+        // Experience pages show their estate's menu and booking food options.
+        revalidatePath('/experiences/[slug]', 'page')
+        revalidatePath('/')
         break
 
       case 'blogPost':
@@ -63,6 +72,7 @@ export async function POST(request: Request) {
         break
 
       case 'newsItem':
+        revalidatePath('/news')
         revalidatePath('/news/awards')
         revalidatePath('/news/press')
         revalidatePath('/news/brand-news')

@@ -1,28 +1,16 @@
 import type { Metadata } from 'next'
-import { getPageBySlug } from '@/lib/sanity/queries'
-import { PageLayout } from '@/components/layout/PageLayout'
+import { OurStory } from '@/components/sections/OurStory'
 
 export const metadata: Metadata = {
   title: 'Our Story',
   description: 'The story behind HOVAZ Wine Rooms — passion for Armenian wine and hospitality.',
+  openGraph: {
+    title: 'Our Story — HOVAZ',
+    description: 'The story behind HOVAZ Wine Rooms — passion for Armenian wine and hospitality.',
+    url: 'https://hovazwines.com/about/our-story',
+  },
 }
 
-export const revalidate = 3600
-
-export default async function OurStoryPage() {
-  const page = await getPageBySlug('our-story')
-
-  return (
-    <PageLayout
-      label="About HOVAZ"
-      title={page?.title ?? 'Our Story'}
-      subtitle={page?.subtitle}
-      featuredImage={page?.featuredImage}
-      body={page?.body}
-      ctaText={page?.ctaText ?? 'Book an Experience'}
-      ctaLink={page?.ctaLink ?? '/events'}
-      backHref="/about/our-story"
-      backLabel="About"
-    />
-  )
+export default function OurStoryPage() {
+  return <OurStory />
 }

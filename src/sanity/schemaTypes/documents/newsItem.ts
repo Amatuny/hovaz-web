@@ -37,6 +37,8 @@ export const newsItem = defineType({
           { title: 'Award', value: 'award' },
           { title: 'Press & Media', value: 'press' },
           { title: 'Brand News', value: 'brand_news' },
+          { title: 'Release', value: 'release' },
+          { title: 'Event', value: 'event' },
         ],
         layout: 'radio',
       },
@@ -91,6 +93,14 @@ export const newsItem = defineType({
       group: 'content',
       description: 'e.g. Gold, Silver, Medal, Trophy — shown alongside the award year',
     }),
+    defineField({
+      name: 'awardedWine',
+      title: 'Awarded Wine',
+      type: 'string',
+      group: 'content',
+      description:
+        'e.g. Areni Reserve 2019 — shown under the organization on the News & Awards page',
+    }),
 
     // Press specific fields
     defineField({
@@ -113,7 +123,8 @@ export const newsItem = defineType({
       type: 'boolean',
       group: 'content',
       initialValue: false,
-      description: 'Show on homepage awards strip',
+      description:
+        'Show as one of the (up to 3) large story cards at the top of the News & Awards page. Awards always appear in the awards section instead.',
     }),
 
     // ── TRANSLATIONS ──

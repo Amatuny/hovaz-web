@@ -10,7 +10,7 @@ export const revalidate = 3600
 
 const categoryLabels: Record<string, string> = {
   bookings: 'Bookings',
-  wine_tours: 'Wine Tours',
+  wine_tours: 'Wine Experiences',
   getting_here: 'Getting Here',
   wine: 'Wine',
   general: 'General',

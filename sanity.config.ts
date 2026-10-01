@@ -59,8 +59,9 @@ export default defineConfig({
                   ])
               ),
 
-            S.documentTypeListItem('tour').title('Tours'),
+            S.documentTypeListItem('tour').title('Experiences'),
             S.documentTypeListItem('event').title('Events'),
+            S.documentTypeListItem('testimonial').title('Testimonials'),
             S.documentTypeListItem('blogPost').title('Blog Posts'),
 
             S.divider(),

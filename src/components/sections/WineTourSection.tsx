@@ -26,7 +26,7 @@ export function WineTourSection({ images }: WineTourSectionProps) {
             color: 'rgba(93,110,82,0.92)',
           }}
         >
-          Wine Tour
+          Wine Experience
         </p>
         <h2
           className="mb-3 max-w-2xl capitalize"
@@ -63,7 +63,7 @@ export function WineTourSection({ images }: WineTourSectionProps) {
           >
             <Image
               src={urlFor(large).width(900).height(950).url()}
-              alt={large.alt ?? 'Wine tour'}
+              alt={large.alt ?? 'Wine experience'}
               fill
               className="object-cover"
               sizes="(min-width: 1024px) 50vw, 100vw"
@@ -88,7 +88,7 @@ export function WineTourSection({ images }: WineTourSectionProps) {
                 >
                   <Image
                     src={urlFor(image).width(500).height(500).url()}
-                    alt={image.alt ?? 'Wine tour'}
+                    alt={image.alt ?? 'Wine experience'}
                     fill
                     className="object-cover"
                     sizes="(min-width: 1024px) 25vw, 50vw"

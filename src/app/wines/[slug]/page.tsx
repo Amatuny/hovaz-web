@@ -8,6 +8,7 @@ import { urlFor } from '@/lib/sanity/image'
 import { WineCard } from '@/components/ui/WineCard'
 import { JsonLd } from '@/components/sanity/JsonLd'
 import { PageTracker } from '@/components/analytics/PageTracker'
+import { DragScroll } from '@/components/ui/DragScroll'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -540,13 +541,13 @@ export default async function WineDetailPage({ params }: Props) {
               </p>
             </div>
 
-            <div className="flex gap-6 overflow-x-auto pb-2">
+            <DragScroll className="flex gap-6 pb-2">
               {otherWines.map((otherWine) => (
                 <div key={otherWine._id} className="w-[240px] shrink-0 sm:w-[280px]">
                   <WineCard wine={otherWine} />
                 </div>
               ))}
-            </div>
+            </DragScroll>
 
             <Link
               href="/wines"

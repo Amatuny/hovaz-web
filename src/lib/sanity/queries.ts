@@ -3,6 +3,7 @@ import { client } from '@/sanity/lib/client'
 import type {
   Wine,
   Tour,
+  ExperienceTour,
   Event,
   BlogPost,
   NewsItem,
@@ -10,6 +11,7 @@ import type {
   Page,
   SiteSettings,
   Estate,
+  Testimonial,
 } from '@/types/sanity'
 
 // `imageWithAlt` stores the actual image one level deeper (`asset.asset._ref`)
@@ -22,7 +24,9 @@ const IMAGE_FIELDS = `alt, caption, "asset": asset.asset`
 export async function getAllEstates(): Promise<Estate[]> {
   return client.fetch(`
     *[_type == "estate"] | order(order asc) {
-      _id, name, description, "mainImage": mainImage{${IMAGE_FIELDS}},
+      _id, name, description, tagline, "mainImage": mainImage{${IMAGE_FIELDS}},
+      "heroImage": heroImage{${IMAGE_FIELDS}}, heroHeading,
+      "gallery": gallery[]{${IMAGE_FIELDS}},
       eventsCount, link, order
     }
   `)
@@ -35,7 +39,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       heroHeadline, heroSubheadline, heroLocation, heroCtaText,
       "heroGallery": heroGallery[]{${IMAGE_FIELDS}},
       "wineTourGallery": wineTourGallery[]{${IMAGE_FIELDS}},
-      email, phone, address,
+      email, phone, whatsapp, viber, telegram, address,
       instagramWineRooms, instagramWines, facebook,
       siteName, siteDescription, defaultOgImage,
       "featuredWines": featuredWines[]->{
@@ -113,13 +117,15 @@ export async function getAllTours(): Promise<Tour[]> {
       _id, title, slug, description, duration,
       tourType, pricePerPerson, priceNote,
       minGroupSize, maxGroupSize, featured,
-      "mainImage": mainImage{${IMAGE_FIELDS}}, includedServices, ctaText,
+      "mainImage": mainImage{${IMAGE_FIELDS}},
+      "gallery": gallery[]{${IMAGE_FIELDS}},
+      includedServices, ctaText,
       "estate": estate->{_id, name}, tags
     }
   `)
 }
 
-export async function getTourBySlug(slug: string): Promise<Tour | null> {
+export async function getTourBySlug(slug: string): Promise<ExperienceTour | null> {
   return client.fetch(
     `
     *[_type == "tour" && slug.current == $slug][0] {
@@ -129,12 +135,31 @@ export async function getTourBySlug(slug: string): Promise<Tour | null> {
       featured,
       "mainImage": mainImage{${IMAGE_FIELDS}},
       "gallery": gallery[]{${IMAGE_FIELDS}},
+      includesHeading, experienceHeading,
       includedServices, ctaText,
+      "estate": estate->{
+        _id, name, tagline,
+        foodOptions[]{_key, name, priceAmd},
+        menuItems[]{_key, course, dish, pairing, "image": image{${IMAGE_FIELDS}}},
+        "menuUrl": menuFile.asset->url
+      },
+      "addOnEvents": addOnEvents[]->{
+        _id, title, slug, "mainImage": mainImage{${IMAGE_FIELDS}},
+        location, "estate": estate->{_id, name}
+      },
+      tags,
       title_i18n, description_i18n, seo
     }
   `,
     { slug }
   )
+}
+
+export async function tourSlugExists(slug: string): Promise<boolean> {
+  const count: number = await client.fetch(`count(*[_type == "tour" && slug.current == $slug])`, {
+    slug,
+  })
+  return count > 0
 }
 
 export async function getAllTourSlugs(): Promise<{ slug: string }[]> {
@@ -172,11 +197,13 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
     `
     *[_type == "event" && slug.current == $slug][0] {
       _id, title, slug, description, eventType,
-      startDate, endDate, location, capacity,
+      startDate, endDate, location, duration, capacity,
       price, priceNote, status, featured,
       "mainImage": mainImage{${IMAGE_FIELDS}},
       "gallery": gallery[]{${IMAGE_FIELDS}},
+      includesHeading,
       ctaText, ctaEmail,
+      "estate": estate->{_id, name, tagline}, tags,
       title_i18n, description_i18n, seo
     }
   `,
@@ -187,6 +214,28 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
 export async function getAllEventSlugs(): Promise<{ slug: string }[]> {
   return client.fetch(`
     *[_type == "event"] { "slug": slug.current }
+  `)
+}
+
+// Full event listing (any status except cancelled) with tags/location for the
+// events browse page's search, date and location filters.
+export async function getAllEventsForListing(): Promise<Event[]> {
+  return client.fetch(`
+    *[_type == "event" && status != "cancelled"] | order(startDate asc) {
+      _id, title, slug, eventType, startDate, endDate,
+      location, capacity, price, priceNote,
+      status, featured, "mainImage": mainImage{${IMAGE_FIELDS}}, description, tags,
+      "estate": estate->{_id, name}
+    }
+  `)
+}
+
+// ── Testimonials ──
+export async function getTestimonials(): Promise<Testimonial[]> {
+  return client.fetch(`
+    *[_type == "testimonial"] | order(order asc) {
+      _id, guestName, quote, rating, context, "avatar": avatar{${IMAGE_FIELDS}}, order
+    }
   `)
 }
 
@@ -226,7 +275,7 @@ export async function getAllNews(): Promise<NewsItem[]> {
     *[_type == "newsItem"] | order(date desc) {
       _id, title, slug, category, date, excerpt,
       "featuredImage": featuredImage{${IMAGE_FIELDS}}, awardOrganization, awardYear, awardTier,
-      publication, externalUrl, featured
+      awardedWine, publication, externalUrl, featured
     }
   `)
 }

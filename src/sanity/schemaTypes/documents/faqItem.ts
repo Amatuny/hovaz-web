@@ -34,7 +34,7 @@ export const faqItem = defineType({
       options: {
         list: [
           { title: 'Bookings', value: 'bookings' },
-          { title: 'Wine Tours', value: 'wine_tours' },
+          { title: 'Wine Experiences', value: 'wine_tours' },
           { title: 'Getting Here', value: 'getting_here' },
           { title: 'Wine', value: 'wine' },
           { title: 'General', value: 'general' },

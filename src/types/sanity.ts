@@ -98,6 +98,29 @@ export interface Wine {
 export interface EstateRef {
   _id: string
   name: string
+  tagline?: string
+}
+
+export interface FoodOption {
+  _key: string
+  name: string
+  priceAmd: number
+}
+
+export interface MenuItem {
+  _key: string
+  course?: string
+  dish: string
+  pairing?: string
+  image?: SanityImage
+}
+
+// The estate as expanded on an experience detail page — adds what the
+// booking form's "Add Food" step and the menu section need.
+export interface ExperienceEstate extends EstateRef {
+  foodOptions?: FoodOption[]
+  menuItems?: MenuItem[]
+  menuUrl?: string
 }
 
 export interface Tour {
@@ -114,15 +137,22 @@ export interface Tour {
   privateAvailable?: boolean
   featured?: boolean
   active?: boolean
+  experienceHeading?: string
   includedServices?: string[]
   estate?: EstateRef
+  addOnEvents?: Event[]
   tags?: string[]
   ctaText?: string
   mainImage?: SanityImage
   gallery?: SanityImage[]
+  includesHeading?: string
   title_i18n?: LocalizedString
   description_i18n?: LocalizedText
   seo?: SeoMetadata
+}
+
+export interface ExperienceTour extends Omit<Tour, 'estate'> {
+  estate?: ExperienceEstate
 }
 
 export interface Event {
@@ -134,6 +164,7 @@ export interface Event {
   startDate?: string
   endDate?: string
   location?: string
+  duration?: string
   estate?: EstateRef
   tags?: string[]
   capacity?: number
@@ -145,9 +176,20 @@ export interface Event {
   ctaEmail?: string
   mainImage?: SanityImage
   gallery?: SanityImage[]
+  includesHeading?: string
   title_i18n?: LocalizedString
   description_i18n?: LocalizedText
   seo?: SeoMetadata
+}
+
+export interface Testimonial {
+  _id: string
+  guestName: string
+  quote: string
+  rating?: number
+  context?: string
+  avatar?: SanityImage
+  order?: number
 }
 
 export interface BlogPost {
@@ -171,7 +213,7 @@ export interface NewsItem {
   _id: string
   title: string
   slug: SanitySlug
-  category?: 'award' | 'press' | 'brand_news'
+  category?: 'award' | 'press' | 'brand_news' | 'release' | 'event'
   date?: string
   excerpt?: string
   featuredImage?: SanityImage
@@ -179,6 +221,7 @@ export interface NewsItem {
   awardOrganization?: string
   awardYear?: number
   awardTier?: string
+  awardedWine?: string
   publication?: string
   externalUrl?: string
   featured?: boolean
@@ -199,7 +242,11 @@ export interface Estate {
   _id: string
   name: string
   description: string
+  tagline?: string
   mainImage: SanityImage
+  heroImage?: SanityImage
+  heroHeading?: string
+  gallery?: SanityImage[]
   eventsCount: number
   link: string
   order?: number
@@ -249,6 +296,9 @@ export interface SiteSettings {
   featuredPosts?: BlogPost[]
   email?: string
   phone?: string
+  whatsapp?: string
+  viber?: string
+  telegram?: string
   address?: string
   instagramWineRooms?: string
   instagramWines?: string
