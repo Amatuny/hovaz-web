@@ -115,6 +115,13 @@ export const event = defineType({
       initialValue: 'HOVAZ Wine Rooms',
     }),
     defineField({
+      name: 'duration',
+      title: 'Duration',
+      type: 'string',
+      group: 'logistics',
+      description: 'e.g. "2.5 hours, seated" — shown on the reservation panel',
+    }),
+    defineField({
       name: 'estate',
       title: 'Estate',
       type: 'reference',
@@ -129,7 +136,8 @@ export const event = defineType({
       of: [{ type: 'string' }],
       group: 'details',
       options: { layout: 'tags' },
-      description: 'e.g. Tasting, Seasonal, Tours — shown as pills on the homepage journal strip',
+      description:
+        'e.g. Tasting, Seasonal, Experiences — shown as pills on the homepage journal strip',
     }),
     defineField({
       name: 'capacity',
@@ -185,6 +193,16 @@ export const event = defineType({
       group: 'media',
       of: [{ type: 'imageWithAlt' }],
       options: { layout: 'grid' },
+      description:
+        'The first 3 images appear in the "About" section grid on the detail page; the next 3 appear in the "What\'s Included" row (if Included Heading is set).',
+    }),
+    defineField({
+      name: 'includesHeading',
+      title: 'Included Heading',
+      type: 'string',
+      group: 'media',
+      description:
+        'e.g. "The event includes a tasting plate." Shown above the 4th–6th gallery images on the detail page. Leave empty to hide that section.',
     }),
 
     // ─── TRANSLATIONS ───

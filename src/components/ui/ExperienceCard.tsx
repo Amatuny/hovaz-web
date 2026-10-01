@@ -11,7 +11,7 @@ interface ExperienceCardProps {
 export function ExperienceCard({ tour }: ExperienceCardProps) {
   return (
     <Link
-      href={`/events/${tour.slug.current}`}
+      href={`/experiences/${tour.slug.current}`}
       className="card-experience group block"
       style={{ backgroundColor: 'var(--color-brand-dark)' }}
     >

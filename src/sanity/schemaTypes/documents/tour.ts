@@ -3,11 +3,11 @@ import { MdDirectionsWalk } from 'react-icons/md'
 
 export const tour = defineType({
   name: 'tour',
-  title: 'Tour',
+  title: 'Experience',
   type: 'document',
   icon: MdDirectionsWalk,
   groups: [
-    { name: 'details', title: 'Tour Details', default: true },
+    { name: 'details', title: 'Experience Details', default: true },
     { name: 'pricing', title: 'Pricing & Capacity' },
     { name: 'media', title: 'Gallery' },
     { name: 'i18n', title: 'Translations' },
@@ -17,10 +17,10 @@ export const tour = defineType({
     // ─── CORE DETAILS ───
     defineField({
       name: 'title',
-      title: 'Tour Title',
+      title: 'Experience Title',
       type: 'string',
       group: 'details',
-      validation: (Rule) => Rule.required().error('Tour title is required'),
+      validation: (Rule) => Rule.required().error('Experience title is required'),
     }),
     defineField({
       name: 'slug',
@@ -31,7 +31,7 @@ export const tour = defineType({
         source: 'title',
         maxLength: 96,
       },
-      validation: (Rule) => Rule.required().error('Slug is required for the tour URL'),
+      validation: (Rule) => Rule.required().error('Slug is required for the experience URL'),
     }),
     defineField({
       name: 'description',
@@ -51,7 +51,7 @@ export const tour = defineType({
     }),
     defineField({
       name: 'tourType',
-      title: 'Tour Type',
+      title: 'Experience Type',
       type: 'string',
       group: 'details',
       options: {
@@ -60,8 +60,8 @@ export const tour = defineType({
           { title: 'Wine Tasting', value: 'wine_tasting' },
           { title: 'Winemaking Experience', value: 'winemaking' },
           { title: 'Harvest Experience', value: 'harvest' },
-          { title: 'Private Tour', value: 'private' },
-          { title: 'Group Tour', value: 'group' },
+          { title: 'Private Experience', value: 'private' },
+          { title: 'Group Experience', value: 'group' },
         ],
         layout: 'radio',
       },
@@ -80,7 +80,15 @@ export const tour = defineType({
       type: 'boolean',
       group: 'details',
       initialValue: true,
-      description: 'Turn off to hide this tour from the website',
+      description: 'Turn off to hide this experience from the website',
+    }),
+    defineField({
+      name: 'experienceHeading',
+      title: 'Experience Heading',
+      type: 'string',
+      group: 'details',
+      description:
+        'e.g. "Sparkling Armenia Experience" — heading above the description on the detail page. Falls back to Experience Title if empty.',
     }),
     defineField({
       name: 'includedServices',
@@ -88,8 +96,18 @@ export const tour = defineType({
       type: 'array',
       group: 'details',
       of: [{ type: 'string' }],
-      options: { layout: 'tags' },
-      description: 'e.g. Wine tasting, Vineyard walk, Light snacks, Transportation',
+      description:
+        'One line each, e.g. "Guided boutique winery tour" — listed in order under "Includes:" on the detail page',
+    }),
+    defineField({
+      name: 'addOnEvents',
+      title: 'Add-on Events',
+      type: 'array',
+      group: 'details',
+      of: [{ type: 'reference', to: [{ type: 'event' }] }],
+      validation: (Rule) => Rule.max(3).unique(),
+      description:
+        'Up to 3 events guests can add to this experience — shown under "Events You Can Add To Your Experience" on the detail page.',
     }),
     defineField({
       name: 'estate',
@@ -97,7 +115,8 @@ export const tour = defineType({
       type: 'reference',
       to: [{ type: 'estate' }],
       group: 'details',
-      description: 'Which estate hosts this tour — shown as a badge on the homepage journal strip',
+      description:
+        'Which estate hosts this experience — shown as a badge on the homepage journal strip',
     }),
     defineField({
       name: 'tags',
@@ -106,14 +125,15 @@ export const tour = defineType({
       of: [{ type: 'string' }],
       group: 'details',
       options: { layout: 'tags' },
-      description: 'e.g. Tasting, Seasonal, Tours — shown as pills on the homepage journal strip',
+      description:
+        'e.g. Tasting, Seasonal, Experiences — shown as pills on the homepage journal strip',
     }),
     defineField({
       name: 'ctaText',
       title: 'CTA Button Text',
       type: 'string',
       group: 'details',
-      initialValue: 'Book This Tour',
+      initialValue: 'Book This Experience',
       description: 'Text shown on the booking button',
     }),
 
@@ -170,6 +190,16 @@ export const tour = defineType({
       group: 'media',
       of: [{ type: 'imageWithAlt' }],
       options: { layout: 'grid' },
+      description:
+        'The first 3 images appear in the "About" section grid on the detail page; the next 3 appear in the "What\'s Included" row (if Included Heading is set).',
+    }),
+    defineField({
+      name: 'includesHeading',
+      title: 'Included Heading',
+      type: 'string',
+      group: 'media',
+      description:
+        'e.g. "The experience includes a tasting plate." Shown above the 4th–6th gallery images on the detail page. Leave empty to hide that section.',
     }),
 
     // ─── TRANSLATIONS ───
@@ -204,7 +234,7 @@ export const tour = defineType({
     },
     prepare({ title, subtitle, price, media }) {
       return {
-        title: title ?? 'Untitled Tour',
+        title: title ?? 'Untitled Experience',
         subtitle: `${subtitle ?? ''} ${price ? `· $${price}/person` : ''}`.trim(),
         media,
       }

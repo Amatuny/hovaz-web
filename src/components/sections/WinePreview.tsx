@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { WineCard } from '@/components/ui/WineCard'
 import type { Wine } from '@/types/sanity'
+import { DragScroll } from '@/components/ui/DragScroll'
 
 interface WinePreviewProps {
   wines: Wine[]
@@ -51,13 +52,13 @@ export function WinePreview({ wines }: WinePreviewProps) {
           slowly.
         </p>
 
-        <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[var(--color-brand-gold)]">
+        <DragScroll className="flex gap-4 pb-2 snap-x snap-mandatory">
           {wines.map((wine) => (
             <div key={wine._id} className="shrink-0 snap-start" style={{ width: '250px' }}>
               <WineCard wine={wine} />
             </div>
           ))}
-        </div>
+        </DragScroll>
 
         <div className="mt-8">
           <Link

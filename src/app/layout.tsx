@@ -31,14 +31,15 @@ const sans = Inter({
 const hankenGrotesk = Hanken_Grotesk({
   variable: '--font-hanken',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
   display: 'swap',
 })
 
 const playfairDisplay = Playfair_Display({
   variable: '--font-playfair',
   subsets: ['latin'],
-  weight: ['600'],
+  weight: ['400', '500', '600'],
   style: ['normal', 'italic'],
   display: 'swap',
 })
@@ -46,7 +47,7 @@ const playfairDisplay = Playfair_Display({
 const montserrat = Montserrat({
   variable: '--font-montserrat',
   subsets: ['latin', 'cyrillic'],
-  weight: ['600'],
+  weight: ['300', '500', '600', '700'],
   display: 'swap',
 })
 
@@ -63,10 +64,10 @@ export const metadata: Metadata = {
     template: '%s — HOVAZ',
   },
   description:
-    'Experience Armenian wine at its finest. Book wine tastings, tours and events at HOVAZ Wine Rooms in Armenia.',
+    'Experience Armenian wine at its finest. Book wine tastings, experiences and events at HOVAZ Wine Rooms in Armenia.',
   keywords: [
     'Armenian wines',
-    'wine tours Armenia',
+    'wine experiences Armenia',
     'winery Armenia',
     'wine tasting Armenia',
     'quality Armenian wines',

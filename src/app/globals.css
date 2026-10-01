@@ -33,7 +33,7 @@
   --spacing-30: 7.5rem;
 
   /* ── Max Widths ── */
-  --max-width-content: 1200px;
+  --max-width-content: 1600px; /* Figma frame "main": w=1600 */
   --max-width-prose:   720px;
   --max-width-narrow:  480px;
 
@@ -70,6 +70,16 @@
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    /*
+      Figma is authored on a fixed 1900px canvas; this site is responsive.
+      Literal Figma px values only look right at exactly 1900px viewport width
+      — narrower than that (i.e. most real screens) they read oversized
+      relative to the available column. --figma-scale is a unitless ratio of
+      viewport-width : 1900, clamped so it never exceeds 1 (never bigger than
+      Figma intends) and never drops below 0.6 (stays legible on small
+      screens). Multiply any raw Figma px value by it: calc(var(--figma-scale) * 44px).
+    */
+    --figma-scale: clamp(0.6, calc(100vw / 1900px), 1);
   }
 
   body {
@@ -108,7 +118,11 @@
   }
 
   @media (min-width: 1024px) {
-    .container-content { padding-inline: 2rem; }
+    /* Figma frame "Events" (1900px) = 1600px content + 150px margin each
+       side — 150px (9.375rem) is that margin, literal, not just a fallback
+       gutter. Without it, content ran ~edge-to-edge at common laptop widths
+       (viewport < max-width, so only this padding is visible at all). */
+    .container-content { padding-inline: 9.375rem; }
   }
 
   .section-padding    { padding-block: 2.75rem; }
@@ -458,3 +472,15 @@
 .prose-hovaz a:hover { color: var(--color-brand-gold); }
 .prose-hovaz strong { font-weight: 600; color: var(--color-brand-charcoal); }
 .prose-hovaz img { width: 100%; margin-block: 2rem; }
+/* Date/time inputs in the tasting booking form draw their own Figma icon, so
+   the native picker indicator is made invisible and stretched over the whole
+   field — clicking anywhere still opens the picker. */
+.booking-picker { position: relative; }
+.booking-picker::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  opacity: 0;
+  cursor: pointer;
+}

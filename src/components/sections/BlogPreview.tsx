@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
 import type { BlogPost } from '@/types/sanity'
+import { DragScroll } from '@/components/ui/DragScroll'
 
 interface BlogPreviewProps {
   posts: BlogPost[]
@@ -53,7 +54,7 @@ export function BlogPreview({ posts }: BlogPreviewProps) {
           by the people actually making the wine.
         </p>
 
-        <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <DragScroll className="flex gap-4 pb-2 snap-x snap-mandatory">
           {posts.map((post) => {
             const year = post.publishedAt ? new Date(post.publishedAt).getFullYear() : null
             const category = post.categories?.[0]?.replace(/_/g, ' ')
@@ -134,7 +135,7 @@ export function BlogPreview({ posts }: BlogPreviewProps) {
               </Link>
             )
           })}
-        </div>
+        </DragScroll>
 
         <div className="mt-8">
           <Link

@@ -26,7 +26,7 @@ import { JsonLd } from '@/components/sanity/JsonLd'
 export const metadata: Metadata = {
   title: 'HOVAZ Wine Rooms — Premium Armenian Wine Experience',
   description:
-    'Experience Armenian wine at its finest. Book wine tastings, tours and events at HOVAZ Wine Rooms in Armenia.',
+    'Experience Armenian wine at its finest. Book wine tastings, experiences and events at HOVAZ Wine Rooms in Armenia.',
   openGraph: {
     title: 'HOVAZ Wine Rooms',
     description: 'Premium Armenian winery and hospitality experience.',

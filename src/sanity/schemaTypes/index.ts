@@ -13,6 +13,7 @@ import { page } from './documents/page'
 import { faqItem } from './documents/faqItem'
 import { newsItem } from './documents/newsItem'
 import { estate } from './documents/estate'
+import { testimonial } from './documents/testimonial'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   localizedString,
@@ -29,4 +30,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   faqItem,
   newsItem,
   estate,
+  testimonial,
 ]
