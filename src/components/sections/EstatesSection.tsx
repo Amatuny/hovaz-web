@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
+import { estateHref } from '@/lib/estates'
 import type { Estate } from '@/types/sanity'
 
 interface EstatesSectionProps {
@@ -19,12 +20,12 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div className="container-content">
         <p
-          className="mb-2 uppercase"
+          className="mb-4 uppercase"
           style={{
             fontFamily: 'var(--font-montserrat)',
             fontWeight: 600,
             fontSize: '10px',
-            letterSpacing: '1.5px',
+            letterSpacing: '2.5px',
             color: 'rgba(93,110,82,0.92)',
           }}
         >
@@ -35,9 +36,9 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
           style={{
             fontFamily: 'var(--font-playfair)',
             fontWeight: 600,
-            fontSize: '26px',
+            fontSize: 'clamp(26px, 2.6vw, 36px)',
             color: '#1a1d17',
-            letterSpacing: '0.3px',
+            letterSpacing: '0.5px',
             lineHeight: 1.15,
           }}
         >
@@ -54,7 +55,7 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
             return (
               <Link
                 key={estate._id}
-                href={estate.link}
+                href={estateHref(estate)}
                 onMouseEnter={() => setHoveredId(estate._id)}
                 onMouseLeave={() => setHoveredId(null)}
                 onFocus={() => setHoveredId(estate._id)}
@@ -146,15 +147,18 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
 
         <div className="mt-10">
           <Link
-            href="/about/our-story"
-            className="group inline-flex items-center gap-2"
-            style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', color: '#1a1d17' }}
+            href="/estates"
+            className="group inline-flex items-center gap-2 border-b-2 border-[#1a1d17] px-2 pb-1 transition-colors hover:border-[var(--color-brand-gold)]"
+            style={{
+              fontFamily: 'var(--font-hanken)',
+              fontWeight: 600,
+              fontSize: '14px',
+              letterSpacing: '1px',
+              color: '#1a1d17',
+            }}
           >
-            <span
-              className="border-b pb-1 transition-colors group-hover:text-[var(--color-brand-gold)]"
-              style={{ borderColor: 'currentColor' }}
-            >
-              Read Our Story
+            <span className="transition-colors group-hover:text-[var(--color-brand-gold)]">
+              Meet Our Estates
             </span>
             <span
               aria-hidden="true"

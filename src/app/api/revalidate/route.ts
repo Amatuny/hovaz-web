@@ -46,6 +46,7 @@ export async function POST(request: Request) {
       case 'tour':
         revalidatePath('/events')
         revalidatePath('/experiences')
+        revalidatePath('/estates')
         revalidatePath('/')
         if (slug) revalidatePath(`/experiences/${slug}`)
         break
@@ -60,13 +61,13 @@ export async function POST(request: Request) {
 
       case 'estate':
         revalidatePath('/experiences')
+        revalidatePath('/estates')
         // Experience pages show their estate's menu and booking food options.
         revalidatePath('/experiences/[slug]', 'page')
         revalidatePath('/')
         break
 
       case 'blogPost':
-        revalidatePath('/blog')
         revalidatePath('/')
         if (slug) revalidatePath(`/blog/${slug}`)
         break
@@ -76,11 +77,13 @@ export async function POST(request: Request) {
         revalidatePath('/news/awards')
         revalidatePath('/news/press')
         revalidatePath('/news/brand-news')
+        // Every article shows "Up Next" and "More Stories" from the other items.
+        revalidatePath('/news/[slug]', 'page')
         break
 
       case 'page':
-        if (slug) revalidatePath(`/about/${slug}`)
-        revalidatePath('/contact')
+        // The only page document left is Our Story, shown on the homepage.
+        revalidatePath('/')
         break
 
       case 'faqItem':

@@ -7,6 +7,7 @@ import type { SanityImage } from '@/types/sanity'
 
 // Shared by the /events grid and the homepage's horizontal "journal" strip —
 // one component, one hover implementation, so a fix here applies everywhere.
+// Only the "Reserve Your Seat" button links to the event; the card itself isn't clickable.
 export interface EventCardData {
   href: string
   title: string
@@ -50,9 +51,8 @@ export function EventCard({ card, variant = 'grid' }: EventCardProps) {
   const tags = card.tags?.length ? card.tags.slice(0, 3) : []
 
   return (
-    <Link
-      href={card.href}
-      className={`group relative block overflow-hidden ${isStrip ? 'shrink-0 snap-start' : 'w-full'}`}
+    <article
+      className={`group relative overflow-hidden ${isStrip ? 'shrink-0 snap-start' : 'w-full'}`}
       style={
         isStrip
           ? { width: '240px', height: '300px', borderRadius: '18px' }
@@ -69,7 +69,7 @@ export function EventCard({ card, variant = 'grid' }: EventCardProps) {
               .url()}
             alt={card.image.alt ?? card.title}
             fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            className="object-cover transition-transform duration-700 group-hover:scale-110 group-focus-within:scale-110"
             sizes={isStrip ? '240px' : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw'}
           />
         ) : (
@@ -80,6 +80,9 @@ export function EventCard({ card, variant = 'grid' }: EventCardProps) {
         )}
       </div>
 
+      {/* Soft white wash over the photo on hover — same effect as NewsCard */}
+      <div className="absolute inset-0 bg-white opacity-0 transition-opacity duration-700 group-hover:opacity-35 group-focus-within:opacity-35" />
+
       {/* Gradient overlay */}
       <div
         className="absolute inset-0"
@@ -89,24 +92,17 @@ export function EventCard({ card, variant = 'grid' }: EventCardProps) {
         }}
       />
 
-      {/* Soft glow behind the CTA, revealed on hover */}
-      <div
-        className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          background:
-            'radial-gradient(circle at 50% 48%, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.16) 25%, rgba(255,255,255,0.05) 45%, rgba(255,255,255,0) 70%)',
-        }}
-      />
-
       {/* Reserve CTA — revealed on hover */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <span
+        <Link
+          href={card.href}
+          aria-label={`Reserve your seat: ${card.title}`}
           // Fixed, not scaled by `size()`: this CTA isn't in the Figma design
           // at all (the card component has no button in its node tree), and
           // scaling its padding with the viewport made it overflow the card
           // at breakpoints where the grid packs 3-4 narrower columns — a
           // small fixed pill stays comfortable at any card width.
-          className="pointer-events-auto inline-flex items-center gap-1.5 whitespace-nowrap bg-[#fdfcf8] px-5 py-2 text-[#1a1d17] opacity-0 transition-all duration-300 hover:bg-[rgba(63,91,63,0.92)] hover:text-white group-hover:opacity-100"
+          className="pointer-events-auto inline-flex items-center gap-1.5 whitespace-nowrap bg-[#fdfcf8] px-5 py-2 text-[#1a1d17] opacity-0 transition-all duration-300 hover:bg-[rgba(63,91,63,0.92)] hover:text-white group-hover:opacity-100 group-focus-within:opacity-100"
           style={{
             fontFamily: 'var(--font-hanken)',
             fontWeight: 600,
@@ -118,7 +114,7 @@ export function EventCard({ card, variant = 'grid' }: EventCardProps) {
         >
           Reserve Your Seat
           <span aria-hidden="true">→</span>
-        </span>
+        </Link>
       </div>
 
       {/* Badges */}
@@ -237,6 +233,6 @@ export function EventCard({ card, variant = 'grid' }: EventCardProps) {
           </p>
         )}
       </div>
-    </Link>
+    </article>
   )
 }

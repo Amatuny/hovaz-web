@@ -1,66 +1,59 @@
-import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
-import type { Page, SanityBlock } from '@/types/sanity'
+import type { MascotSettings } from '@/types/sanity'
 
 interface MascotSectionProps {
-  page: Page | null
+  mascot?: MascotSettings
 }
 
-function blockText(block: SanityBlock) {
-  return block.children?.map((child) => child.text).join('') ?? ''
-}
+// Content comes from Site Settings → Mascot.
+export function MascotSection({ mascot }: MascotSectionProps) {
+  const heading = mascot?.heading
+  if (!mascot || !heading) return null
 
-export function MascotSection({ page }: MascotSectionProps) {
-  if (!page) return null
-
-  const paragraphs = (page.body ?? [])
-    .filter((block) => block._type === 'block' && block.children?.length)
-    .slice(0, 3)
-    .map(blockText)
-
-  const gallery = page.gallery ?? []
+  const paragraphs = (mascot.story ?? []).filter(Boolean).slice(0, 3)
+  const gallery = (mascot.gallery ?? []).slice(0, 2)
 
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div className="container-content">
         <p
-          className="mb-2 uppercase"
+          className="mb-4 uppercase"
           style={{
             fontFamily: 'var(--font-montserrat)',
             fontWeight: 600,
             fontSize: '10px',
-            letterSpacing: '1.5px',
+            letterSpacing: '2.5px',
             color: 'rgba(93,110,82,0.92)',
           }}
         >
           Meet The Mascot
         </p>
         <h2
-          className="mb-4 max-w-2xl capitalize"
+          className="mb-4 max-w-[870px] capitalize"
           style={{
             fontFamily: 'var(--font-playfair)',
             fontWeight: 600,
-            fontSize: '26px',
+            fontSize: 'clamp(26px, 2.6vw, 36px)',
             color: '#1a1d17',
-            letterSpacing: '0.3px',
+            letterSpacing: '0.5px',
             lineHeight: 1.15,
           }}
         >
-          {page.title}
+          {heading}
         </h2>
-        {page.subtitle && (
+        {mascot.subtitle && (
           <p
-            className="mb-10 max-w-2xl"
+            className="mb-10 max-w-[860px]"
             style={{
               fontFamily: 'var(--font-hanken)',
               fontWeight: 400,
-              fontSize: '13px',
-              lineHeight: '20px',
+              fontSize: '16px',
+              lineHeight: '26px',
               color: '#4f4542',
             }}
           >
-            {page.subtitle}
+            {mascot.subtitle}
           </p>
         )}
 
@@ -73,10 +66,10 @@ export function MascotSection({ page }: MascotSectionProps) {
             className="relative overflow-hidden rounded-2xl lg:rounded-3xl"
             style={{ flex: '1.4 1 0%', minWidth: 0 }}
           >
-            {page.featuredImage?.asset?._ref ? (
+            {mascot.image?.asset?._ref ? (
               <Image
-                src={urlFor(page.featuredImage).width(1000).height(1300).url()}
-                alt={page.featuredImage.alt ?? page.title}
+                src={urlFor(mascot.image).width(1000).height(1300).url()}
+                alt={mascot.image.alt ?? heading}
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 40vw, 100vw"
@@ -96,9 +89,9 @@ export function MascotSection({ page }: MascotSectionProps) {
               }}
             />
 
-            {(page.imageBadgeTitle || page.imageBadgeSubtitle) && (
+            {(mascot.imageBadgeTitle || mascot.imageBadgeSubtitle) && (
               <div className="absolute inset-x-0 bottom-0 p-6 lg:p-9">
-                {page.imageBadgeTitle && (
+                {mascot.imageBadgeTitle && (
                   <h3
                     className="mb-1 text-white"
                     style={{
@@ -107,15 +100,15 @@ export function MascotSection({ page }: MascotSectionProps) {
                       fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
                     }}
                   >
-                    {page.imageBadgeTitle}
+                    {mascot.imageBadgeTitle}
                   </h3>
                 )}
-                {page.imageBadgeSubtitle && (
+                {mascot.imageBadgeSubtitle && (
                   <p
                     className="text-white/80"
                     style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px' }}
                   >
-                    {page.imageBadgeSubtitle}
+                    {mascot.imageBadgeSubtitle}
                   </p>
                 )}
               </div>
@@ -160,7 +153,7 @@ export function MascotSection({ page }: MascotSectionProps) {
                     {image?.asset?._ref ? (
                       <Image
                         src={urlFor(image).width(500).height(500).url()}
-                        alt={image.alt ?? page.title}
+                        alt={image.alt ?? heading}
                         fill
                         className="object-cover"
                         sizes="(min-width: 768px) 20vw, 50vw"
@@ -176,27 +169,6 @@ export function MascotSection({ page }: MascotSectionProps) {
               </div>
             )}
           </div>
-        </div>
-
-        <div className="mt-10">
-          <Link
-            href="/about/the-leopard"
-            className="group inline-flex items-center gap-2"
-            style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', color: '#1a1d17' }}
-          >
-            <span
-              className="border-b pb-1 transition-colors group-hover:text-[var(--color-brand-gold)]"
-              style={{ borderColor: 'currentColor' }}
-            >
-              Meet Hovaz
-            </span>
-            <span
-              aria-hidden="true"
-              className="transition-colors group-hover:text-[var(--color-brand-gold)]"
-            >
-              →
-            </span>
-          </Link>
         </div>
       </div>
     </section>

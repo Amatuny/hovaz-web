@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
+import { fig } from '@/lib/figmaScale'
 
 interface NavigationProps {
   settings: {
@@ -28,7 +29,7 @@ export function Navigation({ settings }: NavigationProps) {
     { label: t('ourStory'), href: '/about/our-story' },
     { label: t('newsAwards'), href: '/news' },
     { label: t('contactUs'), href: '/contact/form' },
-    { label: t('twoEstates'), href: '#' },
+    { label: t('twoEstates'), href: '/estates' },
   ]
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export function Navigation({ settings }: NavigationProps) {
       style={{ backgroundColor: 'var(--color-brand-cream)' }}
     >
       <div className="container-content">
-        <div className="relative flex items-center justify-between py-3 lg:min-h-22 lg:py-4">
+        <div className="relative flex items-center justify-between py-3 min-[1200px]:min-h-22 min-[1200px]:py-4">
           {/*
             Logo: in normal flow on mobile (shares the row with the menu button),
             but absolutely positioned on desktop — matching Figma, where the logo
@@ -61,22 +62,22 @@ export function Navigation({ settings }: NavigationProps) {
           */}
           <Link
             href="/"
-            className="shrink-0 lg:absolute lg:left-0 lg:top-1/2 lg:z-10 lg:-translate-y-1/2"
+            className="shrink-0 min-[1200px]:absolute min-[1200px]:left-0 min-[1200px]:top-1/2 min-[1200px]:z-10 min-[1200px]:-translate-y-1/2"
           >
             <Image
               src="/logo.png"
               alt="Hovaz"
               width={101}
               height={120}
-              className="h-16 w-auto lg:h-22"
+              className="h-16 w-auto min-[1200px]:h-22"
               priority
             />
           </Link>
 
           {/* Desktop nav + language — full-width row, unaffected by the logo's footprint */}
-          <div className="hidden w-full items-center justify-between gap-4 lg:flex">
+          <div className="hidden w-full items-center justify-between gap-4 min-[1200px]:flex">
             <div className="flex flex-1 items-center justify-center">
-              <nav className="flex items-center gap-5">
+              <nav className="flex items-center" style={{ gap: fig(50) }}>
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
@@ -94,7 +95,7 @@ export function Navigation({ settings }: NavigationProps) {
 
           {/* Mobile menu button */}
           <button
-            className="lg:hidden flex flex-col gap-1.5 p-2"
+            className="min-[1200px]:hidden flex flex-col gap-1.5 p-2"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
@@ -126,7 +127,7 @@ export function Navigation({ settings }: NavigationProps) {
       {/* Mobile menu */}
       {menuOpen && (
         <div
-          className="lg:hidden border-t"
+          className="min-[1200px]:hidden border-t"
           style={{
             borderColor: 'color-mix(in srgb, var(--color-brand-stone) 20%, transparent)',
             backgroundColor: 'var(--color-brand-cream)',

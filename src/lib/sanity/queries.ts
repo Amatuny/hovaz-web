@@ -39,6 +39,11 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       heroHeadline, heroSubheadline, heroLocation, heroCtaText,
       "heroGallery": heroGallery[]{${IMAGE_FIELDS}},
       "wineTourGallery": wineTourGallery[]{${IMAGE_FIELDS}},
+      "mascot": mascot{
+        heading, subtitle, imageBadgeTitle, imageBadgeSubtitle, story,
+        "image": image{${IMAGE_FIELDS}},
+        "gallery": gallery[]{${IMAGE_FIELDS}}
+      },
       email, phone, whatsapp, viber, telegram, address,
       instagramWineRooms, instagramWines, facebook,
       siteName, siteDescription, defaultOgImage,
@@ -280,6 +285,25 @@ export async function getAllNews(): Promise<NewsItem[]> {
   `)
 }
 
+export async function getNewsBySlug(slug: string): Promise<NewsItem | null> {
+  return client.fetch(
+    `
+    *[_type == "newsItem" && slug.current == $slug][0] {
+      _id, title, slug, category, date, excerpt, place, intro, body, quote,
+      detailsTitle, detailsText, highlights[]{_key, label, text},
+      "featuredImage": featuredImage{${IMAGE_FIELDS}},
+      "gallery": gallery[]{${IMAGE_FIELDS}},
+      externalUrl, seo
+    }
+  `,
+    { slug }
+  )
+}
+
+export async function getAllNewsSlugs(): Promise<{ slug: string }[]> {
+  return client.fetch(`*[_type == "newsItem" && defined(slug.current)]{ "slug": slug.current }`)
+}
+
 export async function getNewsByCategory(category: string): Promise<NewsItem[]> {
   return client.fetch(
     `
@@ -313,25 +337,10 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
     *[_type == "page" && slug.current == $slug][0] {
       _id, title, slug, section, subtitle,
       "featuredImage": featuredImage{${IMAGE_FIELDS}}, body, ctaText, ctaLink,
-      imageBadgeTitle, imageBadgeSubtitle,
-      "gallery": gallery[]{${IMAGE_FIELDS}},
-      location,
-      "teamMembers": teamMembers[]{name, role, bio, "photo": photo{${IMAGE_FIELDS}}},
       title_i18n, subtitle_i18n, seo
     }
   `,
     { slug }
-  )
-}
-
-export async function getPagesBySection(section: string): Promise<Page[]> {
-  return client.fetch(
-    `
-    *[_type == "page" && section == $section] | order(_createdAt asc) {
-      _id, title, slug, subtitle, "featuredImage": featuredImage{${IMAGE_FIELDS}}
-    }
-  `,
-    { section }
   )
 }
 

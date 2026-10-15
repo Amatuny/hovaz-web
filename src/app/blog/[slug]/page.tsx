@@ -77,11 +77,11 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 mb-8">
             <Link
-              href="/blog"
+              href="/news"
               className="text-caption transition-colors"
               style={{ color: 'var(--color-brand-stone)' }}
             >
-              Journal
+              News &amp; Awards
             </Link>
             <span style={{ color: 'var(--color-brand-stone)' }}>/</span>
             <span className="text-caption" style={{ color: 'var(--color-brand-burgundy)' }}>
@@ -200,7 +200,7 @@ export default async function BlogPostPage({ params }: Props) {
               <Link href="/events" className="btn-primary">
                 Book an Experience
               </Link>
-              <Link href="/blog" className="btn-secondary">
+              <Link href="/news" className="btn-secondary">
                 More Stories
               </Link>
             </div>

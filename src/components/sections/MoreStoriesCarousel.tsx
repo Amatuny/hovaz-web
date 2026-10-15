@@ -2,98 +2,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
-import { urlFor } from '@/lib/sanity/image'
 import { fig } from '@/lib/figmaScale'
 import { DragScroll } from '@/components/ui/DragScroll'
-import { newsCategoryLabel, newsHref, newsYear } from '@/lib/news'
+import { NewsCard } from '@/components/ui/NewsCard'
 import type { NewsItem } from '@/types/sanity'
-
-function StoryCard({ item }: { item: NewsItem }) {
-  const href = newsHref(item)
-  const label = [newsCategoryLabel(item), newsYear(item)].filter(Boolean).join(' · ')
-
-  const content = (
-    <>
-      {item.featuredImage?.asset?._ref && (
-        <Image
-          src={urlFor(item.featuredImage).width(800).height(560).url()}
-          alt={item.featuredImage.alt ?? item.title}
-          fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
-          sizes="400px"
-          draggable={false}
-        />
-      )}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0.64) 100%)',
-        }}
-      />
-      <div
-        className="absolute bottom-0 left-0 flex flex-col text-white"
-        style={{ padding: fig(36), gap: fig(16), width: fig(320) }}
-      >
-        <p
-          className="uppercase"
-          style={{
-            fontFamily: 'var(--font-montserrat)',
-            fontWeight: 600,
-            fontSize: fig(10),
-            lineHeight: fig(13),
-            letterSpacing: fig(2.5),
-          }}
-        >
-          {label}
-        </p>
-        <h3
-          style={{
-            fontFamily: 'var(--font-montserrat)',
-            fontWeight: 500,
-            fontSize: fig(18),
-            lineHeight: fig(26.1),
-            letterSpacing: fig(0.5),
-            color: 'white',
-          }}
-        >
-          {item.title}
-        </h3>
-        {item.excerpt && (
-          <p
-            className="truncate"
-            style={{
-              fontFamily: 'var(--font-montserrat)',
-              fontWeight: 300,
-              fontSize: fig(13),
-              lineHeight: fig(24.05),
-            }}
-          >
-            {item.excerpt}
-          </p>
-        )}
-      </div>
-    </>
-  )
-
-  const className = 'group relative block shrink-0 snap-start overflow-hidden'
-  const style: React.CSSProperties = {
-    width: fig(400),
-    height: fig(280),
-    borderRadius: fig(24),
-    backgroundColor: '#b5adad',
-  }
-
-  return href ? (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={className} style={style}>
-      {content}
-    </a>
-  ) : (
-    <div className={className} style={style}>
-      {content}
-    </div>
-  )
-}
 
 export function MoreStoriesCarousel({ items }: { items: NewsItem[] }) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -149,7 +61,7 @@ export function MoreStoriesCarousel({ items }: { items: NewsItem[] }) {
         style={{ gap: fig(37) }}
       >
         {items.map((item) => (
-          <StoryCard key={item._id} item={item} />
+          <NewsCard key={item._id} item={item} />
         ))}
       </DragScroll>
       {pages > 1 && (
