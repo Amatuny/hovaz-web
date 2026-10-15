@@ -8,6 +8,7 @@ export const siteSettings = defineType({
   icon: MdSettings,
   groups: [
     { name: 'homepage', title: 'Homepage', default: true },
+    { name: 'mascot', title: 'Mascot' },
     { name: 'contact', title: 'Contact & Social' },
     { name: 'seo', title: 'Global SEO' },
   ],
@@ -98,6 +99,65 @@ export const siteSettings = defineType({
       of: [{ type: 'reference', to: [{ type: 'blogPost' }] }],
       validation: (Rule) => Rule.max(3).warning('Show maximum 3 featured posts'),
       description: 'Select blog posts to feature on homepage — max 3',
+    }),
+
+    // ─── MASCOT ───
+    defineField({
+      name: 'mascot',
+      title: 'Mascot Section',
+      type: 'object',
+      group: 'mascot',
+      description:
+        'The homepage "Meet The Mascot" section. The section is hidden if Heading is empty.',
+      fields: [
+        defineField({
+          name: 'heading',
+          title: 'Heading',
+          type: 'string',
+          description: 'e.g. Meet Hovaz, Our Leopard',
+        }),
+        defineField({
+          name: 'subtitle',
+          title: 'Subtitle',
+          type: 'text',
+          rows: 2,
+          description: 'Short intro shown under the heading',
+        }),
+        defineField({
+          name: 'image',
+          title: 'Main Photo',
+          type: 'imageWithAlt',
+        }),
+        defineField({
+          name: 'imageBadgeTitle',
+          title: 'Photo Badge Title',
+          type: 'string',
+          description: 'e.g. Rescued 2021 — overlaid on the main photo',
+        }),
+        defineField({
+          name: 'imageBadgeSubtitle',
+          title: 'Photo Badge Subtitle',
+          type: 'string',
+          description: 'e.g. Found injured, now thriving under full-time care.',
+        }),
+        defineField({
+          name: 'story',
+          title: 'His Story',
+          type: 'array',
+          of: [{ type: 'text', rows: 4 }],
+          validation: (Rule) => Rule.max(3),
+          description: 'Up to 3 paragraphs shown in the dark "His Story" card',
+        }),
+        defineField({
+          name: 'gallery',
+          title: 'Gallery',
+          type: 'array',
+          of: [{ type: 'imageWithAlt' }],
+          options: { layout: 'grid' },
+          validation: (Rule) => Rule.max(2),
+          description: 'Up to 2 photos shown under the story card',
+        }),
+      ],
     }),
 
     // ─── CONTACT & SOCIAL ───

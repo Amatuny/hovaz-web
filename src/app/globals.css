@@ -119,10 +119,10 @@
 
   @media (min-width: 1024px) {
     /* Figma frame "Events" (1900px) = 1600px content + 150px margin each
-       side — 150px (9.375rem) is that margin, literal, not just a fallback
-       gutter. Without it, content ran ~edge-to-edge at common laptop widths
-       (viewport < max-width, so only this padding is visible at all). */
-    .container-content { padding-inline: 9.375rem; }
+       side. The margin scales with --figma-scale like every other Figma value
+       (150px at 1900px, down to 90px on small laptops) — a fixed 150px left
+       too little width for the header nav below ~1300px viewports. */
+    .container-content { padding-inline: calc(var(--figma-scale) * 150px); }
   }
 
   .section-padding    { padding-block: 2.75rem; }
@@ -131,6 +131,13 @@
   @media (min-width: 1024px) {
     .section-padding    { padding-block: 3.75rem; }
     .section-padding-sm { padding-block: 2.75rem; }
+  }
+
+  /* Homepage stacks many sections back to back — tighter rhythm there. */
+  .home-sections .section-padding { padding-block: 1.75rem; }
+
+  @media (min-width: 1024px) {
+    .home-sections .section-padding { padding-block: 2.5rem; }
   }
 
   /* ── Buttons ── */
@@ -373,7 +380,7 @@
     font-family: var(--font-hanken);
     font-weight: 500;
     font-size: 11px;
-    letter-spacing: 0.75px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     color: rgba(0, 0, 0, 0.9);
     transition: color 200ms;

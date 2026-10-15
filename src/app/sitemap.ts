@@ -5,16 +5,18 @@ import {
   getAllTourSlugs,
   getAllBlogSlugs,
   getAllEventSlugs,
+  getAllNewsSlugs,
 } from '@/lib/sanity/queries'
 
 const BASE_URL = 'https://hovazwines.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [wineSlugs, tourSlugs, blogSlugs, eventSlugs] = await Promise.all([
+  const [wineSlugs, tourSlugs, blogSlugs, eventSlugs, newsSlugs] = await Promise.all([
     getAllWineSlugs(),
     getAllTourSlugs(),
     getAllBlogSlugs(),
     getAllEventSlugs(),
+    getAllNewsSlugs(),
   ])
 
   // Static pages
@@ -44,43 +46,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/blog`,
+      url: `${BASE_URL}/estates`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.7,
     },
     {
       url: `${BASE_URL}/about/our-story`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/about/the-leopard`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/about/the-team`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/about/sustainability`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/about/dilijan`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/about/proshyan`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.6,
@@ -167,5 +139,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...staticPages, ...winePages, ...tourPages, ...eventPages, ...blogPages]
+  // Dynamic news articles
+  const newsPages: MetadataRoute.Sitemap = newsSlugs.map(({ slug }) => ({
+    url: `${BASE_URL}/news/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }))
+
+  return [...staticPages, ...winePages, ...tourPages, ...eventPages, ...blogPages, ...newsPages]
 }

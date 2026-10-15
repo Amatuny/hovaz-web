@@ -218,6 +218,13 @@ export interface NewsItem {
   excerpt?: string
   featuredImage?: SanityImage
   body?: SanityBlock[]
+  place?: string
+  intro?: string
+  gallery?: SanityImage[]
+  highlights?: { _key: string; label: string; text: string }[]
+  quote?: string
+  detailsTitle?: string
+  detailsText?: string
   awardOrganization?: string
   awardYear?: number
   awardTier?: string
@@ -262,25 +269,19 @@ export interface Page {
   body?: SanityBlock[]
   ctaText?: string
   ctaLink?: string
-  imageBadgeTitle?: string
-  imageBadgeSubtitle?: string
-  gallery?: SanityImage[]
-  location?: {
-    address?: string
-    phone?: string
-    email?: string
-    googleMapsUrl?: string
-    openingHours?: string
-  }
-  teamMembers?: {
-    name?: string
-    role?: string
-    bio?: string
-    photo?: SanityImage
-  }[]
   title_i18n?: LocalizedString
   subtitle_i18n?: LocalizedString
   seo?: SeoMetadata
+}
+
+export interface MascotSettings {
+  heading?: string
+  subtitle?: string
+  image?: SanityImage
+  imageBadgeTitle?: string
+  imageBadgeSubtitle?: string
+  story?: string[]
+  gallery?: SanityImage[]
 }
 
 export interface SiteSettings {
@@ -289,6 +290,7 @@ export interface SiteSettings {
   heroLocation?: string
   heroGallery?: SanityImage[]
   wineTourGallery?: SanityImage[]
+  mascot?: MascotSettings
   heroCtaText?: string
   featuredWines?: Wine[]
   featuredTours?: Tour[]

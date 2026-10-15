@@ -8,6 +8,7 @@ export const newsItem = defineType({
   icon: MdNewspaper,
   groups: [
     { name: 'content', title: 'Content', default: true },
+    { name: 'article', title: 'Article Page' },
     { name: 'i18n', title: 'Translations' },
     { name: 'seo', title: 'SEO' },
   ],
@@ -60,16 +61,98 @@ export const newsItem = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'body',
-      title: 'Body',
-      type: 'blockContent',
-      group: 'content',
-    }),
-    defineField({
       name: 'featuredImage',
       title: 'Featured Image',
       type: 'imageWithAlt',
       group: 'content',
+      description: 'Card photo, and the large photo at the top of the article page',
+    }),
+
+    // ── ARTICLE PAGE (/news/[slug]) — every section is hidden when left empty ──
+    defineField({
+      name: 'place',
+      title: 'Place',
+      type: 'string',
+      group: 'article',
+      description: 'e.g. Proshyan Estate — shown next to the date under the title',
+    }),
+    defineField({
+      name: 'intro',
+      title: 'Intro',
+      type: 'text',
+      rows: 5,
+      group: 'article',
+      description: 'Opening text under the photo. Leave a blank line between paragraphs.',
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Photo Grid Images',
+      type: 'array',
+      of: [{ type: 'imageWithAlt' }],
+      options: { layout: 'grid' },
+      group: 'article',
+      validation: (Rule) => Rule.max(2),
+      description: 'Up to 2 photos, shown in the grid alongside the highlight cards',
+    }),
+    defineField({
+      name: 'highlights',
+      title: 'Highlight Cards',
+      type: 'array',
+      group: 'article',
+      validation: (Rule) => Rule.max(2),
+      description: 'Up to 2 dark text cards in the photo grid, e.g. "The Vintage", "In the Glass"',
+      of: [
+        {
+          type: 'object',
+          name: 'highlight',
+          fields: [
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              description: 'e.g. The Vintage',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'text',
+              title: 'Text',
+              type: 'text',
+              rows: 4,
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: { select: { title: 'label', subtitle: 'text' } },
+        },
+      ],
+    }),
+    defineField({
+      name: 'body',
+      title: 'Body',
+      type: 'blockContent',
+      group: 'article',
+      description: 'Main text, shown after the photo grid',
+    }),
+    defineField({
+      name: 'quote',
+      title: 'Quote',
+      type: 'text',
+      rows: 2,
+      group: 'article',
+    }),
+    defineField({
+      name: 'detailsTitle',
+      title: 'Closing Section Label',
+      type: 'string',
+      group: 'article',
+      description: 'e.g. Where to try it',
+    }),
+    defineField({
+      name: 'detailsText',
+      title: 'Closing Section Text',
+      type: 'text',
+      rows: 6,
+      group: 'article',
+      description: 'Leave a blank line between paragraphs.',
     }),
 
     // Award specific fields

@@ -28,8 +28,16 @@ export function newsYear(item: NewsItem) {
   return item.date ? new Date(item.date).getUTCFullYear() : undefined
 }
 
-// News items have no detail page yet, so only items pointing at an external
-// article are linked.
+// "August 2026"
+export function formatNewsMonthLong(date?: string) {
+  if (!date) return null
+  return new Date(date).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
 export function newsHref(item: NewsItem) {
-  return item.externalUrl || null
+  return `/news/${item.slug.current}`
 }

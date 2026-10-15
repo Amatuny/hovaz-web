@@ -5,7 +5,6 @@ import {
   getAllTours,
   getJournalEvents,
   getAllNews,
-  getAllBlogPosts,
   getAllEstates,
   getPageBySlug,
 } from '@/lib/sanity/queries'
@@ -17,7 +16,7 @@ import { WinePreview } from '@/components/sections/WinePreview'
 import { StorySection } from '@/components/sections/StorySection'
 import { AwardsStrip } from '@/components/sections/AwardsStrip'
 import { MascotSection } from '@/components/sections/MascotSection'
-import { BlogPreview } from '@/components/sections/BlogPreview'
+import { JournalPreview } from '@/components/sections/JournalPreview'
 import { NewsletterSection } from '@/components/sections/NewsletterSection'
 import { SectionDivider } from '@/components/ui/SectionDivider'
 import type { NewsItem } from '@/types/sanity'
@@ -37,23 +36,20 @@ export const metadata: Metadata = {
 export const revalidate = 3600
 
 export default async function HomePage() {
-  const [settings, wines, tours, events, news, posts, estates, storyPage, leopardPage] =
-    await Promise.all([
-      getSiteSettings(),
-      getAllWines(),
-      getAllTours(),
-      getJournalEvents(),
-      getAllNews(),
-      getAllBlogPosts(),
-      getAllEstates(),
-      getPageBySlug('our-story'),
-      getPageBySlug('the-leopard'),
-    ])
+  const [settings, wines, tours, events, news, estates, storyPage] = await Promise.all([
+    getSiteSettings(),
+    getAllWines(),
+    getAllTours(),
+    getJournalEvents(),
+    getAllNews(),
+    getAllEstates(),
+    getPageBySlug('our-story'),
+  ])
 
   const awards = ((news as NewsItem[]) ?? []).filter((item: NewsItem) => item.category === 'award')
 
   return (
-    <>
+    <div className="home-sections">
       <HeroSection
         headline={settings?.heroHeadline}
         subheadline={settings?.heroSubheadline}
@@ -70,8 +66,8 @@ export default async function HomePage() {
       <AwardsStrip awards={awards} />
       <EventsStrip tours={tours ?? []} events={events ?? []} />
       <SectionDivider variant="symbol" />
-      <MascotSection page={leopardPage} />
-      <BlogPreview posts={posts ?? []} />
+      <MascotSection mascot={settings?.mascot} />
+      <JournalPreview news={news ?? []} />
       <NewsletterSection />
       <JsonLd
         data={{
@@ -91,6 +87,6 @@ export default async function HomePage() {
           ],
         }}
       />
-    </>
+    </div>
   )
 }

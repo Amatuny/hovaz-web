@@ -79,12 +79,12 @@ export function AwardsStrip({ awards }: AwardsStripProps) {
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div className="container-content text-center">
         <p
-          className="mb-2 uppercase"
+          className="mb-4 uppercase"
           style={{
             fontFamily: 'var(--font-montserrat)',
             fontWeight: 600,
             fontSize: '10px',
-            letterSpacing: '1.5px',
+            letterSpacing: '2.5px',
             color: 'rgba(93,110,82,0.92)',
           }}
         >
@@ -95,9 +95,9 @@ export function AwardsStrip({ awards }: AwardsStripProps) {
           style={{
             fontFamily: 'var(--font-playfair)',
             fontWeight: 600,
-            fontSize: '26px',
+            fontSize: 'clamp(26px, 2.6vw, 36px)',
             color: '#1a1d17',
-            letterSpacing: '0.3px',
+            letterSpacing: '0.5px',
             lineHeight: 1.15,
           }}
         >

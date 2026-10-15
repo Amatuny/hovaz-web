@@ -1,11 +1,13 @@
 // src/components/sections/ExperiencesEstateSwitcher.tsx
 'use client'
 
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
 import { fig } from '@/lib/figmaScale'
+import { estateKey } from '@/lib/estates'
 import type { Estate, Tour } from '@/types/sanity'
 
 interface ExperiencesEstateSwitcherProps {
@@ -47,9 +49,33 @@ function OutlineButton({ href, children }: { href: string; children: React.React
   )
 }
 
-export function ExperiencesEstateSwitcher({ estates, tours }: ExperiencesEstateSwitcherProps) {
-  const [selectedId, setSelectedId] = useState(estates[0]?._id)
-  const selectedEstate = estates.find((e) => e._id === selectedId) ?? estates[0]
+// The selected estate lives in the URL (/estates?estate=dilijan) so the homepage
+// estate cards can deep-link to it. The prerendered HTML shows the first estate;
+// the Suspense boundary keeps the page static while the URL is read on the client.
+export function ExperiencesEstateSwitcher(props: ExperiencesEstateSwitcherProps) {
+  return (
+    <Suspense fallback={<EstateSwitcher {...props} />}>
+      <EstateSwitcherFromUrl {...props} />
+    </Suspense>
+  )
+}
+
+function EstateSwitcherFromUrl(props: ExperiencesEstateSwitcherProps) {
+  const selectedKey = useSearchParams().get('estate')
+  return <EstateSwitcher {...props} selectedKey={selectedKey} />
+}
+
+function selectEstate(estate: Estate) {
+  // Native history updates sync with useSearchParams without a server round-trip.
+  window.history.replaceState(null, '', `?estate=${estateKey(estate)}`)
+}
+
+function EstateSwitcher({
+  estates,
+  tours,
+  selectedKey,
+}: ExperiencesEstateSwitcherProps & { selectedKey?: string | null }) {
+  const selectedEstate = estates.find((e) => estateKey(e) === selectedKey) ?? estates[0]
 
   const estateTours = useMemo(
     () => tours.filter((tour) => tour.estate?._id === selectedEstate?._id),
@@ -108,7 +134,7 @@ export function ExperiencesEstateSwitcher({ estates, tours }: ExperiencesEstateS
               <button
                 key={estate._id}
                 type="button"
-                onClick={() => setSelectedId(estate._id)}
+                onClick={() => selectEstate(estate)}
                 className="cursor-pointer whitespace-nowrap rounded-full transition-colors"
                 style={{
                   paddingInline: fig(32),
