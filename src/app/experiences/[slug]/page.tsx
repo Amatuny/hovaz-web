@@ -55,6 +55,7 @@ export default async function TourExperiencePage({ params }: Props) {
     value: t._id,
     label: t.title,
     experienceType: toExperienceType(t.tourType),
+    pricePerPerson: t.pricePerPerson,
   }))
 
   const journalCards = buildJournalCards(tours, journalEvents).filter((card) => card.slug !== slug)

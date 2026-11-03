@@ -44,7 +44,7 @@ export function ExperienceCard({ tour }: ExperienceCardProps) {
       <div className="p-6">
         <p className="text-label mb-2" style={{ color: 'var(--color-brand-gold)' }}>
           {tour.duration}
-          {tour.pricePerPerson && ` · From $${tour.pricePerPerson}`}
+          {tour.pricePerPerson && ` · From ${tour.pricePerPerson.toLocaleString('en-US')} AMD`}
         </p>
         <h3 className="heading-card mb-3" style={{ color: 'white', fontSize: '1.25rem' }}>
           {tour.title}

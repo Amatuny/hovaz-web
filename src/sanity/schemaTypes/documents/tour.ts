@@ -140,7 +140,7 @@ export const tour = defineType({
     // ─── PRICING & CAPACITY ───
     defineField({
       name: 'pricePerPerson',
-      title: 'Price Per Person (USD)',
+      title: 'Price Per Person (AMD)',
       type: 'number',
       group: 'pricing',
       validation: (Rule) => Rule.required().min(0),
@@ -235,7 +235,8 @@ export const tour = defineType({
     prepare({ title, subtitle, price, media }) {
       return {
         title: title ?? 'Untitled Experience',
-        subtitle: `${subtitle ?? ''} ${price ? `· $${price}/person` : ''}`.trim(),
+        subtitle:
+          `${subtitle ?? ''} ${price ? `· ${price.toLocaleString('en-US')} AMD/person` : ''}`.trim(),
         media,
       }
     },

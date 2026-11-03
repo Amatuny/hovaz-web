@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { getAllEventsForListing, getTestimonials } from '@/lib/sanity/queries'
+import { getAllEstates, getAllEventsForListing, getTestimonials } from '@/lib/sanity/queries'
 import { EventsFilterGrid } from '@/components/sections/EventsFilterGrid'
 import { TestimonialCard } from '@/components/ui/TestimonialCard'
 import { fig } from '@/lib/figmaScale'
@@ -78,7 +78,11 @@ function SectionHeader({
 }
 
 export default async function EventsPage() {
-  const [events, testimonials] = await Promise.all([getAllEventsForListing(), getTestimonials()])
+  const [events, testimonials, estates] = await Promise.all([
+    getAllEventsForListing(),
+    getTestimonials(),
+    getAllEstates(),
+  ])
 
   return (
     <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
@@ -105,7 +109,7 @@ export default async function EventsPage() {
               No events scheduled right now — check back soon.
             </p>
           ) : (
-            <EventsFilterGrid events={events} />
+            <EventsFilterGrid events={events} estateNames={estates.map((estate) => estate.name)} />
           )}
         </div>
 
