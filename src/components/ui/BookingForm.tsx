@@ -136,7 +136,7 @@ export function BookingForm({
               className="font-serif text-4xl mb-1"
               style={{ color: 'var(--color-brand-burgundy)' }}
             >
-              ${pricePerPerson}
+              {pricePerPerson.toLocaleString('en-US')} AMD
               <span className="text-label text-base ml-1">/ person</span>
             </p>
             {priceNote && <p className="text-caption pb-4">{priceNote}</p>}

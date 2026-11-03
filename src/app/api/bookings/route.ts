@@ -4,7 +4,7 @@ import { headers } from 'next/headers'
 import { bookingSchema } from '@/lib/validations/booking'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { bookingRatelimit } from '@/lib/ratelimit'
-import { insertBooking } from '@/lib/supabase/queries'
+import { findDuplicateBooking, insertBooking } from '@/lib/supabase/queries'
 import { sendBookingEmails } from '@/lib/email/sendBookingEmails'
 import { logger } from '@/lib/logger'
 
@@ -59,8 +59,17 @@ export async function POST(request: Request) {
     )
   }
 
-  const { name, email, phone, experienceType, preferredDate, groupSize, notes, turnstileToken } =
-    result.data
+  const {
+    name,
+    email,
+    phone,
+    experienceType,
+    preferredDate,
+    preferredTime,
+    groupSize,
+    notes,
+    turnstileToken,
+  } = result.data
 
   // ── 4. Verify Turnstile ──
   const turnstileValid = await verifyTurnstile(turnstileToken)
@@ -69,7 +78,38 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Security check failed. Please try again.' }, { status: 400 })
   }
 
-  // ── 5. Insert booking to Supabase ──
+  // ── 5. Conflicts ──
+  // Same guest, same experience, same slot: almost always a double submit or a
+  // second tab, so stop it before a second deposit. The form shows its own
+  // message for each `code`. A failed check doesn't block the booking.
+  //
+  // A full slot would answer 409 { code: 'slot_full', preferredTime, nextTimes }
+  // — the form already handles it — but there's no per-slot capacity to check
+  // against yet.
+  try {
+    const duplicate = await findDuplicateBooking({
+      email,
+      preferredDate,
+      experienceType: experienceType as never,
+      preferredTime,
+    })
+    if (duplicate) {
+      logger.info('Duplicate booking blocked', { email, preferredDate, preferredTime })
+      return NextResponse.json(
+        {
+          error: 'You already have a booking for this time.',
+          code: 'duplicate_booking',
+          preferredDate,
+          preferredTime,
+        },
+        { status: 409 }
+      )
+    }
+  } catch (error) {
+    logger.error('Duplicate booking check failed', error, { email })
+  }
+
+  // ── 6. Insert booking to Supabase ──
   let booking
   try {
     booking = await insertBooking({
@@ -95,7 +135,7 @@ export async function POST(request: Request) {
     )
   }
 
-  // ── 6. Send emails ──
+  // ── 7. Send emails ──
   try {
     await sendBookingEmails({
       bookingId: booking.id,
@@ -112,7 +152,7 @@ export async function POST(request: Request) {
     logger.error('Booking email send failed', error, { bookingId: booking.id })
   }
 
-  // ── 7. Return success ──
+  // ── 8. Return success ──
   return NextResponse.json(
     {
       success: true,

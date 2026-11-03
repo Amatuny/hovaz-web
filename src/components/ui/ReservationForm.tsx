@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { TurnstileWidget } from './TurnstileWidget'
+import { DatePicker } from './BookingPickers'
 import { fig } from '@/lib/figmaScale'
 import { trackEvent } from '@/lib/analytics'
 import type { BookingInput } from '@/lib/validations/booking'
@@ -52,6 +53,16 @@ const inputShellStyle: React.CSSProperties = {
   width: '100%',
 }
 
+// The picker trigger sets its own padding.
+const pickerShellStyle: React.CSSProperties = {
+  borderRadius: inputShellStyle.borderRadius,
+  fontFamily: inputShellStyle.fontFamily,
+  fontSize: inputShellStyle.fontSize,
+  backgroundColor: inputShellStyle.backgroundColor,
+  boxShadow: inputShellStyle.boxShadow,
+  width: '100%',
+}
+
 export function ReservationForm({
   experienceTitle,
   experienceType,
@@ -69,11 +80,18 @@ export function ReservationForm({
   const [turnstileToken, setTurnstileToken] = useState('')
   const [turnstileExpired, setTurnstileExpired] = useState(false)
   const [guestCount, setGuestCount] = useState(Math.min(2, maxGuests))
+  const [preferredDate, setPreferredDate] = useState('')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setFieldErrors({})
     setErrorMessage('')
+
+    // The calendar is a button, so the browser can't enforce "required" on it.
+    if (!fixedDate && !preferredDate) {
+      setFieldErrors({ preferredDate: 'Choose a date to continue.' })
+      return
+    }
 
     if (!turnstileToken || turnstileExpired) {
       setErrorMessage('Please complete the security check')
@@ -83,14 +101,13 @@ export function ReservationForm({
     setFormState('loading')
 
     const formData = new FormData(e.currentTarget)
-    const preferredDate = fixedDate ?? (formData.get('preferredDate') as string)
 
     const payload: BookingInput = {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
       phone: formData.get('phone') as string,
       experienceType,
-      preferredDate,
+      preferredDate: fixedDate ?? preferredDate,
       groupSize: guestCount,
       notes: (formData.get('notes') as string) || undefined,
       turnstileToken,
@@ -195,20 +212,15 @@ export function ReservationForm({
             {dateTimeLabel}
           </p>
         ) : (
-          <input
-            type="date"
-            name="preferredDate"
-            required
-            disabled={isLoading}
-            min={new Date().toISOString().split('T')[0]}
+          <DatePicker
+            id="reservation-date"
+            value={preferredDate}
+            onChange={setPreferredDate}
             style={{
-              fontFamily: 'var(--font-playfair)',
-              fontWeight: 500,
-              fontSize: fig(18),
-              color: '#1a1d17',
-              border: 'none',
-              background: 'transparent',
-              padding: 0,
+              ...pickerShellStyle,
+              ...(fieldErrors.preferredDate && {
+                boxShadow: 'inset 0 0 0 1.5px #dc2626',
+              }),
             }}
           />
         )}

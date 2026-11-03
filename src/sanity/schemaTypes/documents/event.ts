@@ -111,7 +111,7 @@ export const event = defineType({
       title: 'Location',
       type: 'string',
       group: 'logistics',
-      description: 'e.g. HOVAZ Wine Rooms, Yerevan',
+      description: 'Venue within the estate, e.g. HOVAZ Wine Rooms. Set the Estate field too.',
       initialValue: 'HOVAZ Wine Rooms',
     }),
     defineField({
@@ -127,7 +127,9 @@ export const event = defineType({
       type: 'reference',
       to: [{ type: 'estate' }],
       group: 'logistics',
-      description: 'Which estate hosts this event — shown as a badge on the homepage journal strip',
+      description:
+        'Which estate hosts this event — used for the Location filter on /events and the event badge',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'tags',
@@ -148,7 +150,7 @@ export const event = defineType({
     }),
     defineField({
       name: 'price',
-      title: 'Price Per Person (USD)',
+      title: 'Price Per Person (AMD)',
       type: 'number',
       group: 'logistics',
       description: 'Leave empty if price is on request',

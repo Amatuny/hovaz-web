@@ -415,7 +415,6 @@ export function TourExperienceDetail({
           foodOptions={estate?.foodOptions ?? []}
           minGuests={tour.minGroupSize ?? 1}
           maxGuests={tour.maxGroupSize ?? 12}
-          ctaText={tour.ctaText ?? 'Reserve Your Seat'}
           width={520}
         />
       </div>

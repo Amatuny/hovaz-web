@@ -34,6 +34,13 @@ export const bookingSchema = z.object({
       return selected >= today
     }, 'Date must be today or in the future'),
 
+  // 24h "HH:mm". Stored in notes (there's no column for it) and used to spot
+  // a duplicate booking for the same slot.
+  preferredTime: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Choose a valid time')
+    .optional(),
+
   groupSize: z
     .number()
     .int('Group size must be a whole number')

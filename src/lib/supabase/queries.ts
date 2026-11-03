@@ -18,6 +18,38 @@ export async function insertBooking(data: BookingInsert) {
   return booking
 }
 
+// An active booking by the same guest for the same experience, day and (when
+// given) time — used to stop an accidental second booking and deposit.
+export async function findDuplicateBooking({
+  email,
+  preferredDate,
+  experienceType,
+  preferredTime,
+}: {
+  email: string
+  preferredDate: string
+  experienceType: BookingInsert['experience_type']
+  preferredTime?: string
+}) {
+  const supabase = createAdminClient()
+  // ilike for a case-insensitive match; escape LIKE wildcards in the address.
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('id, notes')
+    .ilike('email', email.replace(/[\\%_]/g, '\\$&'))
+    .eq('preferred_date', preferredDate)
+    .eq('experience_type', experienceType)
+    .in('status', ['pending', 'confirmed'])
+
+  if (error) throw new Error(`Failed to check for duplicate booking: ${error.message}`)
+  // The time only lives in notes ("Preferred time: HH:mm").
+  return (
+    data.find(
+      (booking) => !preferredTime || booking.notes?.includes(`Preferred time: ${preferredTime}`)
+    ) ?? null
+  )
+}
+
 export async function getBookings(status?: Database['public']['Enums']['booking_status']) {
   const supabase = createAdminClient()
   let query = supabase.from('bookings').select('*').order('created_at', { ascending: false })

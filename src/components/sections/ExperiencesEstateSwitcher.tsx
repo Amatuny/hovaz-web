@@ -21,7 +21,8 @@ function estateLabel(estate: Estate) {
 
 function formatPrice(tour: Tour) {
   const price =
-    tour.priceNote || (tour.pricePerPerson ? `$${tour.pricePerPerson} per person` : null)
+    tour.priceNote ||
+    (tour.pricePerPerson ? `${tour.pricePerPerson.toLocaleString('en-US')} AMD per person` : null)
   return [tour.duration, price].filter(Boolean).join(' · ')
 }
 

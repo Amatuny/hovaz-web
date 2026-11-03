@@ -9,6 +9,8 @@ import type { Event } from '@/types/sanity'
 
 interface EventsFilterGridProps {
   events: Event[]
+  // Every estate is a location option, even before it has events.
+  estateNames?: string[]
 }
 
 const PAGE_SIZE = 16
@@ -178,7 +180,7 @@ function PageButton({
   )
 }
 
-export function EventsFilterGrid({ events }: EventsFilterGridProps) {
+export function EventsFilterGrid({ events, estateNames = [] }: EventsFilterGridProps) {
   const [searchInput, setSearchInput] = useState('')
   const [dateInput, setDateInput] = useState<Date | null>(null)
   const [locationInput, setLocationInput] = useState('')
@@ -200,13 +202,18 @@ export function EventsFilterGrid({ events }: EventsFilterGridProps) {
   }, [events])
 
   const locationOptions = useMemo(() => {
+    // Locations are the estates; a venue name like "HOVAZ Wine Rooms" is part
+    // of an estate, not a location of its own. Only fall back to the events'
+    // own locations when no estates are loaded.
+    const names = estateNames.filter(Boolean)
+    if (names.length > 0) return names
     const locations = new Set<string>()
     events.forEach((event) => {
       const location = event.estate?.name ?? event.location
       if (location) locations.add(location)
     })
     return Array.from(locations)
-  }, [events])
+  }, [events, estateNames])
 
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
@@ -274,7 +281,18 @@ export function EventsFilterGrid({ events }: EventsFilterGridProps) {
           className="min-w-[200px] flex-1 border-r"
           style={{ paddingInline: fig(12), borderColor: '#e6e1d2' }}
         >
-          <DateFilterCalendar value={dateInput} onChange={setDateInput} eventDates={eventDates} />
+          <DateFilterCalendar
+            value={dateInput}
+            onChange={(date) => {
+              setDateInput(date)
+              // Clearing the date drops the filter right away — no need to press Search.
+              if (!date) {
+                setAppliedDate(null)
+                setPage(1)
+              }
+            }}
+            eventDates={eventDates}
+          />
         </div>
 
         <div className="min-w-[200px] flex-1" style={{ paddingInline: fig(12) }}>
