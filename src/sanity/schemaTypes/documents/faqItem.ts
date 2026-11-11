@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { translatable } from '../helpers/translatable'
 import { MdQuestionAnswer } from 'react-icons/md'
 
 export const faqItem = defineType({
@@ -6,26 +7,27 @@ export const faqItem = defineType({
   title: 'FAQ Item',
   type: 'document',
   icon: MdQuestionAnswer,
-  groups: [
-    { name: 'content', title: 'Content', default: true },
-    { name: 'i18n', title: 'Translations' },
-  ],
+  groups: [{ name: 'content', title: 'Content', default: true }],
   fields: [
-    defineField({
-      name: 'question',
-      title: 'Question',
-      type: 'string',
-      group: 'content',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'answer',
-      title: 'Answer',
-      type: 'text',
-      rows: 5,
-      group: 'content',
-      validation: (Rule) => Rule.required(),
-    }),
+    ...translatable(
+      defineField({
+        name: 'question',
+        title: 'Question',
+        type: 'string',
+        group: 'content',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'answer',
+        title: 'Answer',
+        type: 'text',
+        rows: 5,
+        group: 'content',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
     defineField({
       name: 'category',
       title: 'Category',
@@ -50,20 +52,6 @@ export const faqItem = defineType({
       group: 'content',
       description: 'Lower numbers appear first',
       initialValue: 99,
-    }),
-
-    // ── TRANSLATIONS ──
-    defineField({
-      name: 'question_i18n',
-      title: 'Question (Translations)',
-      type: 'localizedString',
-      group: 'i18n',
-    }),
-    defineField({
-      name: 'answer_i18n',
-      title: 'Answer (Translations)',
-      type: 'localizedText',
-      group: 'i18n',
     }),
   ],
 

@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { translatable } from '../helpers/translatable'
 import { MdEvent } from 'react-icons/md'
 
 export const event = defineType({
@@ -10,18 +11,19 @@ export const event = defineType({
     { name: 'details', title: 'Event Details', default: true },
     { name: 'logistics', title: 'Date & Capacity' },
     { name: 'media', title: 'Gallery' },
-    { name: 'i18n', title: 'Translations' },
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
     // ─── CORE DETAILS ───
-    defineField({
-      name: 'title',
-      title: 'Event Title',
-      type: 'string',
-      group: 'details',
-      validation: (Rule) => Rule.required().error('Event title is required'),
-    }),
+    ...translatable(
+      defineField({
+        name: 'title',
+        title: 'Event Title',
+        type: 'string',
+        group: 'details',
+        validation: (Rule) => Rule.required().error('Event title is required'),
+      })
+    ),
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -33,14 +35,16 @@ export const event = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'text',
-      rows: 5,
-      group: 'details',
-      validation: (Rule) => Rule.required(),
-    }),
+    ...translatable(
+      defineField({
+        name: 'description',
+        title: 'Description',
+        type: 'text',
+        rows: 5,
+        group: 'details',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
     defineField({
       name: 'eventType',
       title: 'Event Type',
@@ -67,13 +71,15 @@ export const event = defineType({
       group: 'details',
       initialValue: false,
     }),
-    defineField({
-      name: 'ctaText',
-      title: 'CTA Button Text',
-      type: 'string',
-      group: 'details',
-      initialValue: 'Inquire About This Event',
-    }),
+    ...translatable(
+      defineField({
+        name: 'ctaText',
+        title: 'CTA Button Text',
+        type: 'string',
+        group: 'details',
+        initialValue: 'Inquire About This Event',
+      })
+    ),
     defineField({
       name: 'ctaEmail',
       title: 'Inquiry Email',
@@ -106,21 +112,25 @@ export const event = defineType({
         timeStep: 30,
       },
     }),
-    defineField({
-      name: 'location',
-      title: 'Location',
-      type: 'string',
-      group: 'logistics',
-      description: 'Venue within the estate, e.g. HOVAZ Wine Rooms. Set the Estate field too.',
-      initialValue: 'HOVAZ Wine Rooms',
-    }),
-    defineField({
-      name: 'duration',
-      title: 'Duration',
-      type: 'string',
-      group: 'logistics',
-      description: 'e.g. "2.5 hours, seated" — shown on the reservation panel',
-    }),
+    ...translatable(
+      defineField({
+        name: 'location',
+        title: 'Location',
+        type: 'string',
+        group: 'logistics',
+        description: 'Venue within the estate, e.g. HOVAZ Wine Rooms. Set the Estate field too.',
+        initialValue: 'HOVAZ Wine Rooms',
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'duration',
+        title: 'Duration',
+        type: 'string',
+        group: 'logistics',
+        description: 'e.g. "2.5 hours, seated" — shown on the reservation panel',
+      })
+    ),
     defineField({
       name: 'estate',
       title: 'Estate',
@@ -131,16 +141,18 @@ export const event = defineType({
         'Which estate hosts this event — used for the Location filter on /events and the event badge',
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: 'tags',
-      title: 'Tags',
-      type: 'array',
-      of: [{ type: 'string' }],
-      group: 'details',
-      options: { layout: 'tags' },
-      description:
-        'e.g. Tasting, Seasonal, Experiences — shown as pills on the homepage journal strip',
-    }),
+    ...translatable(
+      defineField({
+        name: 'tags',
+        title: 'Tags',
+        type: 'array',
+        of: [{ type: 'string' }],
+        group: 'details',
+        options: { layout: 'tags' },
+        description:
+          'e.g. Tasting, Seasonal, Experiences — shown as pills on the homepage journal strip',
+      })
+    ),
     defineField({
       name: 'capacity',
       title: 'Maximum Capacity',
@@ -155,13 +167,15 @@ export const event = defineType({
       group: 'logistics',
       description: 'Leave empty if price is on request',
     }),
-    defineField({
-      name: 'priceNote',
-      title: 'Price Note',
-      type: 'string',
-      group: 'logistics',
-      description: 'e.g. Includes 5-course dinner and wine pairing',
-    }),
+    ...translatable(
+      defineField({
+        name: 'priceNote',
+        title: 'Price Note',
+        type: 'string',
+        group: 'logistics',
+        description: 'e.g. Includes 5-course dinner and wine pairing',
+      })
+    ),
     defineField({
       name: 'status',
       title: 'Event Status',
@@ -198,29 +212,16 @@ export const event = defineType({
       description:
         'The first 3 images appear in the "About" section grid on the detail page; the next 3 appear in the "What\'s Included" row (if Included Heading is set).',
     }),
-    defineField({
-      name: 'includesHeading',
-      title: 'Included Heading',
-      type: 'string',
-      group: 'media',
-      description:
-        'e.g. "The event includes a tasting plate." Shown above the 4th–6th gallery images on the detail page. Leave empty to hide that section.',
-    }),
-
-    // ─── TRANSLATIONS ───
-    defineField({
-      name: 'title_i18n',
-      title: 'Title (Translations)',
-      type: 'localizedString',
-      group: 'i18n',
-    }),
-    defineField({
-      name: 'description_i18n',
-      title: 'Description (Translations)',
-      type: 'localizedText',
-      group: 'i18n',
-    }),
-
+    ...translatable(
+      defineField({
+        name: 'includesHeading',
+        title: 'Included Heading',
+        type: 'string',
+        group: 'media',
+        description:
+          'e.g. "The event includes a tasting plate." Shown above the 4th–6th gallery images on the detail page. Leave empty to hide that section.',
+      })
+    ),
     // ─── SEO ───
     defineField({
       name: 'seo',

@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { translatable } from '../helpers/translatable'
 import { MdDirectionsWalk } from 'react-icons/md'
 
 export const tour = defineType({
@@ -10,18 +11,19 @@ export const tour = defineType({
     { name: 'details', title: 'Experience Details', default: true },
     { name: 'pricing', title: 'Pricing & Capacity' },
     { name: 'media', title: 'Gallery' },
-    { name: 'i18n', title: 'Translations' },
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
     // ─── CORE DETAILS ───
-    defineField({
-      name: 'title',
-      title: 'Experience Title',
-      type: 'string',
-      group: 'details',
-      validation: (Rule) => Rule.required().error('Experience title is required'),
-    }),
+    ...translatable(
+      defineField({
+        name: 'title',
+        title: 'Experience Title',
+        type: 'string',
+        group: 'details',
+        validation: (Rule) => Rule.required().error('Experience title is required'),
+      })
+    ),
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -33,22 +35,26 @@ export const tour = defineType({
       },
       validation: (Rule) => Rule.required().error('Slug is required for the experience URL'),
     }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'text',
-      rows: 5,
-      group: 'details',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'duration',
-      title: 'Duration',
-      type: 'string',
-      group: 'details',
-      description: 'e.g. 2 hours, Half day, Full day',
-      validation: (Rule) => Rule.required(),
-    }),
+    ...translatable(
+      defineField({
+        name: 'description',
+        title: 'Description',
+        type: 'text',
+        rows: 5,
+        group: 'details',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'duration',
+        title: 'Duration',
+        type: 'string',
+        group: 'details',
+        description: 'e.g. 2 hours, Half day, Full day',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
     defineField({
       name: 'tourType',
       title: 'Experience Type',
@@ -82,23 +88,27 @@ export const tour = defineType({
       initialValue: true,
       description: 'Turn off to hide this experience from the website',
     }),
-    defineField({
-      name: 'experienceHeading',
-      title: 'Experience Heading',
-      type: 'string',
-      group: 'details',
-      description:
-        'e.g. "Sparkling Armenia Experience" — heading above the description on the detail page. Falls back to Experience Title if empty.',
-    }),
-    defineField({
-      name: 'includedServices',
-      title: 'Included Services',
-      type: 'array',
-      group: 'details',
-      of: [{ type: 'string' }],
-      description:
-        'One line each, e.g. "Guided boutique winery tour" — listed in order under "Includes:" on the detail page',
-    }),
+    ...translatable(
+      defineField({
+        name: 'experienceHeading',
+        title: 'Experience Heading',
+        type: 'string',
+        group: 'details',
+        description:
+          'e.g. "Sparkling Armenia Experience" — heading above the description on the detail page. Falls back to Experience Title if empty.',
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'includedServices',
+        title: 'Included Services',
+        type: 'array',
+        group: 'details',
+        of: [{ type: 'string' }],
+        description:
+          'One line each, e.g. "Guided boutique winery tour" — listed in order under "Includes:" on the detail page',
+      })
+    ),
     defineField({
       name: 'addOnEvents',
       title: 'Add-on Events',
@@ -118,24 +128,28 @@ export const tour = defineType({
       description:
         'Which estate hosts this experience — shown as a badge on the homepage journal strip',
     }),
-    defineField({
-      name: 'tags',
-      title: 'Tags',
-      type: 'array',
-      of: [{ type: 'string' }],
-      group: 'details',
-      options: { layout: 'tags' },
-      description:
-        'e.g. Tasting, Seasonal, Experiences — shown as pills on the homepage journal strip',
-    }),
-    defineField({
-      name: 'ctaText',
-      title: 'CTA Button Text',
-      type: 'string',
-      group: 'details',
-      initialValue: 'Book This Experience',
-      description: 'Text shown on the booking button',
-    }),
+    ...translatable(
+      defineField({
+        name: 'tags',
+        title: 'Tags',
+        type: 'array',
+        of: [{ type: 'string' }],
+        group: 'details',
+        options: { layout: 'tags' },
+        description:
+          'e.g. Tasting, Seasonal, Experiences — shown as pills on the homepage journal strip',
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'ctaText',
+        title: 'CTA Button Text',
+        type: 'string',
+        group: 'details',
+        initialValue: 'Book This Experience',
+        description: 'Text shown on the booking button',
+      })
+    ),
 
     // ─── PRICING & CAPACITY ───
     defineField({
@@ -145,13 +159,15 @@ export const tour = defineType({
       group: 'pricing',
       validation: (Rule) => Rule.required().min(0),
     }),
-    defineField({
-      name: 'priceNote',
-      title: 'Price Note',
-      type: 'string',
-      group: 'pricing',
-      description: 'e.g. Includes wine tasting for 3 wines, Starting from price',
-    }),
+    ...translatable(
+      defineField({
+        name: 'priceNote',
+        title: 'Price Note',
+        type: 'string',
+        group: 'pricing',
+        description: 'e.g. Includes wine tasting for 3 wines, Starting from price',
+      })
+    ),
     defineField({
       name: 'minGroupSize',
       title: 'Minimum Group Size',
@@ -193,29 +209,16 @@ export const tour = defineType({
       description:
         'The first 3 images appear in the "About" section grid on the detail page; the next 3 appear in the "What\'s Included" row (if Included Heading is set).',
     }),
-    defineField({
-      name: 'includesHeading',
-      title: 'Included Heading',
-      type: 'string',
-      group: 'media',
-      description:
-        'e.g. "The experience includes a tasting plate." Shown above the 4th–6th gallery images on the detail page. Leave empty to hide that section.',
-    }),
-
-    // ─── TRANSLATIONS ───
-    defineField({
-      name: 'title_i18n',
-      title: 'Title (Translations)',
-      type: 'localizedString',
-      group: 'i18n',
-    }),
-    defineField({
-      name: 'description_i18n',
-      title: 'Description (Translations)',
-      type: 'localizedText',
-      group: 'i18n',
-    }),
-
+    ...translatable(
+      defineField({
+        name: 'includesHeading',
+        title: 'Included Heading',
+        type: 'string',
+        group: 'media',
+        description:
+          'e.g. "The experience includes a tasting plate." Shown above the 4th–6th gallery images on the detail page. Leave empty to hide that section.',
+      })
+    ),
     // ─── SEO ───
     defineField({
       name: 'seo',

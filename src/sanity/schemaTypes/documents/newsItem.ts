@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { translatable } from '../helpers/translatable'
 import { MdNewspaper } from 'react-icons/md'
 
 export const newsItem = defineType({
@@ -9,17 +10,18 @@ export const newsItem = defineType({
   groups: [
     { name: 'content', title: 'Content', default: true },
     { name: 'article', title: 'Article Page' },
-    { name: 'i18n', title: 'Translations' },
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
-    defineField({
-      name: 'title',
-      title: 'Title',
-      type: 'string',
-      group: 'content',
-      validation: (Rule) => Rule.required(),
-    }),
+    ...translatable(
+      defineField({
+        name: 'title',
+        title: 'Title',
+        type: 'string',
+        group: 'content',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -52,14 +54,16 @@ export const newsItem = defineType({
       group: 'content',
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: 'excerpt',
-      title: 'Excerpt',
-      type: 'text',
-      rows: 3,
-      group: 'content',
-      validation: (Rule) => Rule.required(),
-    }),
+    ...translatable(
+      defineField({
+        name: 'excerpt',
+        title: 'Excerpt',
+        type: 'text',
+        rows: 3,
+        group: 'content',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
     defineField({
       name: 'featuredImage',
       title: 'Featured Image',
@@ -69,21 +73,25 @@ export const newsItem = defineType({
     }),
 
     // ── ARTICLE PAGE (/news/[slug]) — every section is hidden when left empty ──
-    defineField({
-      name: 'place',
-      title: 'Place',
-      type: 'string',
-      group: 'article',
-      description: 'e.g. Proshyan Estate — shown next to the date under the title',
-    }),
-    defineField({
-      name: 'intro',
-      title: 'Intro',
-      type: 'text',
-      rows: 5,
-      group: 'article',
-      description: 'Opening text under the photo. Leave a blank line between paragraphs.',
-    }),
+    ...translatable(
+      defineField({
+        name: 'place',
+        title: 'Place',
+        type: 'string',
+        group: 'article',
+        description: 'e.g. Proshyan Estate — shown next to the date under the title',
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'intro',
+        title: 'Intro',
+        type: 'text',
+        rows: 5,
+        group: 'article',
+        description: 'Opening text under the photo. Leave a blank line between paragraphs.',
+      })
+    ),
     defineField({
       name: 'gallery',
       title: 'Photo Grid Images',
@@ -106,93 +114,113 @@ export const newsItem = defineType({
           type: 'object',
           name: 'highlight',
           fields: [
-            defineField({
-              name: 'label',
-              title: 'Label',
-              type: 'string',
-              description: 'e.g. The Vintage',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'text',
-              title: 'Text',
-              type: 'text',
-              rows: 4,
-              validation: (Rule) => Rule.required(),
-            }),
+            ...translatable(
+              defineField({
+                name: 'label',
+                title: 'Label',
+                type: 'string',
+                description: 'e.g. The Vintage',
+                validation: (Rule) => Rule.required(),
+              })
+            ),
+            ...translatable(
+              defineField({
+                name: 'text',
+                title: 'Text',
+                type: 'text',
+                rows: 4,
+                validation: (Rule) => Rule.required(),
+              })
+            ),
           ],
           preview: { select: { title: 'label', subtitle: 'text' } },
         },
       ],
     }),
-    defineField({
-      name: 'body',
-      title: 'Body',
-      type: 'blockContent',
-      group: 'article',
-      description: 'Main text, shown after the photo grid',
-    }),
-    defineField({
-      name: 'quote',
-      title: 'Quote',
-      type: 'text',
-      rows: 2,
-      group: 'article',
-    }),
-    defineField({
-      name: 'detailsTitle',
-      title: 'Closing Section Label',
-      type: 'string',
-      group: 'article',
-      description: 'e.g. Where to try it',
-    }),
-    defineField({
-      name: 'detailsText',
-      title: 'Closing Section Text',
-      type: 'text',
-      rows: 6,
-      group: 'article',
-      description: 'Leave a blank line between paragraphs.',
-    }),
+    ...translatable(
+      defineField({
+        name: 'body',
+        title: 'Body',
+        type: 'blockContent',
+        group: 'article',
+        description: 'Main text, shown after the photo grid',
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'quote',
+        title: 'Quote',
+        type: 'text',
+        rows: 2,
+        group: 'article',
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'detailsTitle',
+        title: 'Closing Section Label',
+        type: 'string',
+        group: 'article',
+        description: 'e.g. Where to try it',
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'detailsText',
+        title: 'Closing Section Text',
+        type: 'text',
+        rows: 6,
+        group: 'article',
+        description: 'Leave a blank line between paragraphs.',
+      })
+    ),
 
     // Award specific fields
-    defineField({
-      name: 'awardOrganization',
-      title: 'Award Organization',
-      type: 'string',
-      group: 'content',
-      description: 'e.g. Decanter World Wine Awards',
-    }),
+    ...translatable(
+      defineField({
+        name: 'awardOrganization',
+        title: 'Award Organization',
+        type: 'string',
+        group: 'content',
+        description: 'e.g. Decanter World Wine Awards',
+      })
+    ),
     defineField({
       name: 'awardYear',
       title: 'Award Year',
       type: 'number',
       group: 'content',
     }),
-    defineField({
-      name: 'awardTier',
-      title: 'Award Tier',
-      type: 'string',
-      group: 'content',
-      description: 'e.g. Gold, Silver, Medal, Trophy — shown alongside the award year',
-    }),
-    defineField({
-      name: 'awardedWine',
-      title: 'Awarded Wine',
-      type: 'string',
-      group: 'content',
-      description:
-        'e.g. Areni Reserve 2019 — shown under the organization on the News & Awards page',
-    }),
+    ...translatable(
+      defineField({
+        name: 'awardTier',
+        title: 'Award Tier',
+        type: 'string',
+        group: 'content',
+        description: 'e.g. Gold, Silver, Medal, Trophy — shown alongside the award year',
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'awardedWine',
+        title: 'Awarded Wine',
+        type: 'string',
+        group: 'content',
+        description:
+          'e.g. Areni Reserve 2019 — shown under the organization on the News & Awards page',
+      })
+    ),
 
     // Press specific fields
-    defineField({
-      name: 'publication',
-      title: 'Publication',
-      type: 'string',
-      group: 'content',
-      description: 'e.g. Wine Spectator, Decanter',
-    }),
+    ...translatable(
+      defineField({
+        name: 'publication',
+        title: 'Publication',
+        type: 'string',
+        group: 'content',
+        description: 'e.g. Wine Spectator, Decanter',
+      })
+    ),
     defineField({
       name: 'externalUrl',
       title: 'External Article URL',
@@ -209,21 +237,6 @@ export const newsItem = defineType({
       description:
         'Show as one of the (up to 3) large story cards at the top of the News & Awards page. Awards always appear in the awards section instead.',
     }),
-
-    // ── TRANSLATIONS ──
-    defineField({
-      name: 'title_i18n',
-      title: 'Title (Translations)',
-      type: 'localizedString',
-      group: 'i18n',
-    }),
-    defineField({
-      name: 'excerpt_i18n',
-      title: 'Excerpt (Translations)',
-      type: 'localizedText',
-      group: 'i18n',
-    }),
-
     // ── SEO ──
     defineField({
       name: 'seo',

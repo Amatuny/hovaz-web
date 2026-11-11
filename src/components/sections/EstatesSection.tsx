@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
 import { estateHref } from '@/lib/estates'
+import { fig } from '@/lib/figmaScale'
 import type { Estate } from '@/types/sanity'
 
 interface EstatesSectionProps {
@@ -17,7 +18,11 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
   if (!estates?.length) return null
 
   return (
-    <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
+    <section
+      id="estates"
+      className="section-padding scroll-mt-20"
+      style={{ backgroundColor: 'var(--color-brand-cream)' }}
+    >
       <div className="container-content">
         <p
           className="mb-4 uppercase"
@@ -36,18 +41,21 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
           style={{
             fontFamily: 'var(--font-playfair)',
             fontWeight: 600,
-            fontSize: 'clamp(26px, 2.6vw, 36px)',
+            fontSize: 'clamp(26px, 2.4vw, 36px)',
             color: '#1a1d17',
             letterSpacing: '0.5px',
             lineHeight: 1.15,
           }}
         >
-          Proshyan &amp; Dilijan
+          Choose Your Location First
         </h2>
 
+        {/* Figma "Locations Row": two 750.5 × 595 cards, 24px gap = 1525px,
+            centred in the 1600px content column (hence the slight inset from
+            the heading). All values scale with --figma-scale. */}
         <div
-          className="flex flex-col gap-4 md:flex-row"
-          style={{ height: 'clamp(420px, 62vh, 600px)' }}
+          className="mx-auto flex w-full flex-col md:flex-row"
+          style={{ maxWidth: fig(1525), gap: fig(24) }}
         >
           {estates.map((estate) => {
             const isHovered = hoveredId === estate._id
@@ -60,11 +68,12 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
                 onMouseLeave={() => setHoveredId(null)}
                 onFocus={() => setHoveredId(estate._id)}
                 onBlur={() => setHoveredId(null)}
-                className="group relative block overflow-hidden rounded-2xl lg:rounded-3xl"
+                // Equal widths at rest (Figma 750.5px each); on md+ the hovered
+                // card grows to twice the share of the row. Row-only, so the
+                // stacked mobile cards keep their fixed height.
+                className={`group relative block h-[420px] min-w-0 overflow-hidden md:h-[calc(var(--figma-scale)*595px)] md:basis-0 ${isHovered ? 'md:grow-[2]' : 'md:grow'}`}
                 style={{
-                  flexGrow: isHovered ? 2 : 1,
-                  flexBasis: 0,
-                  minWidth: 0,
+                  borderRadius: fig(24),
                   transition: 'flex-grow 600ms cubic-bezier(0.65, 0, 0.35, 1)',
                 }}
               >
@@ -93,48 +102,69 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
                 />
 
                 {/* Stat */}
-                <div className="absolute left-6 top-8 lg:left-9 lg:top-10">
-                  <p
-                    className="leading-none text-white"
-                    style={{
-                      fontFamily: 'var(--font-playfair)',
-                      fontWeight: 600,
-                      fontSize: 'clamp(2.75rem, 5.5vw, 5rem)',
-                      textShadow: '0 2px 16px rgba(0,0,0,0.4)',
-                    }}
-                  >
-                    {estate.eventsCount}
-                  </p>
-                  <p
-                    className="mt-2 flex items-center gap-1.5 uppercase text-white"
+                <div
+                  className="absolute left-6 top-8 text-white lg:left-[calc(var(--figma-scale)*44px)] lg:top-[calc(var(--figma-scale)*44px)]"
+                  style={{ textShadow: '0 2px 16px rgba(0,0,0,0.4)' }}
+                >
+                  <div className="flex items-start" style={{ gap: fig(20) }}>
+                    <p
+                      className="leading-[0.8]"
+                      style={{
+                        // Figma: Playfair Display SemiBold 160px, -4px tracking,
+                        // default (old-style) figures — gives the flat-topped "3"
+                        fontFamily: 'var(--font-playfair)',
+                        fontWeight: 600,
+                        fontSize: fig(160),
+                        letterSpacing: fig(-4),
+                        color: '#FDFCF8',
+                        // Old-style figures sit low in the line box; lift them so
+                        // the digit's top lines up with the top of "Type"
+                        marginTop: '-0.243em',
+                      }}
+                    >
+                      {estate.eventsCount}
+                    </p>
+                    <p
+                      className="flex flex-col"
+                      style={{
+                        fontFamily: 'var(--font-playfair)',
+                        fontWeight: 500,
+                        fontSize: fig(42),
+                        lineHeight: 0.9,
+                      }}
+                    >
+                      <span>Type</span>
+                      <span>Of</span>
+                      <span>Experiences</span>
+                    </p>
+                  </div>
+                  <span
+                    className="mt-5 inline-flex items-center gap-1.5 border-b-2 border-white px-1 pb-1 transition-colors group-hover:border-[var(--color-brand-gold)]"
                     style={{
                       fontFamily: 'var(--font-hanken)',
-                      fontSize: '10px',
-                      letterSpacing: '1.5px',
+                      fontWeight: 500,
+                      fontSize: 'clamp(15px, 1.25vw, 20px)',
+                      letterSpacing: '1px',
                     }}
                   >
-                    Events <span aria-hidden="true">→</span>
-                  </p>
-                  <div
-                    className="mt-3 h-px w-16"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.5)' }}
-                  />
+                    Find Your <span aria-hidden="true">→</span>
+                  </span>
                 </div>
 
                 {/* Name & description */}
-                <div className="absolute inset-x-0 bottom-0 p-6 lg:p-9">
+                <div className="absolute inset-x-0 bottom-0 p-6 lg:p-[calc(var(--figma-scale)*40px)]">
                   <h3
-                    className="mb-2 text-white"
+                    className="mb-3 text-white"
                     style={{
                       fontFamily: 'var(--font-playfair)',
-                      fontWeight: 600,
-                      fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
+                      fontWeight: 500,
+                      fontSize: 'clamp(1.5rem, 2.2vw, 2.25rem)',
                     }}
                   >
                     {estate.name}
                   </h3>
                   <p
-                    className="max-w-sm text-white/80"
+                    className="max-w-2xl text-white/90"
                     style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', lineHeight: 1.6 }}
                   >
                     {estate.description}
@@ -143,30 +173,6 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
               </Link>
             )
           })}
-        </div>
-
-        <div className="mt-10">
-          <Link
-            href="/estates"
-            className="group inline-flex items-center gap-2 border-b-2 border-[#1a1d17] px-2 pb-1 transition-colors hover:border-[var(--color-brand-gold)]"
-            style={{
-              fontFamily: 'var(--font-hanken)',
-              fontWeight: 600,
-              fontSize: '14px',
-              letterSpacing: '1px',
-              color: '#1a1d17',
-            }}
-          >
-            <span className="transition-colors group-hover:text-[var(--color-brand-gold)]">
-              Meet Our Estates
-            </span>
-            <span
-              aria-hidden="true"
-              className="transition-colors group-hover:text-[var(--color-brand-gold)]"
-            >
-              →
-            </span>
-          </Link>
         </div>
       </div>
     </section>

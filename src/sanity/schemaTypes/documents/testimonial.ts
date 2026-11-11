@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { translatable } from '../helpers/translatable'
 import { MdRateReview } from 'react-icons/md'
 
 export const testimonial = defineType({
@@ -8,22 +9,26 @@ export const testimonial = defineType({
   icon: MdRateReview,
   groups: [{ name: 'content', title: 'Content', default: true }],
   fields: [
-    defineField({
-      name: 'guestName',
-      title: 'Guest Name',
-      type: 'string',
-      group: 'content',
-      description: 'e.g. Marine A. — first name and last initial reads best',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'quote',
-      title: 'Quote',
-      type: 'text',
-      rows: 4,
-      group: 'content',
-      validation: (Rule) => Rule.required(),
-    }),
+    ...translatable(
+      defineField({
+        name: 'guestName',
+        title: 'Guest Name',
+        type: 'string',
+        group: 'content',
+        description: 'e.g. Marine A. — first name and last initial reads best',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'quote',
+        title: 'Quote',
+        type: 'text',
+        rows: 4,
+        group: 'content',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
     defineField({
       name: 'rating',
       title: 'Rating',
@@ -35,13 +40,15 @@ export const testimonial = defineType({
       initialValue: 5,
       validation: (Rule) => Rule.required().min(1).max(5),
     }),
-    defineField({
-      name: 'context',
-      title: 'Context',
-      type: 'string',
-      group: 'content',
-      description: 'e.g. Guided Tasting, Dilijan',
-    }),
+    ...translatable(
+      defineField({
+        name: 'context',
+        title: 'Context',
+        type: 'string',
+        group: 'content',
+        description: 'e.g. Guided Tasting, Dilijan',
+      })
+    ),
     defineField({
       name: 'avatar',
       title: 'Avatar',
