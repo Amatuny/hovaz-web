@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { translatable } from '../helpers/translatable'
 import { MdSettings } from 'react-icons/md'
 
 export const siteSettings = defineType({
@@ -14,28 +15,34 @@ export const siteSettings = defineType({
   ],
   fields: [
     // ─── HOMEPAGE ───
-    defineField({
-      name: 'heroHeadline',
-      title: 'Hero Headline',
-      type: 'string',
-      group: 'homepage',
-      description: 'Main headline shown on homepage hero section',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'heroSubheadline',
-      title: 'Hero Subheadline',
-      type: 'string',
-      group: 'homepage',
-      description: 'Subtitle shown below the main headline',
-    }),
-    defineField({
-      name: 'heroLocation',
-      title: 'Hero Location Label',
-      type: 'string',
-      group: 'homepage',
-      description: 'Small eyebrow label above the headline, e.g. "Proshyan Valley, Armenia"',
-    }),
+    ...translatable(
+      defineField({
+        name: 'heroHeadline',
+        title: 'Hero Headline',
+        type: 'string',
+        group: 'homepage',
+        description: 'Main headline shown on homepage hero section',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'heroSubheadline',
+        title: 'Hero Subheadline',
+        type: 'string',
+        group: 'homepage',
+        description: 'Subtitle shown below the main headline',
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'heroLocation',
+        title: 'Hero Location Label',
+        type: 'string',
+        group: 'homepage',
+        description: 'Small eyebrow label above the headline, e.g. "Proshyan Valley, Armenia"',
+      })
+    ),
     defineField({
       name: 'heroGallery',
       title: 'Hero Gallery',
@@ -47,13 +54,15 @@ export const siteSettings = defineType({
       validation: (Rule) =>
         Rule.required().min(3).error('Add at least 3 images for the hero carousel'),
     }),
-    defineField({
-      name: 'heroCtaText',
-      title: 'Hero CTA Button Text',
-      type: 'string',
-      group: 'homepage',
-      initialValue: 'Book Your Experience',
-    }),
+    ...translatable(
+      defineField({
+        name: 'heroCtaText',
+        title: 'Hero CTA Button Text',
+        type: 'string',
+        group: 'homepage',
+        initialValue: 'Book Your Experience',
+      })
+    ),
     defineField({
       name: 'featuredWines',
       title: 'Featured Wines',
@@ -110,44 +119,54 @@ export const siteSettings = defineType({
       description:
         'The homepage "Meet The Mascot" section. The section is hidden if Heading is empty.',
       fields: [
-        defineField({
-          name: 'heading',
-          title: 'Heading',
-          type: 'string',
-          description: 'e.g. Meet Hovaz, Our Leopard',
-        }),
-        defineField({
-          name: 'subtitle',
-          title: 'Subtitle',
-          type: 'text',
-          rows: 2,
-          description: 'Short intro shown under the heading',
-        }),
+        ...translatable(
+          defineField({
+            name: 'heading',
+            title: 'Heading',
+            type: 'string',
+            description: 'e.g. Meet Hovaz, Our Leopard',
+          })
+        ),
+        ...translatable(
+          defineField({
+            name: 'subtitle',
+            title: 'Subtitle',
+            type: 'text',
+            rows: 2,
+            description: 'Short intro shown under the heading',
+          })
+        ),
         defineField({
           name: 'image',
           title: 'Main Photo',
           type: 'imageWithAlt',
         }),
-        defineField({
-          name: 'imageBadgeTitle',
-          title: 'Photo Badge Title',
-          type: 'string',
-          description: 'e.g. Rescued 2021 — overlaid on the main photo',
-        }),
-        defineField({
-          name: 'imageBadgeSubtitle',
-          title: 'Photo Badge Subtitle',
-          type: 'string',
-          description: 'e.g. Found injured, now thriving under full-time care.',
-        }),
-        defineField({
-          name: 'story',
-          title: 'His Story',
-          type: 'array',
-          of: [{ type: 'text', rows: 4 }],
-          validation: (Rule) => Rule.max(3),
-          description: 'Up to 3 paragraphs shown in the dark "His Story" card',
-        }),
+        ...translatable(
+          defineField({
+            name: 'imageBadgeTitle',
+            title: 'Photo Badge Title',
+            type: 'string',
+            description: 'e.g. Rescued 2021 — overlaid on the main photo',
+          })
+        ),
+        ...translatable(
+          defineField({
+            name: 'imageBadgeSubtitle',
+            title: 'Photo Badge Subtitle',
+            type: 'string',
+            description: 'e.g. Found injured, now thriving under full-time care.',
+          })
+        ),
+        ...translatable(
+          defineField({
+            name: 'story',
+            title: 'His Story',
+            type: 'array',
+            of: [{ type: 'text', rows: 4 }],
+            validation: (Rule) => Rule.max(3),
+            description: 'Up to 3 paragraphs shown in the dark "His Story" card',
+          })
+        ),
         defineField({
           name: 'gallery',
           title: 'Gallery',
@@ -196,13 +215,15 @@ export const siteSettings = defineType({
       group: 'contact',
       description: 'Shown on the Contact page, e.g. @hovazwines',
     }),
-    defineField({
-      name: 'address',
-      title: 'Address',
-      type: 'text',
-      rows: 3,
-      group: 'contact',
-    }),
+    ...translatable(
+      defineField({
+        name: 'address',
+        title: 'Address',
+        type: 'text',
+        rows: 3,
+        group: 'contact',
+      })
+    ),
     defineField({
       name: 'instagramWineRooms',
       title: 'Instagram — Wine Rooms',
@@ -225,23 +246,27 @@ export const siteSettings = defineType({
     }),
 
     // ─── GLOBAL SEO ───
-    defineField({
-      name: 'siteName',
-      title: 'Site Name',
-      type: 'string',
-      group: 'seo',
-      initialValue: 'HOVAZ Wine Rooms',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'siteDescription',
-      title: 'Default Meta Description',
-      type: 'text',
-      rows: 3,
-      group: 'seo',
-      description: 'Used on pages without their own meta description',
-      validation: (Rule) => Rule.max(160),
-    }),
+    ...translatable(
+      defineField({
+        name: 'siteName',
+        title: 'Site Name',
+        type: 'string',
+        group: 'seo',
+        initialValue: 'HOVAZ Wine Rooms',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'siteDescription',
+        title: 'Default Meta Description',
+        type: 'text',
+        rows: 3,
+        group: 'seo',
+        description: 'Used on pages without their own meta description',
+        validation: (Rule) => Rule.max(160),
+      })
+    ),
     defineField({
       name: 'defaultOgImage',
       title: 'Default Social Share Image',

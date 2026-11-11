@@ -38,17 +38,14 @@ export interface SanityBlock {
   }[]
 }
 
-export interface LocalizedString {
-  en?: string
-  hy?: string
-  ru?: string
+/** Armenian/Russian versions of a field, stored as `<field>_i18n` (see translatable() schema helper). English is the field itself. */
+export interface Translations<T = string> {
+  hy?: T
+  ru?: T
 }
 
-export interface LocalizedText {
-  en?: string
-  hy?: string
-  ru?: string
-}
+export type LocalizedString = Translations<string>
+export type LocalizedText = Translations<string>
 
 export interface SeoMetadata {
   metaTitle?: string

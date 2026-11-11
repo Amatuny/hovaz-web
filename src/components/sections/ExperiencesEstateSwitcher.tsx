@@ -94,65 +94,10 @@ function EstateSwitcher({
 
   return (
     <div className="flex flex-col" style={{ gap: fig(82) }}>
-      {/* Breadcrumb + estate switcher */}
-      <div className="flex flex-col" style={{ gap: fig(16) }}>
-        <p style={{ fontFamily: 'var(--font-hanken)', fontSize: fig(13), color: '#a8a290' }}>
-          Experiences / <span style={{ color: '#4f4542' }}>{estateLabel(selectedEstate)}</span>
-        </p>
-
-        <div className="flex flex-col" style={{ maxWidth: fig(860), gap: fig(16) }}>
-          <h1
-            className="capitalize"
-            style={{
-              fontFamily: 'var(--font-playfair)',
-              fontWeight: 600,
-              fontSize: fig(32),
-              letterSpacing: fig(0.5),
-              color: '#1a1d17',
-            }}
-          >
-            Choose your estate
-          </h1>
-          <p
-            style={{
-              fontFamily: 'var(--font-hanken)',
-              fontSize: fig(18),
-              lineHeight: fig(29.7),
-              color: '#4f4542',
-            }}
-          >
-            Two terroirs, two rhythms — pick the estate, then the tasting that suits you.
-          </p>
-        </div>
-
-        <div
-          className="inline-flex w-fit items-center rounded-full"
-          style={{ backgroundColor: '#d4ceb9', padding: fig(8), gap: fig(8) }}
-        >
-          {estates.map((estate) => {
-            const active = estate._id === selectedEstate._id
-            return (
-              <button
-                key={estate._id}
-                type="button"
-                onClick={() => selectEstate(estate)}
-                className="cursor-pointer whitespace-nowrap rounded-full transition-colors"
-                style={{
-                  paddingInline: fig(32),
-                  paddingBlock: fig(16),
-                  fontFamily: 'var(--font-hanken)',
-                  fontWeight: 600,
-                  fontSize: fig(16),
-                  backgroundColor: active ? 'var(--color-brand-olive)' : 'transparent',
-                  color: active ? '#fdfcf8' : '#1a1d17',
-                }}
-              >
-                {estateLabel(estate)}
-              </button>
-            )
-          })}
-        </div>
-      </div>
+      {/* Breadcrumb */}
+      <p style={{ fontFamily: 'var(--font-hanken)', fontSize: fig(13), color: '#a8a290' }}>
+        Experiences / <span style={{ color: '#4f4542' }}>{estateLabel(selectedEstate)}</span>
+      </p>
 
       {/* Hero banner */}
       <div className="flex flex-col" style={{ gap: fig(82) }}>
@@ -438,6 +383,62 @@ function EstateSwitcher({
           </div>
         </div>
       )}
+
+      {/* Estate switcher */}
+      <div className="flex flex-col" style={{ gap: fig(16) }}>
+        <div className="flex flex-col" style={{ maxWidth: fig(860), gap: fig(16) }}>
+          <h1
+            className="capitalize"
+            style={{
+              fontFamily: 'var(--font-playfair)',
+              fontWeight: 600,
+              fontSize: fig(32),
+              letterSpacing: fig(0.5),
+              color: '#1a1d17',
+            }}
+          >
+            Choose your estate
+          </h1>
+          <p
+            style={{
+              fontFamily: 'var(--font-hanken)',
+              fontSize: fig(18),
+              lineHeight: fig(29.7),
+              color: '#4f4542',
+            }}
+          >
+            Two terroirs, two rhythms — pick the estate, then the tasting that suits you.
+          </p>
+        </div>
+
+        <div
+          className="inline-flex w-fit items-center rounded-full"
+          style={{ backgroundColor: '#d4ceb9', padding: fig(8), gap: fig(8) }}
+        >
+          {estates.map((estate) => {
+            const active = estate._id === selectedEstate._id
+            return (
+              <button
+                key={estate._id}
+                type="button"
+                onClick={() => selectEstate(estate)}
+                className="cursor-pointer whitespace-nowrap rounded-full transition-colors"
+                style={{
+                  paddingInline: fig(32),
+                  paddingBlock: fig(16),
+                  fontFamily: 'var(--font-hanken)',
+                  fontWeight: 600,
+                  fontSize: fig(16),
+                  backgroundColor: active ? 'var(--color-brand-olive)' : 'transparent',
+                  color: active ? '#fdfcf8' : '#1a1d17',
+                }}
+              >
+                {estateLabel(estate)}
+              </button>
+            )
+          })}
+        </div>
+      </div>
 
       {/* Closing symbol */}
       <div className="flex items-center justify-center overflow-hidden">

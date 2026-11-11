@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { translatable } from '../helpers/translatable'
 import { MdArticle } from 'react-icons/md'
 
 export const blogPost = defineType({
@@ -9,18 +10,19 @@ export const blogPost = defineType({
   groups: [
     { name: 'content', title: 'Content', default: true },
     { name: 'meta', title: 'Publishing' },
-    { name: 'i18n', title: 'Translations' },
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
     // ─── CONTENT ───
-    defineField({
-      name: 'title',
-      title: 'Title',
-      type: 'string',
-      group: 'content',
-      validation: (Rule) => Rule.required().error('Title is required'),
-    }),
+    ...translatable(
+      defineField({
+        name: 'title',
+        title: 'Title',
+        type: 'string',
+        group: 'content',
+        validation: (Rule) => Rule.required().error('Title is required'),
+      })
+    ),
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -32,15 +34,17 @@ export const blogPost = defineType({
       },
       validation: (Rule) => Rule.required().error('Slug is required for the post URL'),
     }),
-    defineField({
-      name: 'excerpt',
-      title: 'Excerpt',
-      type: 'text',
-      rows: 3,
-      group: 'content',
-      description: 'Short summary shown in blog listing and social shares',
-      validation: (Rule) => Rule.required().max(300),
-    }),
+    ...translatable(
+      defineField({
+        name: 'excerpt',
+        title: 'Excerpt',
+        type: 'text',
+        rows: 3,
+        group: 'content',
+        description: 'Short summary shown in blog listing and social shares',
+        validation: (Rule) => Rule.required().max(300),
+      })
+    ),
     defineField({
       name: 'featuredImage',
       title: 'Featured Image',
@@ -48,13 +52,15 @@ export const blogPost = defineType({
       group: 'content',
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: 'body',
-      title: 'Body',
-      type: 'blockContent',
-      group: 'content',
-      validation: (Rule) => Rule.required(),
-    }),
+    ...translatable(
+      defineField({
+        name: 'body',
+        title: 'Body',
+        type: 'blockContent',
+        group: 'content',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
     defineField({
       name: 'categories',
       title: 'Categories',
@@ -75,14 +81,16 @@ export const blogPost = defineType({
     }),
 
     // ─── PUBLISHING ───
-    defineField({
-      name: 'author',
-      title: 'Author',
-      type: 'string',
-      group: 'meta',
-      initialValue: 'HOVAZ Team',
-      validation: (Rule) => Rule.required(),
-    }),
+    ...translatable(
+      defineField({
+        name: 'author',
+        title: 'Author',
+        type: 'string',
+        group: 'meta',
+        initialValue: 'HOVAZ Team',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
     defineField({
       name: 'publishedAt',
       title: 'Publish Date',
@@ -111,21 +119,6 @@ export const blogPost = defineType({
       description: 'Estimated reading time — shown on the post card',
       validation: (Rule) => Rule.min(1).max(60),
     }),
-
-    // ─── TRANSLATIONS ───
-    defineField({
-      name: 'title_i18n',
-      title: 'Title (Translations)',
-      type: 'localizedString',
-      group: 'i18n',
-    }),
-    defineField({
-      name: 'excerpt_i18n',
-      title: 'Excerpt (Translations)',
-      type: 'localizedText',
-      group: 'i18n',
-    }),
-
     // ─── SEO ───
     defineField({
       name: 'seo',

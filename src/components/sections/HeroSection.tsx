@@ -202,9 +202,9 @@ export function HeroSection({
               </h1>
 
               <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap lg:gap-[calc(var(--figma-scale)*16px)]">
-                <Link href="/events" className={`btn-pill ${HERO_BUTTON}`}>
+                <a href="#estates" className={`btn-pill ${HERO_BUTTON}`}>
                   {resolvedCtaText}
-                </Link>
+                </a>
                 <Link href="/wines" className={`btn-pill-outline ${HERO_BUTTON}`}>
                   Explore Our Wines
                 </Link>

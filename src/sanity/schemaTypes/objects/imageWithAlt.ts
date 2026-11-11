@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { translatable } from '../helpers/translatable'
 
 export const imageWithAlt = defineType({
   name: 'imageWithAlt',
@@ -14,18 +15,22 @@ export const imageWithAlt = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: 'alt',
-      title: 'Alt Text',
-      type: 'string',
-      description: 'Describe the image for screen readers and SEO',
-      validation: (Rule) => Rule.required().error('Alt text is required for accessibility'),
-    }),
-    defineField({
-      name: 'caption',
-      title: 'Caption (optional)',
-      type: 'string',
-    }),
+    ...translatable(
+      defineField({
+        name: 'alt',
+        title: 'Alt Text',
+        type: 'string',
+        description: 'Describe the image for screen readers and SEO',
+        validation: (Rule) => Rule.required().error('Alt text is required for accessibility'),
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'caption',
+        title: 'Caption (optional)',
+        type: 'string',
+      })
+    ),
   ],
   preview: {
     select: {

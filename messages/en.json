@@ -1,11 +1,12 @@
 {
   "Navigation": {
     "events": "Events",
-    "experiences": "Experiences",
     "ourWines": "Our Wines",
     "ourStory": "Our Story",
     "newsAwards": "News & Awards",
     "contactUs": "Contact Us",
-    "twoEstates": "Two Estates"
+    "twoLocations": "Two Locations",
+    "proshyan": "Wine Boutique, Proshyan",
+    "dilijan": "Wine Rooms, Dilijan"
   }
 }

@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { translatable } from '../helpers/translatable'
 import { MdLocationOn } from 'react-icons/md'
 
 export const estate = defineType({
@@ -7,28 +8,34 @@ export const estate = defineType({
   type: 'document',
   icon: MdLocationOn,
   fields: [
-    defineField({
-      name: 'name',
-      title: 'Estate Name',
-      type: 'string',
-      description: 'e.g. Proshyan, Dilijan',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'text',
-      rows: 3,
-      description: 'Short description shown on the homepage estate card',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'tagline',
-      title: 'Full Display Name',
-      type: 'string',
-      description:
-        'e.g. "Hovaz Wine Boutique, Proshyan village" — used in the Experiences page location switcher and headings. Falls back to Estate Name if empty.',
-    }),
+    ...translatable(
+      defineField({
+        name: 'name',
+        title: 'Estate Name',
+        type: 'string',
+        description: 'e.g. Proshyan, Dilijan',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'description',
+        title: 'Description',
+        type: 'text',
+        rows: 3,
+        description: 'Short description shown on the homepage estate card',
+        validation: (Rule) => Rule.required(),
+      })
+    ),
+    ...translatable(
+      defineField({
+        name: 'tagline',
+        title: 'Full Display Name',
+        type: 'string',
+        description:
+          'e.g. "Hovaz Wine Boutique, Proshyan village" — used in the Experiences page location switcher and headings. Falls back to Estate Name if empty.',
+      })
+    ),
     defineField({
       name: 'mainImage',
       title: 'Estate Image',
@@ -42,13 +49,15 @@ export const estate = defineType({
       description:
         'Banner image shown on the Experiences page when this estate is selected. Falls back to Estate Image if empty — independent of any tour/experience.',
     }),
-    defineField({
-      name: 'heroHeading',
-      title: 'Experiences Page Hero Heading',
-      type: 'string',
-      description:
-        'Headline shown over the hero image on the Experiences page, e.g. "Evening Among the Vines". Independent of any tour/experience.',
-    }),
+    ...translatable(
+      defineField({
+        name: 'heroHeading',
+        title: 'Experiences Page Hero Heading',
+        type: 'string',
+        description:
+          'Headline shown over the hero image on the Experiences page, e.g. "Evening Among the Vines". Independent of any tour/experience.',
+      })
+    ),
     defineField({
       name: 'gallery',
       title: 'Experiences Page Gallery ("Days with Us" series)',
@@ -68,13 +77,15 @@ export const estate = defineType({
           type: 'object',
           name: 'foodOption',
           fields: [
-            defineField({
-              name: 'name',
-              title: 'Name',
-              type: 'string',
-              description: 'e.g. Lunch — Light',
-              validation: (Rule) => Rule.required(),
-            }),
+            ...translatable(
+              defineField({
+                name: 'name',
+                title: 'Name',
+                type: 'string',
+                description: 'e.g. Lunch — Light',
+                validation: (Rule) => Rule.required(),
+              })
+            ),
             defineField({
               name: 'priceAmd',
               title: 'Price per Portion (AMD)',
@@ -102,25 +113,31 @@ export const estate = defineType({
           type: 'object',
           name: 'menuItem',
           fields: [
-            defineField({
-              name: 'course',
-              title: 'Course',
-              type: 'string',
-              description: 'e.g. First, Second, Dessert',
-            }),
-            defineField({
-              name: 'dish',
-              title: 'Dish',
-              type: 'string',
-              description: 'e.g. Charred eggplant, walnut, pomegranate',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'pairing',
-              title: 'Wine Pairing',
-              type: 'string',
-              description: 'e.g. Paired with Voskehat Estate',
-            }),
+            ...translatable(
+              defineField({
+                name: 'course',
+                title: 'Course',
+                type: 'string',
+                description: 'e.g. First, Second, Dessert',
+              })
+            ),
+            ...translatable(
+              defineField({
+                name: 'dish',
+                title: 'Dish',
+                type: 'string',
+                description: 'e.g. Charred eggplant, walnut, pomegranate',
+                validation: (Rule) => Rule.required(),
+              })
+            ),
+            ...translatable(
+              defineField({
+                name: 'pairing',
+                title: 'Wine Pairing',
+                type: 'string',
+                description: 'e.g. Paired with Voskehat Estate',
+              })
+            ),
             defineField({ name: 'image', title: 'Photo', type: 'imageWithAlt' }),
           ],
           preview: {
@@ -140,10 +157,10 @@ export const estate = defineType({
     }),
     defineField({
       name: 'eventsCount',
-      title: 'Events Count',
+      title: 'Experiences Count',
       type: 'number',
       description:
-        'Number of events hosted at this estate — shown as the large stat on the homepage card',
+        'Number of experiences offered at this estate — shown as the large stat on the homepage card',
       validation: (Rule) => Rule.required().min(0),
     }),
     defineField({
@@ -170,7 +187,7 @@ export const estate = defineType({
     prepare({ title, subtitle, media }) {
       return {
         title: title ?? 'Untitled Estate',
-        subtitle: subtitle ? `${subtitle} events` : undefined,
+        subtitle: subtitle ? `${subtitle} experiences` : undefined,
         media,
       }
     },
