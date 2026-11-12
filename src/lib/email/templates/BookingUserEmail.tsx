@@ -2,6 +2,7 @@
 import { Html, Head, Body, Container, Heading, Text, Hr, Section } from '@react-email/components'
 
 interface BookingUserEmailProps {
+  confirmationCode: string
   name: string
   experienceType: string
   preferredDate: string
@@ -9,6 +10,7 @@ interface BookingUserEmailProps {
 }
 
 export function BookingUserEmail({
+  confirmationCode,
   name,
   experienceType,
   preferredDate,
@@ -54,6 +56,46 @@ export function BookingUserEmail({
             </strong>
             .
           </Text>
+
+          <Section style={{ backgroundColor: '#FFFFFF', padding: '24px', margin: '24px 0 0 0' }}>
+            <Text
+              style={{
+                color: '#8C8279',
+                fontSize: '12px',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                margin: 0,
+              }}
+            >
+              Confirmation number
+            </Text>
+            <Text
+              style={{
+                color: '#2C2C2C',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                letterSpacing: '2px',
+                margin: '4px 0 0 0',
+              }}
+            >
+              {confirmationCode}
+            </Text>
+            <Text
+              style={{
+                color: '#2C2C2C',
+                fontSize: '14px',
+                lineHeight: '1.6',
+                margin: '12px 0 0 0',
+              }}
+            >
+              Need to cancel? Go to{' '}
+              <a href="https://hovazwines.com/booking/cancel" style={{ color: '#6B1F2A' }}>
+                hovazwines.com/booking/cancel
+              </a>{' '}
+              and enter this number with your email. Cancel more than 24 hours before your visit for
+              a full refund.
+            </Text>
+          </Section>
 
           <Section style={{ backgroundColor: '#FFFFFF', padding: '24px', margin: '24px 0' }}>
             <Text

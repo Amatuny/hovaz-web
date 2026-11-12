@@ -30,3 +30,20 @@ export const newsletterRatelimit = new Ratelimit({
   analytics: true,
   prefix: 'hovaz:newsletter',
 })
+
+// Booking lookup / cancellation, per IP: 10 per hour
+export const cancellationRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, '60 m'),
+  analytics: true,
+  prefix: 'hovaz:cancellation',
+})
+
+// Per confirmation code, from any IP: 5 per hour — stops guessing the email
+// for a known code from many addresses
+export const cancellationCodeRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, '60 m'),
+  analytics: true,
+  prefix: 'hovaz:cancellation-code',
+})

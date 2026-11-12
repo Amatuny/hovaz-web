@@ -676,6 +676,10 @@ export function TastingBookingForm({
       preferredTime: time || undefined,
       groupSize: guestCount,
       notes,
+      estate: estateName,
+      experienceName: selected?.label,
+      addOns: foodLines.map((line) => ({ name: line.name, quantity: line.count })),
+      depositAmd: deposit,
       turnstileToken,
     }
 

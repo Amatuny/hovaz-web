@@ -10,9 +10,16 @@ export type Database = {
     Tables: {
       bookings: {
         Row: {
+          add_ons: Json | null
           admin_notes: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          confirmation_code: string
           created_at: string
+          deposit_amd: number | null
           email: string
+          estate: string | null
+          experience_name: string | null
           experience_type: Database['public']['Enums']['experience_type']
           group_size: number
           id: string
@@ -20,13 +27,21 @@ export type Database = {
           notes: string | null
           phone: string
           preferred_date: string
+          preferred_time: string | null
           status: Database['public']['Enums']['booking_status']
           updated_at: string
         }
         Insert: {
+          add_ons?: Json | null
           admin_notes?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          confirmation_code?: string
           created_at?: string
+          deposit_amd?: number | null
           email: string
+          estate?: string | null
+          experience_name?: string | null
           experience_type: Database['public']['Enums']['experience_type']
           group_size: number
           id?: string
@@ -34,13 +49,21 @@ export type Database = {
           notes?: string | null
           phone: string
           preferred_date: string
+          preferred_time?: string | null
           status?: Database['public']['Enums']['booking_status']
           updated_at?: string
         }
         Update: {
+          add_ons?: Json | null
           admin_notes?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          confirmation_code?: string
           created_at?: string
+          deposit_amd?: number | null
           email?: string
+          estate?: string | null
+          experience_name?: string | null
           experience_type?: Database['public']['Enums']['experience_type']
           group_size?: number
           id?: string
@@ -48,6 +71,7 @@ export type Database = {
           notes?: string | null
           phone?: string
           preferred_date?: string
+          preferred_time?: string | null
           status?: Database['public']['Enums']['booking_status']
           updated_at?: string
         }

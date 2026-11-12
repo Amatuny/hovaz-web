@@ -49,6 +49,20 @@ export const bookingSchema = z.object({
 
   notes: z.string().max(1000, 'Notes are too long').optional(),
 
+  // Shown back to the guest when they manage the booking.
+  estate: z.string().trim().max(120).optional(),
+  experienceName: z.string().trim().max(200).optional(),
+  addOns: z
+    .array(
+      z.object({
+        name: z.string().trim().min(1).max(120),
+        quantity: z.number().int().min(1).max(100),
+      })
+    )
+    .max(20)
+    .optional(),
+  depositAmd: z.number().int().min(0).max(100_000_000).optional(),
+
   turnstileToken: z.string().min(1, 'Security check failed — please try again'),
 })
 

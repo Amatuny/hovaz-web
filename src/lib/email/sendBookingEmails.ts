@@ -9,6 +9,7 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 interface BookingEmailData {
   bookingId: string
+  confirmationCode: string
   name: string
   email: string
   phone: string
@@ -25,6 +26,7 @@ export async function sendBookingEmails(data: BookingEmailData) {
   const [adminHtml, userHtml] = await Promise.all([
     render(
       BookingAdminEmail({
+        confirmationCode: data.confirmationCode,
         name: data.name,
         email: data.email,
         phone: data.phone,
@@ -36,6 +38,7 @@ export async function sendBookingEmails(data: BookingEmailData) {
     ),
     render(
       BookingUserEmail({
+        confirmationCode: data.confirmationCode,
         name: data.name,
         experienceType: data.experienceType,
         preferredDate: data.preferredDate,
@@ -49,7 +52,7 @@ export async function sendBookingEmails(data: BookingEmailData) {
     resend.emails.send({
       from: fromEmail,
       to: adminEmail,
-      subject: `New Booking Inquiry — ${data.experienceType.replace(/_/g, ' ')}`,
+      subject: `New Booking Inquiry ${data.confirmationCode} — ${data.experienceType.replace(/_/g, ' ')}`,
       html: adminHtml,
     }),
     resend.emails.send({
