@@ -13,6 +13,7 @@ import {
 } from '@react-email/components'
 
 interface BookingAdminEmailProps {
+  confirmationCode: string
   name: string
   email: string
   phone: string
@@ -23,6 +24,7 @@ interface BookingAdminEmailProps {
 }
 
 export function BookingAdminEmail({
+  confirmationCode,
   name,
   email,
   phone,
@@ -56,6 +58,28 @@ export function BookingAdminEmail({
 
           {/* Booking details */}
           <Section style={{ backgroundColor: '#FFFFFF', padding: '24px' }}>
+            <Row style={{ marginBottom: '16px' }}>
+              <Column style={{ width: '40%' }}>
+                <Text
+                  style={{
+                    color: '#8C8279',
+                    fontSize: '11px',
+                    letterSpacing: '1px',
+                    textTransform: 'uppercase',
+                    margin: 0,
+                  }}
+                >
+                  Confirmation
+                </Text>
+              </Column>
+              <Column>
+                <Text style={{ color: '#2C2C2C', fontSize: '16px', fontWeight: 'bold', margin: 0 }}>
+                  {confirmationCode}
+                </Text>
+              </Column>
+            </Row>
+            <Hr style={{ borderColor: '#F0E6E6', margin: '12px 0' }} />
+
             <Row style={{ marginBottom: '16px' }}>
               <Column style={{ width: '40%' }}>
                 <Text

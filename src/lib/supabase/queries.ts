@@ -50,6 +50,49 @@ export async function findDuplicateBooking({
   )
 }
 
+// The booking only if both the code and the email match — callers must not be
+// able to tell which of the two was wrong.
+export async function findBookingByConfirmation(confirmationCode: string, email: string) {
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*')
+    .eq('confirmation_code', confirmationCode)
+    .maybeSingle()
+
+  if (error) throw new Error(`Failed to look up booking: ${error.message}`)
+  if (!data || data.email.trim().toLowerCase() !== email.trim().toLowerCase()) return null
+  return data
+}
+
+// Cancels only if the booking is still active, so two simultaneous requests
+// can't both succeed. Returns null when nothing was updated.
+export async function cancelBookingByGuest(id: string, adminNote: string, reason: string | null) {
+  const supabase = createAdminClient()
+  const { data: current, error: readError } = await supabase
+    .from('bookings')
+    .select('admin_notes')
+    .eq('id', id)
+    .single()
+  if (readError) throw new Error(`Failed to read booking: ${readError.message}`)
+
+  const { data, error } = await supabase
+    .from('bookings')
+    .update({
+      status: 'cancelled',
+      cancelled_at: new Date().toISOString(),
+      cancellation_reason: reason,
+      admin_notes: [current.admin_notes, adminNote].filter(Boolean).join('\n'),
+    })
+    .eq('id', id)
+    .in('status', ['pending', 'confirmed'])
+    .select()
+    .maybeSingle()
+
+  if (error) throw new Error(`Failed to cancel booking: ${error.message}`)
+  return data
+}
+
 export async function getBookings(status?: Database['public']['Enums']['booking_status']) {
   const supabase = createAdminClient()
   let query = supabase.from('bookings').select('*').order('created_at', { ascending: false })

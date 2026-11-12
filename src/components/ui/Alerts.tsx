@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import Link from 'next/link'
 import { fig } from '@/lib/figmaScale'
 
 // Shared booking alerts from the Figma "alerts" frame:
@@ -274,6 +275,67 @@ export function AlertModal({ open, title, message, actions, onClose }: AlertModa
             </button>
           )
         )}
+      </div>
+    </OverlayCard>
+  )
+}
+
+// ─── Centered result card (e.g. "Your reservation is cancelled.") ───
+
+interface ResultModalProps {
+  open: boolean
+  title: string
+  message: string
+  action: { label: string; href: string }
+  // Escape key; there's no × in this design.
+  onClose: () => void
+}
+
+export function ResultModal({ open, title, message, action, onClose }: ResultModalProps) {
+  if (!open || typeof document === 'undefined') return null
+  return (
+    <OverlayCard
+      role="alertdialog"
+      labelledBy="result-modal-title"
+      describedBy="result-modal-message"
+      onEscape={onClose}
+      maxWidth={500}
+    >
+      <div className="flex w-full flex-col items-center text-center" style={{ gap: fig(24) }}>
+        <h2
+          id="result-modal-title"
+          style={{ ...titleStyle, fontSize: 'max(22px, calc(var(--figma-scale) * 28px))' }}
+        >
+          {title}
+        </h2>
+        <p
+          id="result-modal-message"
+          style={{
+            ...messageStyle,
+            fontSize: 'max(13px, calc(var(--figma-scale) * 14px))',
+            lineHeight: 1.85,
+            maxWidth: 'max(300px, calc(var(--figma-scale) * 400px))',
+          }}
+        >
+          {message}
+        </p>
+        <Link
+          href={action.href}
+          data-autofocus
+          className="flex items-center justify-center rounded-full text-white transition-colors hover:bg-[#1f281b]"
+          style={{
+            marginTop: fig(4),
+            backgroundColor: '#2e3a28',
+            height: 'max(44px, calc(var(--figma-scale) * 48px))',
+            paddingInline: 'max(40px, calc(var(--figma-scale) * 64px))',
+            fontFamily: 'var(--font-hanken)',
+            fontWeight: 600,
+            fontSize: 'max(15px, calc(var(--figma-scale) * 16px))',
+            letterSpacing: fig(2),
+          }}
+        >
+          {action.label}
+        </Link>
       </div>
     </OverlayCard>
   )

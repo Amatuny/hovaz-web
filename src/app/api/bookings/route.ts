@@ -68,6 +68,10 @@ export async function POST(request: Request) {
     preferredTime,
     groupSize,
     notes,
+    estate,
+    experienceName,
+    addOns,
+    depositAmd,
     turnstileToken,
   } = result.data
 
@@ -118,8 +122,13 @@ export async function POST(request: Request) {
       phone,
       experience_type: experienceType as never,
       preferred_date: preferredDate,
+      preferred_time: preferredTime ?? null,
       group_size: groupSize,
       notes: notes ?? null,
+      estate: estate ?? null,
+      experience_name: experienceName ?? null,
+      add_ons: addOns?.length ? addOns : null,
+      deposit_amd: depositAmd ?? null,
       status: 'pending',
     })
     logger.info('Booking created', {
@@ -139,6 +148,7 @@ export async function POST(request: Request) {
   try {
     await sendBookingEmails({
       bookingId: booking.id,
+      confirmationCode: booking.confirmation_code,
       name,
       email,
       phone,
@@ -158,6 +168,7 @@ export async function POST(request: Request) {
       success: true,
       message: 'Booking inquiry received. We will contact you within 24 hours.',
       bookingId: booking.id,
+      confirmationCode: booking.confirmation_code,
     },
     { status: 201 }
   )

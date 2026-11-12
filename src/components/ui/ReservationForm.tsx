@@ -110,6 +110,8 @@ export function ReservationForm({
       preferredDate: fixedDate ?? preferredDate,
       groupSize: guestCount,
       notes: (formData.get('notes') as string) || undefined,
+      estate: location,
+      experienceName: experienceTitle,
       turnstileToken,
     }
 
