@@ -52,7 +52,7 @@ export function WinePreview({ wines }: WinePreviewProps) {
           slowly.
         </p>
 
-        <DragScroll className="flex gap-4 pb-2 snap-x snap-mandatory">
+        <DragScroll arrows className="flex gap-4 pb-2 snap-x snap-mandatory">
           {wines.map((wine) => (
             <div key={wine._id} className="shrink-0 snap-start" style={{ width: '250px' }}>
               <WineCard wine={wine} />
