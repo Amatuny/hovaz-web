@@ -184,6 +184,20 @@ export async function getUpcomingEvents(): Promise<Event[]> {
   `)
 }
 
+// The single soonest upcoming event — featured on the 404 page's "Next Up" card.
+export async function getNextUpcomingEvent(): Promise<Event | null> {
+  return client.fetch(
+    `
+    *[_type == "event" && status == "upcoming" && startDate >= $now] | order(startDate asc) [0] {
+      _id, title, slug, startDate, location,
+      "mainImage": mainImage{${IMAGE_FIELDS}},
+      "estate": estate->{_id, name}
+    }
+  `,
+    { now: new Date().toISOString() }
+  )
+}
+
 // Mixes upcoming and recently-completed events for the homepage journal strip,
 // where past events are shown alongside what's coming next.
 export async function getJournalEvents(): Promise<Event[]> {
