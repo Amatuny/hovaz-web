@@ -8,8 +8,23 @@ import { urlFor } from '@/lib/sanity/image'
 import { fig } from '@/lib/figmaScale'
 import { formatNewsMonth, newsCategoryLabel, newsHref } from '@/lib/news'
 import type { NewsItem } from '@/types/sanity'
+import { NEWS_DEFAULTS, type NewsCardLabels } from '@/content/defaults'
 
-export function NewsStoryCard({ item, priority = false }: { item: NewsItem; priority?: boolean }) {
+const DEFAULT_LABELS: NewsCardLabels = {
+  card: NEWS_DEFAULTS.card,
+  categories: NEWS_DEFAULTS.categories,
+}
+
+export function NewsStoryCard({
+  item,
+  priority = false,
+  labels = DEFAULT_LABELS,
+}: {
+  item: NewsItem
+  priority?: boolean
+  /** From News & Awards Page → Cards & Categories; built-in labels when omitted */
+  labels?: NewsCardLabels
+}) {
   const month = formatNewsMonth(item.date)
 
   return (
@@ -48,7 +63,7 @@ export function NewsStoryCard({ item, priority = false }: { item: NewsItem; prio
             color: '#fdfcf8',
           }}
         >
-          {newsCategoryLabel(item)}
+          {newsCategoryLabel(item, labels.categories)}
         </span>
         {month && (
           <time
@@ -98,7 +113,7 @@ export function NewsStoryCard({ item, priority = false }: { item: NewsItem; prio
             color: 'var(--color-brand-olive)',
           }}
         >
-          Learn More →
+          {labels.card.learnMore} →
         </Link>
       </div>
     </article>

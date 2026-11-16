@@ -9,10 +9,25 @@ import { urlFor } from '@/lib/sanity/image'
 import { fig } from '@/lib/figmaScale'
 import { newsCategoryLabel, newsHref, newsYear } from '@/lib/news'
 import type { NewsItem } from '@/types/sanity'
+import { NEWS_DEFAULTS, type NewsCardLabels } from '@/content/defaults'
 
-export function NewsCard({ item }: { item: NewsItem }) {
+const DEFAULT_LABELS: NewsCardLabels = {
+  card: NEWS_DEFAULTS.card,
+  categories: NEWS_DEFAULTS.categories,
+}
+
+export function NewsCard({
+  item,
+  labels = DEFAULT_LABELS,
+}: {
+  item: NewsItem
+  /** From News & Awards Page → Cards & Categories; built-in labels when omitted */
+  labels?: NewsCardLabels
+}) {
   const href = newsHref(item)
-  const label = [newsCategoryLabel(item), newsYear(item)].filter(Boolean).join(' · ')
+  const label = [newsCategoryLabel(item, labels.categories), newsYear(item)]
+    .filter(Boolean)
+    .join(' · ')
 
   const content = (
     <>
@@ -82,7 +97,7 @@ export function NewsCard({ item }: { item: NewsItem }) {
           <div className="overflow-hidden">
             <Link
               href={href}
-              aria-label={`Learn more: ${item.title}`}
+              aria-label={`${labels.card.learnMore}: ${item.title}`}
               className="inline-flex items-center border-b-2 border-white transition-colors duration-300 hover:border-[#bdbdbd] hover:text-[#bdbdbd]"
               style={{
                 marginTop: fig(16),
@@ -95,7 +110,7 @@ export function NewsCard({ item }: { item: NewsItem }) {
                 letterSpacing: fig(1.5),
               }}
             >
-              Learn More <span aria-hidden="true">→</span>
+              {labels.card.learnMore} <span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>

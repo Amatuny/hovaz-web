@@ -5,13 +5,16 @@ import { blockContent } from './objects/blockContent'
 import { wine } from './documents/wine'
 import { tour } from './documents/tour'
 import { event } from './documents/event'
-import { blogPost } from './documents/blogPost'
 import { siteSettings } from './documents/siteSettings'
-import { page } from './documents/page'
 import { faqItem } from './documents/faqItem'
 import { newsItem } from './documents/newsItem'
 import { estate } from './documents/estate'
 import { testimonial } from './documents/testimonial'
+import { winesPage } from './documents/winesPage'
+import { eventsPage } from './documents/eventsPage'
+import { ourStoryPage } from './documents/ourStoryPage'
+import { newsPage } from './documents/newsPage'
+import { contactPage } from './documents/contactPage'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   imageWithAlt,
@@ -20,11 +23,14 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   wine,
   tour,
   event,
-  blogPost,
   siteSettings,
-  page,
   faqItem,
   newsItem,
   estate,
   testimonial,
+  winesPage,
+  eventsPage,
+  ourStoryPage,
+  newsPage,
+  contactPage,
 ]

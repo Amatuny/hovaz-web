@@ -1,17 +1,18 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { getAllWines } from '@/lib/sanity/queries'
+import { getAllWines, getWinesPage } from '@/lib/sanity/queries'
 import { WineCard } from '@/components/ui/WineCard'
+import { WINES_DEFAULTS } from '@/content/defaults'
+import { currentLocale, resolveWinesContent, seoToMetadata } from '@/lib/sanity/pageContent'
 
-export const metadata: Metadata = {
-  title: 'Our Wines',
-  description:
-    'Discover the HOVAZ wine collection — expressions of Armenian terroir crafted from indigenous grape varieties, across the Hovaz and Gooneh lines.',
-  openGraph: {
-    title: 'Our Wines — HOVAZ',
-    description: 'Discover the HOVAZ wine collection.',
+// Texts and SEO are edited in Studio → Pages → Our Wines Page
+export async function generateMetadata(): Promise<Metadata> {
+  const [doc, locale] = await Promise.all([getWinesPage(), currentLocale()])
+  return seoToMetadata(doc?.seo, locale, {
+    title: WINES_DEFAULTS.seo.metaTitle,
+    description: WINES_DEFAULTS.seo.metaDescription,
     url: 'https://hovazwines.com/wines',
-  },
+  })
 }
 
 export const revalidate = 3600
@@ -79,7 +80,7 @@ function SectionHeader({
   )
 }
 
-function ComingSoon() {
+function ComingSoon({ text }: { text: string }) {
   return (
     <p
       style={{
@@ -89,13 +90,14 @@ function ComingSoon() {
         color: 'var(--color-brand-stone)',
       }}
     >
-      Coming soon.
+      {text}
     </p>
   )
 }
 
 export default async function WinesPage() {
-  const wines = await getAllWines()
+  const [wines, doc, locale] = await Promise.all([getAllWines(), getWinesPage(), currentLocale()])
+  const t = resolveWinesContent(doc, locale)
 
   const hovazWines = wines.filter((w) => (w.collection ?? 'hovaz') === 'hovaz')
   const goonehWines = wines.filter((w) => w.collection === 'gooneh')
@@ -105,36 +107,36 @@ export default async function WinesPage() {
       <div className="container-content flex flex-col gap-10 pt-12 pb-12 lg:gap-[82px] lg:pb-[82px]">
         <SectionHeader
           as="h1"
-          eyebrow="The Cellar"
+          eyebrow={t.list.eyebrow}
           eyebrowColor="rgba(93,110,82,0.92)"
-          heading="Wines of the Valley"
-          paragraph="Estate-grown across Vayots Dzor, Aragatsotn and the Ararat Valley — small lots, made slowly."
+          heading={t.list.heading}
+          paragraph={t.list.text}
           paragraphSize="13px"
           paragraphLineHeight="20px"
           headingTracking="0.3px"
         />
 
         {wines.length === 0 ? (
-          <ComingSoon />
+          <ComingSoon text={t.list.comingSoon} />
         ) : (
           <>
             {/* Hovaz Collection */}
             <div className="flex flex-col gap-8 lg:gap-12">
               <SectionHeader
-                eyebrow="Elegant · Characterful · Structured"
+                eyebrow={t.hovaz.eyebrow}
                 eyebrowColor="#8a9572"
-                heading="Hovaz Collection"
-                paragraph="Our signature wines, made from Armenian grape varieties and created for discovery, good food and special moments."
+                heading={t.hovaz.heading}
+                paragraph={t.hovaz.text}
               />
 
               {hovazWines.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {hovazWines.map((wine) => (
-                    <WineCard key={wine._id} wine={wine} />
+                    <WineCard key={wine._id} wine={wine} labels={t.cards} />
                   ))}
                 </div>
               ) : (
-                <ComingSoon />
+                <ComingSoon text={t.list.comingSoon} />
               )}
             </div>
 
@@ -152,20 +154,20 @@ export default async function WinesPage() {
             {/* Gooneh Collection */}
             <div className="flex flex-col gap-8 lg:gap-12">
               <SectionHeader
-                eyebrow="Fresh · Fruity · Playful"
+                eyebrow={t.gooneh.eyebrow}
                 eyebrowColor="#8a9572"
-                heading="Gooneh Collection"
-                paragraph="Easy-going wines made for relaxed moments, parties, picnics and spontaneous gatherings."
+                heading={t.gooneh.heading}
+                paragraph={t.gooneh.text}
               />
 
               {goonehWines.length > 0 ? (
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {goonehWines.map((wine) => (
-                    <WineCard key={wine._id} wine={wine} />
+                    <WineCard key={wine._id} wine={wine} labels={t.cards} />
                   ))}
                 </div>
               ) : (
-                <ComingSoon />
+                <ComingSoon text={t.list.comingSoon} />
               )}
             </div>
 

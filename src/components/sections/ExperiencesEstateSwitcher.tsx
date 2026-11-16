@@ -7,7 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
 import { fig } from '@/lib/figmaScale'
-import { estateKey } from '@/lib/estates'
+import { estateKey, findEstate } from '@/lib/estates'
 import type { Estate, Tour } from '@/types/sanity'
 
 interface ExperiencesEstateSwitcherProps {
@@ -76,7 +76,7 @@ function EstateSwitcher({
   tours,
   selectedKey,
 }: ExperiencesEstateSwitcherProps & { selectedKey?: string | null }) {
-  const selectedEstate = estates.find((e) => estateKey(e) === selectedKey) ?? estates[0]
+  const selectedEstate = findEstate(estates, selectedKey) ?? estates[0]
 
   const estateTours = useMemo(
     () => tours.filter((tour) => tour.estate?._id === selectedEstate?._id),

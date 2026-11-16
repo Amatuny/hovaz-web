@@ -6,10 +6,26 @@ import { MoreStoriesCarousel } from '@/components/sections/MoreStoriesCarousel'
 import { NewsStoryCard } from '@/components/ui/NewsStoryCard'
 import { Ornament } from '@/components/ui/Ornament'
 import type { NewsItem } from '@/types/sanity'
+import { NEWS_DEFAULTS } from '@/content/defaults'
+import type { NewsContent } from '@/lib/sanity/pageContent'
 
 const FEATURED_COUNT = 3
 
-export function NewsAwards({ news }: { news: NewsItem[] }) {
+const DEFAULT_CONTENT: NewsContent = {
+  list: NEWS_DEFAULTS.list,
+  awards: NEWS_DEFAULTS.awards,
+  stories: NEWS_DEFAULTS.stories,
+  cards: { card: NEWS_DEFAULTS.card, categories: NEWS_DEFAULTS.categories },
+}
+
+export function NewsAwards({
+  news,
+  content: t = DEFAULT_CONTENT,
+}: {
+  news: NewsItem[]
+  /** From Studio → Pages → News & Awards Page */
+  content?: NewsContent
+}) {
   const awards = news.filter((item) => item.category === 'award')
   const stories = news.filter((item) => item.category !== 'award')
 
@@ -36,7 +52,7 @@ export function NewsAwards({ news }: { news: NewsItem[] }) {
               color: 'rgba(93,110,82,0.92)',
             }}
           >
-            Journal
+            {t.list.eyebrow}
           </p>
           <h1
             style={{
@@ -47,7 +63,7 @@ export function NewsAwards({ news }: { news: NewsItem[] }) {
               color: '#1a1d17',
             }}
           >
-            News &amp; Awards
+            {t.list.heading}
           </h1>
         </div>
 
@@ -59,11 +75,11 @@ export function NewsAwards({ news }: { news: NewsItem[] }) {
               color: 'var(--color-brand-stone)',
             }}
           >
-            News coming soon.
+            {t.list.empty}
           </p>
         )}
 
-        {awards.length > 0 && <AwardsRecognition awards={awards} />}
+        {awards.length > 0 && <AwardsRecognition awards={awards} texts={t.awards} />}
 
         {featured.length > 0 && (
           <div
@@ -71,14 +87,20 @@ export function NewsAwards({ news }: { news: NewsItem[] }) {
             style={{ maxWidth: fig(1200), gap: fig(64) }}
           >
             {featured.map((item, index) => (
-              <NewsStoryCard key={item._id} item={item} priority={index === 0} />
+              <NewsStoryCard key={item._id} item={item} priority={index === 0} labels={t.cards} />
             ))}
           </div>
         )}
 
         {news.length > 0 && <Ornament variant="vine" />}
 
-        {moreStories.length > 0 && <MoreStoriesCarousel items={moreStories} />}
+        {moreStories.length > 0 && (
+          <MoreStoriesCarousel
+            items={moreStories}
+            heading={t.stories.moreHeading}
+            cardLabels={t.cards}
+          />
+        )}
 
         <Ornament variant="symbol" />
       </div>

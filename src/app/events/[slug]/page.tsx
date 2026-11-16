@@ -6,7 +6,10 @@ import {
   getAllEventSlugs,
   getAllTours,
   getJournalEvents,
+  getEventsPage,
 } from '@/lib/sanity/queries'
+import { currentLocale, resolveEventsContent, seoToMetadata } from '@/lib/sanity/pageContent'
+import type { TextSource } from '@/lib/sanity/localize'
 import { urlFor } from '@/lib/sanity/image'
 import { ExperienceDetail } from '@/components/sections/ExperienceDetail'
 import { buildJournalCards } from '@/lib/journal'
@@ -24,20 +27,17 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const event = await getEventBySlug(slug)
+  const [event, locale] = await Promise.all([getEventBySlug(slug), currentLocale()])
   if (!event) return {}
 
-  return {
+  // The event's own SEO fields (Events → SEO tab) win; otherwise title + description
+  return seoToMetadata(event.seo as TextSource | undefined, locale, {
     title: event.title,
     description: event.description,
-    openGraph: {
-      title: `${event.title} — HOVAZ`,
-      description: event.description ?? '',
-      images: event.mainImage?.asset?._ref
-        ? [urlFor(event.mainImage).width(1200).height(630).url()]
-        : [],
-    },
-  }
+    image: event.mainImage?.asset?._ref
+      ? urlFor(event.mainImage).width(1200).height(630).url()
+      : undefined,
+  })
 }
 
 export const revalidate = 3600
@@ -76,7 +76,14 @@ export default async function EventDetailPage({ params }: Props) {
     notFound()
   }
 
-  const [tours, journalEvents] = await Promise.all([getAllTours(), getJournalEvents()])
+  const [tours, journalEvents, doc, locale] = await Promise.all([
+    getAllTours(),
+    getJournalEvents(),
+    getEventsPage(),
+    currentLocale(),
+  ])
+  // Fixed texts — Studio → Pages → Events Page
+  const t = resolveEventsContent(doc, locale)
 
   const journalCards = buildJournalCards(tours, journalEvents).filter((card) => card.slug !== slug)
 
@@ -86,8 +93,10 @@ export default async function EventDetailPage({ params }: Props) {
 
   const typeBadge = event.eventType?.replace(/_/g, ' ')
 
-  const estateBadge = event.estate?.name ? `${event.estate.name} Estate` : undefined
-  const location = event.location ?? 'HOVAZ Wine Rooms'
+  const estateBadge = event.estate?.name
+    ? `${event.estate.name} ${t.detail.estateSuffix}`.trim()
+    : undefined
+  const location = event.location ?? t.detail.defaultLocation
 
   const dateLocationLabel = event.startDate
     ? `${formatBannerDate(event.startDate)} — ${location}`
@@ -116,9 +125,13 @@ export default async function EventDetailPage({ params }: Props) {
               fixedDate: event.startDate,
               minGuests: 1,
               maxGuests: event.capacity ?? 12,
-              ctaText: event.ctaText ?? 'Reserve Your Seat',
+              // Event's own button text, else Events Page → Reservation Form
+              ctaText: event.ctaText,
             }}
             journalCards={journalCards}
+            labels={t.detail}
+            formLabels={t.form}
+            cardLabels={t.cards}
           />
         </div>
       </div>

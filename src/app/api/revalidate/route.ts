@@ -67,23 +67,10 @@ export async function POST(request: Request) {
         revalidatePath('/')
         break
 
-      case 'blogPost':
-        revalidatePath('/')
-        if (slug) revalidatePath(`/blog/${slug}`)
-        break
-
       case 'newsItem':
         revalidatePath('/news')
-        revalidatePath('/news/awards')
-        revalidatePath('/news/press')
-        revalidatePath('/news/brand-news')
         // Every article shows "Up Next" and "More Stories" from the other items.
         revalidatePath('/news/[slug]', 'page')
-        break
-
-      case 'page':
-        // The only page document left is Our Story, shown on the homepage.
-        revalidatePath('/')
         break
 
       case 'faqItem':
@@ -92,6 +79,23 @@ export async function POST(request: Request) {
 
       case 'siteSettings':
         // Site settings affect every page
+        revalidatePath('/', 'layout')
+        break
+
+      case 'ourStoryPage':
+        revalidatePath('/about/our-story')
+        break
+
+      case 'contactPage':
+        revalidatePath('/contact/form')
+        revalidatePath('/contact/faq')
+        revalidatePath('/contact/agencies')
+        break
+
+      case 'winesPage':
+      case 'eventsPage':
+      case 'newsPage':
+        // Wine/event card labels also show on the homepage and other pages
         revalidatePath('/', 'layout')
         break
 

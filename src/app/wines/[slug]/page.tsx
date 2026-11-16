@@ -3,7 +3,9 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getWineBySlug, getAllWineSlugs, getOtherWines } from '@/lib/sanity/queries'
+import { getWineBySlug, getAllWineSlugs, getOtherWines, getWinesPage } from '@/lib/sanity/queries'
+import { currentLocale, resolveWinesContent, seoToMetadata } from '@/lib/sanity/pageContent'
+import type { TextSource } from '@/lib/sanity/localize'
 import { urlFor } from '@/lib/sanity/image'
 import { WineCard } from '@/components/ui/WineCard'
 import { JsonLd } from '@/components/sanity/JsonLd'
@@ -21,32 +23,20 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const wine = await getWineBySlug(slug)
+  const [wine, locale] = await Promise.all([getWineBySlug(slug), currentLocale()])
   if (!wine) return {}
 
-  return {
+  // The wine's own SEO fields (Wines → SEO tab) win; otherwise name + description
+  return seoToMetadata(wine.seo as TextSource | undefined, locale, {
     title: `${wine.name} ${wine.vintage ?? ''}`.trim(),
     description: wine.description ?? wine.tastingNotes,
-    openGraph: {
-      title: `${wine.name} — HOVAZ`,
-      description: wine.description ?? '',
-      images: wine.mainImage?.asset?._ref
-        ? [urlFor(wine.mainImage).width(1200).height(630).url()]
-        : [],
-    },
-  }
+    image: wine.mainImage?.asset?._ref
+      ? urlFor(wine.mainImage).width(1200).height(630).url()
+      : undefined,
+  })
 }
 
 export const revalidate = 3600
-
-const styleLabels: Record<string, string> = {
-  red: 'Red, Dry',
-  white: 'White, Dry',
-  rose: 'Rosé, Dry',
-  sparkling: 'White, Sparkling',
-  orange: 'Orange, Dry',
-  dessert: 'Dessert, Sweet',
-}
 
 function formatEventDateTime(startDate?: string) {
   if (!startDate) return undefined
@@ -89,11 +79,21 @@ function MetaField({ label, value }: { label: string; value?: string }) {
 
 export default async function WineDetailPage({ params }: Props) {
   const { slug } = await params
-  const wine = await getWineBySlug(slug)
+  const [wine, doc, locale] = await Promise.all([
+    getWineBySlug(slug),
+    getWinesPage(),
+    currentLocale(),
+  ])
   if (!wine) notFound()
 
+  // Fixed labels — Studio → Pages → Our Wines Page → Wine Detail Page
+  const content = resolveWinesContent(doc, locale)
+  const t = content.detail
+
   const otherWines = await getOtherWines(slug)
-  const styleLabel = wine.wineType ? styleLabels[wine.wineType] : undefined
+  const wineTypes: Record<string, string> = content.cards.wineTypes
+  // Same label as the cards, written "Red, Dry" instead of "Red · Dry"
+  const styleLabel = wine.wineType ? wineTypes[wine.wineType]?.replace(/\s*·\s*/g, ', ') : undefined
   const upcomingEvents = (wine.relatedEvents ?? [])
     .filter((event) => event.status === 'upcoming')
     .slice(0, 3)
@@ -109,7 +109,7 @@ export default async function WineDetailPage({ params }: Props) {
           style={{ fontFamily: 'var(--font-hanken)', fontSize: '12px', color: '#79726d' }}
         >
           <Link href="/wines" className="hover:underline">
-            Wines
+            {t.breadcrumb}
           </Link>
           <span>/</span>
           <span style={{ color: '#2e3a28' }}>{wine.name}</span>
@@ -197,7 +197,7 @@ export default async function WineDetailPage({ params }: Props) {
               >
                 {wine.pairWith?.length ? (
                   <p>
-                    <span style={{ fontWeight: 600, fontStyle: 'italic' }}>PAIR WITH </span>
+                    <span style={{ fontWeight: 600, fontStyle: 'italic' }}>{t.pairWithLabel} </span>
                     <span style={{ fontWeight: 400, fontStyle: 'italic' }}>
                       {wine.pairWith.join(' · ')}
                     </span>
@@ -205,7 +205,9 @@ export default async function WineDetailPage({ params }: Props) {
                 ) : null}
                 {wine.perfectFor?.length ? (
                   <p>
-                    <span style={{ fontWeight: 600, fontStyle: 'italic' }}>PERFECT FOR — </span>
+                    <span style={{ fontWeight: 600, fontStyle: 'italic' }}>
+                      {t.perfectForLabel}{' '}
+                    </span>
                     <span style={{ fontWeight: 400, fontStyle: 'italic' }}>
                       {wine.perfectFor.join(' · ')}
                     </span>
@@ -218,12 +220,12 @@ export default async function WineDetailPage({ params }: Props) {
               className="grid grid-cols-2 gap-x-4 gap-y-3 border-y py-4"
               style={{ borderColor: 'rgba(26,29,23,0.1)' }}
             >
-              <MetaField label="Aging" value={wine.agingNotes} />
-              <MetaField label="Bottle Size" value={wine.bottleSize} />
-              <MetaField label="Vintage" value={wine.vintage?.toString()} />
-              <MetaField label="Region" value={wine.region} />
-              <MetaField label="Varietal" value={wine.grapeVariety} />
-              <MetaField label="Style" value={styleLabel} />
+              <MetaField label={t.agingLabel} value={wine.agingNotes} />
+              <MetaField label={t.bottleSizeLabel} value={wine.bottleSize} />
+              <MetaField label={t.vintageLabel} value={wine.vintage?.toString()} />
+              <MetaField label={t.regionLabel} value={wine.region} />
+              <MetaField label={t.varietalLabel} value={wine.grapeVariety} />
+              <MetaField label={t.styleLabel} value={styleLabel} />
             </div>
 
             {upcomingEvents.length > 0 && (
@@ -239,7 +241,7 @@ export default async function WineDetailPage({ params }: Props) {
                       color: 'rgba(93,110,82,0.92)',
                     }}
                   >
-                    Taste It At
+                    {t.eventsEyebrow}
                   </p>
                   <h2
                     className="capitalize"
@@ -252,7 +254,7 @@ export default async function WineDetailPage({ params }: Props) {
                       lineHeight: 1.15,
                     }}
                   >
-                    Upcoming events pouring this wine
+                    {t.eventsHeading}
                   </h2>
                 </div>
 
@@ -321,7 +323,7 @@ export default async function WineDetailPage({ params }: Props) {
                       letterSpacing: '1.5px',
                     }}
                   >
-                    Reserve Your Seat
+                    {t.eventsButton}
                   </span>
                 </Link>
               </div>
@@ -389,7 +391,7 @@ export default async function WineDetailPage({ params }: Props) {
                     color: '#e5987d',
                   }}
                 >
-                  The Grape
+                  {t.grapeLabel}
                 </p>
                 {wine.grapeVariety && (
                   <p
@@ -443,7 +445,7 @@ export default async function WineDetailPage({ params }: Props) {
                     color: '#e5987d',
                   }}
                 >
-                  How We Decided
+                  {t.howWeDecidedLabel}
                 </p>
                 {wine.howWeDecidedTitle && (
                   <p
@@ -514,7 +516,7 @@ export default async function WineDetailPage({ params }: Props) {
                   color: 'rgba(93,110,82,0.92)',
                 }}
               >
-                The Cellar
+                {t.moreEyebrow}
               </p>
               <h2
                 className="capitalize"
@@ -526,7 +528,7 @@ export default async function WineDetailPage({ params }: Props) {
                   lineHeight: 1.15,
                 }}
               >
-                Wines of the Valley
+                {t.moreHeading}
               </h2>
               <p
                 style={{
@@ -536,15 +538,14 @@ export default async function WineDetailPage({ params }: Props) {
                   color: '#4f4542',
                 }}
               >
-                Estate-grown across Vayots Dzor, Aragatsotn and the Ararat Valley — small lots, made
-                slowly.
+                {t.moreText}
               </p>
             </div>
 
             <DragScroll className="flex gap-6 pb-2">
               {otherWines.map((otherWine) => (
                 <div key={otherWine._id} className="w-[240px] shrink-0 sm:w-[280px]">
-                  <WineCard wine={otherWine} />
+                  <WineCard wine={otherWine} labels={content.cards} />
                 </div>
               ))}
             </DragScroll>
@@ -561,7 +562,7 @@ export default async function WineDetailPage({ params }: Props) {
                 color: '#2e3a28',
               }}
             >
-              Explore the Cellar
+              {t.moreLink}
               <Image src="/wines/explore-arrow.svg" alt="" width={15} height={7} />
             </Link>
           </div>

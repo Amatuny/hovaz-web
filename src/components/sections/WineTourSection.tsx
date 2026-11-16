@@ -2,12 +2,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
 import type { SanityImage } from '@/types/sanity'
+import { HOME_DEFAULTS } from '@/content/defaults'
 
 interface WineTourSectionProps {
   images: SanityImage[]
+  texts?: typeof HOME_DEFAULTS.wineTour
 }
 
-export function WineTourSection({ images }: WineTourSectionProps) {
+export function WineTourSection({ images, texts = HOME_DEFAULTS.wineTour }: WineTourSectionProps) {
   if (!images?.length) return null
 
   const [large, ...rest] = images
@@ -26,7 +28,7 @@ export function WineTourSection({ images }: WineTourSectionProps) {
             color: 'rgba(93,110,82,0.92)',
           }}
         >
-          Wine Experience
+          {texts.eyebrow}
         </p>
         <h2
           className="mb-4 max-w-[870px] capitalize"
@@ -39,7 +41,7 @@ export function WineTourSection({ images }: WineTourSectionProps) {
             lineHeight: 1.15,
           }}
         >
-          Experience that will make you back to us
+          {texts.heading}
         </h2>
         <p
           className="mb-10 max-w-[860px]"
@@ -51,8 +53,7 @@ export function WineTourSection({ images }: WineTourSectionProps) {
             color: '#4f4542',
           }}
         >
-          Small-group tastings and dinners in the cellar and among the vines, held through the
-          harvest season.
+          {texts.text}
         </p>
 
         <div className="flex flex-col gap-6 lg:flex-row">
@@ -119,7 +120,7 @@ export function WineTourSection({ images }: WineTourSectionProps) {
             }}
           >
             <span className="capitalize transition-colors group-hover:text-[var(--color-brand-gold)]">
-              Find your experience
+              {texts.linkText}
             </span>
             <span
               aria-hidden="true"

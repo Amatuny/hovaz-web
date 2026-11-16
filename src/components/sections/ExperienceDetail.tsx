@@ -8,8 +8,17 @@ import { ReservationForm } from '@/components/ui/ReservationForm'
 import type { JournalCard } from '@/lib/journal'
 import type { SanityImage } from '@/types/sanity'
 import type { BookingInput } from '@/lib/validations/booking'
+import {
+  EVENTS_DEFAULTS,
+  type EventCardLabels,
+  type ReservationFormLabels,
+} from '@/content/defaults'
 
 interface ExperienceDetailProps {
+  /** From Events Page → Event Detail Page; built-in texts when omitted */
+  labels?: typeof EVENTS_DEFAULTS.detail
+  formLabels?: ReservationFormLabels
+  cardLabels?: EventCardLabels
   title: string
   estateTagline?: string
   mainImage?: SanityImage
@@ -109,13 +118,16 @@ export function ExperienceDetail({
   includesImages,
   reservation,
   journalCards,
+  labels: t = EVENTS_DEFAULTS.detail,
+  formLabels,
+  cardLabels,
 }: ExperienceDetailProps) {
   return (
     <div className="flex flex-col" style={{ gap: fig(82) }}>
       {/* Breadcrumb + estate context heading */}
       <div className="flex flex-col" style={{ gap: fig(16) }}>
         <p style={{ fontFamily: 'var(--font-hanken)', fontSize: fig(13), color: '#a8a290' }}>
-          Experiences / <span style={{ color: '#4f4542' }}>{title}</span>
+          {t.breadcrumb} / <span style={{ color: '#4f4542' }}>{title}</span>
         </p>
         {estateTagline && (
           <h1
@@ -129,7 +141,7 @@ export function ExperienceDetail({
               maxWidth: fig(860),
             }}
           >
-            welcome to {estateTagline}
+            {t.welcomePrefix} {estateTagline}
           </h1>
         )}
       </div>
@@ -239,7 +251,7 @@ export function ExperienceDetail({
           style={{ gap: fig(32) }}
         >
           <div className="flex flex-col" style={{ gap: fig(16), maxWidth: fig(860) }}>
-            <SectionHeading eyebrow="Experience" heading="About the Experience" />
+            <SectionHeading eyebrow={t.aboutEyebrow} heading={t.aboutHeading} />
             {description && (
               <p
                 style={{
@@ -280,7 +292,7 @@ export function ExperienceDetail({
           )}
         </div>
 
-        <ReservationForm experienceTitle={title} {...reservation} />
+        <ReservationForm experienceTitle={title} {...reservation} labels={formLabels} />
       </div>
 
       {/* Includes */}
@@ -297,7 +309,7 @@ export function ExperienceDetail({
                 color: 'rgba(93,110,82,0.92)',
               }}
             >
-              Experience
+              {t.includesEyebrow}
             </p>
             <h2
               style={{
@@ -337,7 +349,7 @@ export function ExperienceDetail({
                 color: 'rgba(93,110,82,0.92)',
               }}
             >
-              Journal
+              {t.journalEyebrow}
             </p>
             <h2
               className="capitalize"
@@ -349,7 +361,7 @@ export function ExperienceDetail({
                 color: 'black',
               }}
             >
-              discover Our events
+              {t.journalHeading}
             </h2>
             <p
               style={{
@@ -359,15 +371,14 @@ export function ExperienceDetail({
                 color: '#4f4542',
               }}
             >
-              From crisp whites picked at first light to reds aged slow in old oak — each wine
-              carries the same terraces, the same hands, the same patience.
+              {t.journalText}
             </p>
           </div>
 
           <div className="flex flex-wrap items-start" style={{ gap: fig(32) }}>
             {journalCards.slice(0, 5).map((card) => (
               <div key={card.key} style={{ width: fig(320) }}>
-                <EventCard card={card} />
+                <EventCard card={card} labels={cardLabels} />
               </div>
             ))}
 
@@ -400,7 +411,7 @@ export function ExperienceDetail({
                     color: 'white',
                   }}
                 >
-                  Explore the Complete Collection
+                  {t.collectionTitle}
                 </p>
                 <div
                   className="flex items-center justify-center text-center uppercase"
@@ -415,7 +426,7 @@ export function ExperienceDetail({
                     color: 'white',
                   }}
                 >
-                  See All Events
+                  {t.collectionButton}
                 </div>
               </div>
             </Link>

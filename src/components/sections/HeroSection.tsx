@@ -11,6 +11,7 @@ interface HeroSectionProps {
   subheadline?: string
   location?: string
   ctaText?: string
+  secondaryCtaText?: string
   gallery?: SanityImage[]
 }
 
@@ -44,9 +45,11 @@ export function HeroSection({
   subheadline = 'Discover HOVAZ Wine Rooms — where ancient tradition meets modern hospitality',
   location = 'Proshyan Valley, Armenia',
   ctaText,
+  secondaryCtaText,
   gallery = [],
 }: HeroSectionProps) {
   const resolvedCtaText = ctaText || 'Book Your Experience'
+  const resolvedSecondaryCtaText = secondaryCtaText || 'Explore Our Wines'
   const slides = gallery.length > 0 ? gallery : [undefined, undefined, undefined]
   const count = slides.length
 
@@ -206,7 +209,7 @@ export function HeroSection({
                   {resolvedCtaText}
                 </a>
                 <Link href="/wines" className={`btn-pill-outline ${HERO_BUTTON}`}>
-                  Explore Our Wines
+                  {resolvedSecondaryCtaText}
                 </Link>
               </div>
             </div>

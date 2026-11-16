@@ -8,9 +8,15 @@ interface DateFilterCalendarProps {
   value: Date | null
   onChange: (date: Date | null) => void
   eventDates: Set<string>
+  labels?: { label: string; placeholder: string; clear: string }
 }
 
-export function DateFilterCalendar({ value, onChange, eventDates }: DateFilterCalendarProps) {
+export function DateFilterCalendar({
+  value,
+  onChange,
+  eventDates,
+  labels = { label: 'Date', placeholder: 'Choose date', clear: 'Clear date' },
+}: DateFilterCalendarProps) {
   const { open, setOpen, rootRef } = usePopover()
 
   return (
@@ -29,7 +35,7 @@ export function DateFilterCalendar({ value, onChange, eventDates }: DateFilterCa
           color: '#a8a290',
         }}
       >
-        Date
+        {labels.label}
       </p>
       <button
         type="button"
@@ -47,7 +53,7 @@ export function DateFilterCalendar({ value, onChange, eventDates }: DateFilterCa
         <span>
           {value
             ? value.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-            : 'Choose date'}
+            : labels.placeholder}
         </span>
         <svg
           width={fig(10)}
@@ -91,7 +97,7 @@ export function DateFilterCalendar({ value, onChange, eventDates }: DateFilterCa
                   color: 'rgba(255,255,255,0.55)',
                 }}
               >
-                Clear date
+                {labels.clear}
               </button>
             )
           }

@@ -6,8 +6,17 @@ import { fig } from '@/lib/figmaScale'
 import { DragScroll } from '@/components/ui/DragScroll'
 import { NewsCard } from '@/components/ui/NewsCard'
 import type { NewsItem } from '@/types/sanity'
+import { NEWS_DEFAULTS, type NewsCardLabels } from '@/content/defaults'
 
-export function MoreStoriesCarousel({ items }: { items: NewsItem[] }) {
+export function MoreStoriesCarousel({
+  items,
+  heading = NEWS_DEFAULTS.stories.moreHeading,
+  cardLabels,
+}: {
+  items: NewsItem[]
+  heading?: string
+  cardLabels?: NewsCardLabels
+}) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [pages, setPages] = useState(1)
   const [page, setPage] = useState(0)
@@ -52,7 +61,7 @@ export function MoreStoriesCarousel({ items }: { items: NewsItem[] }) {
           color: '#1a1d17',
         }}
       >
-        More Stories
+        {heading}
       </h2>
       <DragScroll
         scrollRef={scrollRef}
@@ -61,7 +70,7 @@ export function MoreStoriesCarousel({ items }: { items: NewsItem[] }) {
         style={{ gap: fig(37) }}
       >
         {items.map((item) => (
-          <NewsCard key={item._id} item={item} />
+          <NewsCard key={item._id} item={item} labels={cardLabels} />
         ))}
       </DragScroll>
       {pages > 1 && (

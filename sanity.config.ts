@@ -3,7 +3,14 @@ import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
 import { schemaTypes } from './src/sanity/schemaTypes'
 
-const SINGLETON_TYPES = ['siteSettings']
+const SINGLETON_TYPES = [
+  'siteSettings',
+  'winesPage',
+  'eventsPage',
+  'ourStoryPage',
+  'newsPage',
+  'contactPage',
+]
 
 export default defineConfig({
   name: 'default',
@@ -22,6 +29,41 @@ export default defineConfig({
               .title('Site Settings')
               .id('siteSettings')
               .child(S.document().schemaType('siteSettings').documentId('siteSettings')),
+
+            // Fixed texts of each page — one document per page
+            S.listItem()
+              .title('Pages')
+              .child(
+                S.list()
+                  .title('Pages')
+                  .items([
+                    S.listItem()
+                      .title('Events Page')
+                      .id('eventsPage')
+                      .schemaType('eventsPage')
+                      .child(S.document().schemaType('eventsPage').documentId('eventsPage')),
+                    S.listItem()
+                      .title('Our Wines Page')
+                      .id('winesPage')
+                      .schemaType('winesPage')
+                      .child(S.document().schemaType('winesPage').documentId('winesPage')),
+                    S.listItem()
+                      .title('Our Story Page')
+                      .id('ourStoryPage')
+                      .schemaType('ourStoryPage')
+                      .child(S.document().schemaType('ourStoryPage').documentId('ourStoryPage')),
+                    S.listItem()
+                      .title('News & Awards Page')
+                      .id('newsPage')
+                      .schemaType('newsPage')
+                      .child(S.document().schemaType('newsPage').documentId('newsPage')),
+                    S.listItem()
+                      .title('Contact Page')
+                      .id('contactPage')
+                      .schemaType('contactPage')
+                      .child(S.document().schemaType('contactPage').documentId('contactPage')),
+                  ])
+              ),
 
             S.divider(),
 
@@ -61,13 +103,11 @@ export default defineConfig({
 
             S.documentTypeListItem('tour').title('Experiences'),
             S.documentTypeListItem('event').title('Events'),
-            S.documentTypeListItem('testimonial').title('Testimonials'),
-            S.documentTypeListItem('blogPost').title('Blog Posts'),
+            S.documentTypeListItem('newsItem').title('News & Awards'),
 
             S.divider(),
 
-            S.documentTypeListItem('newsItem').title('News & Awards'),
-            S.documentTypeListItem('page').title('Pages'),
+            S.documentTypeListItem('testimonial').title('Testimonials'),
             S.documentTypeListItem('faqItem').title('FAQ'),
           ]),
     }),

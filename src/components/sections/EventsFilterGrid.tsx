@@ -6,11 +6,15 @@ import { EventCard, type EventCardData } from '@/components/ui/EventCard'
 import { DateFilterCalendar } from '@/components/ui/DateFilterCalendar'
 import { fig } from '@/lib/figmaScale'
 import type { Event } from '@/types/sanity'
+import { EVENTS_DEFAULTS, type EventCardLabels, type EventFilterLabels } from '@/content/defaults'
 
 interface EventsFilterGridProps {
   events: Event[]
   // Every estate is a location option, even before it has events.
   estateNames?: string[]
+  /** From Events Page → Events List → Search Bar */
+  labels?: EventFilterLabels
+  cardLabels?: EventCardLabels
 }
 
 const PAGE_SIZE = 16
@@ -180,7 +184,12 @@ function PageButton({
   )
 }
 
-export function EventsFilterGrid({ events, estateNames = [] }: EventsFilterGridProps) {
+export function EventsFilterGrid({
+  events,
+  estateNames = [],
+  labels = EVENTS_DEFAULTS.filters,
+  cardLabels,
+}: EventsFilterGridProps) {
   const [searchInput, setSearchInput] = useState('')
   const [dateInput, setDateInput] = useState<Date | null>(null)
   const [locationInput, setLocationInput] = useState('')
@@ -271,7 +280,7 @@ export function EventsFilterGrid({ events, estateNames = [] }: EventsFilterGridP
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search events"
+            placeholder={labels.searchPlaceholder}
             className="w-full bg-transparent outline-none placeholder:text-[#757575]"
             style={{ fontFamily: 'var(--font-hanken)', fontSize: fig(15), color: '#1a1d17' }}
           />
@@ -292,13 +301,18 @@ export function EventsFilterGrid({ events, estateNames = [] }: EventsFilterGridP
               }
             }}
             eventDates={eventDates}
+            labels={{
+              label: labels.dateLabel,
+              placeholder: labels.datePlaceholder,
+              clear: labels.clearDate,
+            }}
           />
         </div>
 
         <div className="min-w-[200px] flex-1" style={{ paddingInline: fig(12) }}>
           <FilterSelect
-            label="Location"
-            placeholder="Choose location"
+            label={labels.locationLabel}
+            placeholder={labels.locationPlaceholder}
             options={locationOptions}
             value={locationInput}
             onChange={setLocationInput}
@@ -321,7 +335,7 @@ export function EventsFilterGrid({ events, estateNames = [] }: EventsFilterGridP
             color: 'var(--color-brand-olive)',
           }}
         >
-          Search
+          {labels.searchButton}
         </button>
       </form>
 
@@ -338,7 +352,7 @@ export function EventsFilterGrid({ events, estateNames = [] }: EventsFilterGridP
             color: 'var(--color-brand-stone)',
           }}
         >
-          No events match your search.
+          {labels.noResults}
         </p>
       ) : (
         <div
@@ -346,7 +360,12 @@ export function EventsFilterGrid({ events, estateNames = [] }: EventsFilterGridP
           style={{ gap: fig(32), paddingInline: fig(112) }}
         >
           {pageEvents.map((event) => (
-            <EventCard key={event._id} card={toEventCardData(event)} variant="grid" />
+            <EventCard
+              key={event._id}
+              card={toEventCardData(event)}
+              variant="grid"
+              labels={cardLabels}
+            />
           ))}
         </div>
       )}

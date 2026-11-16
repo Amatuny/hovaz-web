@@ -2,12 +2,15 @@ import Link from 'next/link'
 import { WineCard } from '@/components/ui/WineCard'
 import type { Wine } from '@/types/sanity'
 import { DragScroll } from '@/components/ui/DragScroll'
+import { HOME_DEFAULTS, type WineCardLabels } from '@/content/defaults'
 
 interface WinePreviewProps {
   wines: Wine[]
+  texts?: typeof HOME_DEFAULTS.wines
+  cardLabels?: WineCardLabels
 }
 
-export function WinePreview({ wines }: WinePreviewProps) {
+export function WinePreview({ wines, texts = HOME_DEFAULTS.wines, cardLabels }: WinePreviewProps) {
   if (!wines?.length) return null
 
   return (
@@ -23,7 +26,7 @@ export function WinePreview({ wines }: WinePreviewProps) {
             color: 'rgba(93,110,82,0.92)',
           }}
         >
-          The Cellar
+          {texts.eyebrow}
         </p>
         <h2
           className="mb-4 capitalize"
@@ -36,7 +39,7 @@ export function WinePreview({ wines }: WinePreviewProps) {
             lineHeight: 1.15,
           }}
         >
-          Wines of the Valley
+          {texts.heading}
         </h2>
         <p
           className="mb-10 max-w-[860px]"
@@ -48,14 +51,13 @@ export function WinePreview({ wines }: WinePreviewProps) {
             color: '#4f4542',
           }}
         >
-          Estate-grown across Vayots Dzor, Aragatsotn and the Ararat Valley — small lots, made
-          slowly.
+          {texts.text}
         </p>
 
         <DragScroll arrows className="flex gap-4 pb-2 snap-x snap-mandatory">
           {wines.map((wine) => (
             <div key={wine._id} className="shrink-0 snap-start" style={{ width: '250px' }}>
-              <WineCard wine={wine} />
+              <WineCard wine={wine} labels={cardLabels} />
             </div>
           ))}
         </DragScroll>
@@ -73,7 +75,7 @@ export function WinePreview({ wines }: WinePreviewProps) {
             }}
           >
             <span className="transition-colors group-hover:text-[var(--color-brand-gold)]">
-              Explore The Cellar
+              {texts.linkText}
             </span>
             <span
               aria-hidden="true"
