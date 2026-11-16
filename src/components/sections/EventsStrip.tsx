@@ -56,7 +56,7 @@ export function EventsStrip({ tours, events }: EventsStripProps) {
           coming next, or look back at what we&apos;ve hosted across both estates.
         </p>
 
-        <DragScroll className="flex gap-4 pb-2 snap-x snap-mandatory">
+        <DragScroll arrows className="flex gap-4 pb-2 snap-x snap-mandatory">
           {cards.map((card) => (
             <EventCard key={card.key} card={card} variant="strip" />
           ))}

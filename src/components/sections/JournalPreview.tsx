@@ -54,7 +54,7 @@ export function JournalPreview({ news }: JournalPreviewProps) {
           by the people actually making the wine.
         </p>
 
-        <DragScroll className="flex gap-4 pb-2 snap-x snap-mandatory">
+        <DragScroll arrows className="flex gap-4 pb-2 snap-x snap-mandatory">
           {news.map((item) => (
             <NewsCard key={item._id} item={item} />
           ))}

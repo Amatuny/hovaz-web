@@ -15,7 +15,11 @@ export function MascotSection({ mascot }: MascotSectionProps) {
   const gallery = (mascot.gallery ?? []).slice(0, 2)
 
   return (
-    <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
+    <section
+      id="leopard"
+      className="section-padding scroll-mt-24"
+      style={{ backgroundColor: 'var(--color-brand-cream)' }}
+    >
       <div className="container-content">
         <p
           className="mb-4 uppercase"

@@ -307,7 +307,7 @@ export function EventsFilterGrid({ events, estateNames = [] }: EventsFilterGridP
 
         <button
           type="submit"
-          className="shrink-0 rounded-full capitalize transition-colors hover:bg-[var(--color-brand-olive)] hover:text-[#fdfcf8]"
+          className="shrink-0 rounded-full capitalize transition-colors hover:bg-[#dcdbd1]"
           style={{
             borderWidth: '1.5px',
             borderStyle: 'solid',
