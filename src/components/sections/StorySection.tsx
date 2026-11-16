@@ -1,23 +1,21 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
-import type { Page, SanityBlock } from '@/types/sanity'
+import type { SanityImage } from '@/types/sanity'
+import { HOME_DEFAULTS } from '@/content/defaults'
 
 interface StorySectionProps {
-  page: Page | null
+  /** Site Settings → Homepage → Our Story Section */
+  texts?: typeof HOME_DEFAULTS.story
+  image?: SanityImage
 }
 
-function blockText(block: SanityBlock) {
-  return block.children?.map((child) => child.text).join('') ?? ''
-}
-
-export function StorySection({ page }: StorySectionProps) {
-  if (!page) return null
-
-  const paragraphs = (page.body ?? [])
-    .filter((block) => block._type === 'block' && block.children?.length)
-    .slice(0, 2)
-    .map(blockText)
+export function StorySection({ texts = HOME_DEFAULTS.story, image }: StorySectionProps) {
+  // Paragraphs are separated by an empty line in Studio
+  const paragraphs = texts.panelText
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
 
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
@@ -32,7 +30,7 @@ export function StorySection({ page }: StorySectionProps) {
             color: 'rgba(93,110,82,0.92)',
           }}
         >
-          Our Story
+          {texts.eyebrow}
         </p>
         <h2
           className="mb-4 max-w-[870px] capitalize"
@@ -45,9 +43,9 @@ export function StorySection({ page }: StorySectionProps) {
             lineHeight: 1.15,
           }}
         >
-          {page.title}
+          {texts.heading}
         </h2>
-        {page.subtitle && (
+        {texts.subtitle && (
           <p
             className="mb-10 max-w-[860px]"
             style={{
@@ -58,7 +56,7 @@ export function StorySection({ page }: StorySectionProps) {
               color: '#4f4542',
             }}
           >
-            {page.subtitle}
+            {texts.subtitle}
           </p>
         )}
 
@@ -68,10 +66,10 @@ export function StorySection({ page }: StorySectionProps) {
         >
           {/* Photo */}
           <div className="relative h-full overflow-hidden rounded-2xl lg:rounded-3xl">
-            {page.featuredImage?.asset?._ref ? (
+            {image?.asset?._ref ? (
               <Image
-                src={urlFor(page.featuredImage).width(900).height(700).url()}
-                alt={page.featuredImage.alt ?? page.title}
+                src={urlFor(image).width(900).height(700).url()}
+                alt={image.alt ?? texts.heading}
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 50vw, 100vw"
@@ -99,7 +97,7 @@ export function StorySection({ page }: StorySectionProps) {
                 color: 'var(--color-brand-gold)',
               }}
             >
-              Our Story
+              {texts.panelLabel}
             </p>
             <div className="flex flex-col gap-4">
               {paragraphs.map((paragraph, i) => (
@@ -128,7 +126,7 @@ export function StorySection({ page }: StorySectionProps) {
             }}
           >
             <span className="transition-colors group-hover:text-[var(--color-brand-gold)]">
-              Read Our Story
+              {texts.linkText}
             </span>
             <span
               aria-hidden="true"

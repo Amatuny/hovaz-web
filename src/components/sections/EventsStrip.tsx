@@ -3,13 +3,21 @@ import { EventCard } from '@/components/ui/EventCard'
 import { buildJournalCards } from '@/lib/journal'
 import type { Event, Tour } from '@/types/sanity'
 import { DragScroll } from '@/components/ui/DragScroll'
+import { HOME_DEFAULTS, type EventCardLabels } from '@/content/defaults'
 
 interface EventsStripProps {
   tours: Tour[]
   events: Event[]
+  texts?: typeof HOME_DEFAULTS.events
+  cardLabels?: EventCardLabels
 }
 
-export function EventsStrip({ tours, events }: EventsStripProps) {
+export function EventsStrip({
+  tours,
+  events,
+  texts = HOME_DEFAULTS.events,
+  cardLabels,
+}: EventsStripProps) {
   if (!tours?.length && !events?.length) return null
 
   const cards = buildJournalCards(tours, events)
@@ -27,7 +35,7 @@ export function EventsStrip({ tours, events }: EventsStripProps) {
             color: 'rgba(93,110,82,0.92)',
           }}
         >
-          Upcoming
+          {texts.eyebrow}
         </p>
         <h2
           className="mb-4 capitalize"
@@ -40,7 +48,7 @@ export function EventsStrip({ tours, events }: EventsStripProps) {
             lineHeight: 1.15,
           }}
         >
-          Discover All Events
+          {texts.heading}
         </h2>
         <p
           className="mb-10 max-w-[860px]"
@@ -52,13 +60,12 @@ export function EventsStrip({ tours, events }: EventsStripProps) {
             color: '#4f4542',
           }}
         >
-          Small-group tastings and dinners in the cellar and among the vines — see what&apos;s
-          coming next, or look back at what we&apos;ve hosted across both estates.
+          {texts.text}
         </p>
 
         <DragScroll arrows className="flex gap-4 pb-2 snap-x snap-mandatory">
           {cards.map((card) => (
-            <EventCard key={card.key} card={card} variant="strip" />
+            <EventCard key={card.key} card={card} variant="strip" labels={cardLabels} />
           ))}
         </DragScroll>
 
@@ -75,7 +82,7 @@ export function EventsStrip({ tours, events }: EventsStripProps) {
             }}
           >
             <span className="transition-colors group-hover:text-[var(--color-brand-gold)]">
-              See What&apos;s Coming
+              {texts.linkText}
             </span>
             <span
               aria-hidden="true"

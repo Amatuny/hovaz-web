@@ -1,20 +1,22 @@
 import type { Metadata } from 'next'
-import { getAllNews } from '@/lib/sanity/queries'
+import { getAllNews, getNewsPage } from '@/lib/sanity/queries'
 import { NewsAwards } from '@/components/sections/NewsAwards'
+import { NEWS_DEFAULTS } from '@/content/defaults'
+import { currentLocale, resolveNewsContent, seoToMetadata } from '@/lib/sanity/pageContent'
 
-export const metadata: Metadata = {
-  title: 'News & Awards',
-  description: 'Awards, new releases, press features and estate news from HOVAZ.',
-  openGraph: {
-    title: 'News & Awards — HOVAZ',
-    description: 'Awards, new releases, press features and estate news from HOVAZ.',
+// Texts and SEO are edited in Studio → Pages → News & Awards Page
+export async function generateMetadata(): Promise<Metadata> {
+  const [doc, locale] = await Promise.all([getNewsPage(), currentLocale()])
+  return seoToMetadata(doc?.seo, locale, {
+    title: NEWS_DEFAULTS.seo.metaTitle,
+    description: NEWS_DEFAULTS.seo.metaDescription,
     url: 'https://hovazwines.com/news',
-  },
+  })
 }
 
 export const revalidate = 3600
 
 export default async function NewsPage() {
-  const news = await getAllNews()
-  return <NewsAwards news={news ?? []} />
+  const [news, doc, locale] = await Promise.all([getAllNews(), getNewsPage(), currentLocale()])
+  return <NewsAwards news={news ?? []} content={resolveNewsContent(doc, locale)} />
 }

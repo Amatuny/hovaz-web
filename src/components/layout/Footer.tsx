@@ -2,6 +2,15 @@ import Link from 'next/link'
 import { TbBrandFacebook, TbBrandInstagram, TbBrandTelegram, TbBrandWhatsapp } from 'react-icons/tb'
 import { LiaViber } from 'react-icons/lia'
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
+import { FOOTER_DEFAULTS } from '@/content/defaults'
+
+export interface FooterContent {
+  texts: typeof FOOTER_DEFAULTS.texts
+  exploreLinks: { label: string; href: string }[]
+  helpLinks: { label: string; href: string }[]
+  locations: typeof FOOTER_DEFAULTS.locations
+  legalLinks: { label: string; href: string }[]
+}
 
 interface FooterProps {
   settings: {
@@ -14,6 +23,16 @@ interface FooterProps {
     instagramWines?: string
     facebook?: string
   } | null
+  /** Texts and links resolved from Site Settings → Footer (defaults when empty) */
+  content?: FooterContent
+}
+
+const DEFAULT_CONTENT: FooterContent = {
+  texts: FOOTER_DEFAULTS.texts,
+  exploreLinks: FOOTER_DEFAULTS.exploreLinks,
+  helpLinks: FOOTER_DEFAULTS.helpLinks,
+  locations: FOOTER_DEFAULTS.locations,
+  legalLinks: FOOTER_DEFAULTS.legalLinks,
 }
 
 const COLORS = {
@@ -23,47 +42,6 @@ const COLORS = {
   muted: '#aaa492',
   rule: 'rgba(242,237,221,0.08)',
 }
-
-const exploreLinks = [
-  { label: 'Our Wines', href: '/wines' },
-  { label: 'Experiences', href: '/experiences' },
-  { label: 'Events', href: '/events' },
-  { label: 'Our Story', href: '/about/our-story' },
-  { label: 'Hovaz, the Leopard', href: '/#leopard' },
-  { label: 'News & Awards', href: '/news' },
-]
-
-const helpLinks = [
-  { label: 'Contact us', href: '/contact/form' },
-  { label: 'FAQ', href: '/contact/faq' },
-  { label: 'Manage or cancel booking', href: '/booking/cancel' },
-  { label: 'For travel agencies', href: '/contact/agencies' },
-  // TODO: point at the real partner portal once it exists.
-  { label: 'Partner portal', href: '/contact/agencies' },
-]
-
-const locations = [
-  {
-    name: 'Dilijan Wine Rooms',
-    href: '/estates?estate=dilijan',
-    detail: 'Founding estate · Dilijan, Tavush',
-    hours: 'Tue-Sun · 11:00-20:00',
-    isNew: false,
-  },
-  {
-    name: 'Hovaz Wine Boutique',
-    href: '/estates?estate=proshyan',
-    detail: 'Proshyan · Ararat Valley',
-    hours: 'Tue-Sun · 11:00-20:00',
-    isNew: true,
-  },
-]
-
-const legalLinks = [
-  { label: 'Privacy', href: '/privacy-policy' },
-  { label: 'Terms', href: '/terms' },
-  { label: 'Cookies', href: '/cookies' },
-]
 
 const digits = (value: string) => value.replace(/\D/g, '')
 
@@ -93,8 +71,8 @@ function ColumnHeading({ children }: { children: React.ReactNode }) {
 function LinkList({ links }: { links: { label: string; href: string }[] }) {
   return (
     <ul className="flex flex-col gap-3">
-      {links.map((link) => (
-        <li key={link.label}>
+      {links.map((link, i) => (
+        <li key={`${link.href}-${i}`}>
           <Link
             href={link.href}
             className="transition-colors hover:!text-[var(--color-brand-gold)]"
@@ -108,7 +86,8 @@ function LinkList({ links }: { links: { label: string; href: string }[] }) {
   )
 }
 
-export function Footer({ settings }: FooterProps) {
+export function Footer({ settings, content = DEFAULT_CONTENT }: FooterProps) {
+  const { texts, exploreLinks, helpLinks, locations, legalLinks } = content
   const currentYear = new Date().getFullYear()
   const instagram = settings?.instagramWineRooms ?? settings?.instagramWines
 
@@ -153,7 +132,7 @@ export function Footer({ settings }: FooterProps) {
                 color: '#ffffff',
               }}
             >
-              Hovaz
+              {texts.brandName}
             </Link>
             <p
               className="mt-6 max-w-[200px]"
@@ -164,29 +143,28 @@ export function Footer({ settings }: FooterProps) {
                 color: '#ffffff',
               }}
             >
-              Dedicated to the pursuit of excellence in viticulture across Armenia&apos;s most
-              historic terroirs.
+              {texts.tagline}
             </p>
           </div>
 
           {/* Explore */}
-          <nav aria-label="Explore">
-            <ColumnHeading>Explore</ColumnHeading>
+          <nav aria-label={texts.exploreHeading}>
+            <ColumnHeading>{texts.exploreHeading}</ColumnHeading>
             <LinkList links={exploreLinks} />
           </nav>
 
           {/* Help */}
-          <nav aria-label="Help">
-            <ColumnHeading>Help</ColumnHeading>
+          <nav aria-label={texts.helpHeading}>
+            <ColumnHeading>{texts.helpHeading}</ColumnHeading>
             <LinkList links={helpLinks} />
           </nav>
 
           {/* Locations */}
           <div>
-            <ColumnHeading>Locations</ColumnHeading>
+            <ColumnHeading>{texts.locationsHeading}</ColumnHeading>
             <ul className="flex flex-col gap-6">
-              {locations.map((loc) => (
-                <li key={loc.name}>
+              {locations.map((loc, i) => (
+                <li key={`${loc.name}-${i}`}>
                   <div className="flex items-start justify-between gap-3">
                     <Link
                       href={loc.href}
@@ -214,7 +192,7 @@ export function Footer({ settings }: FooterProps) {
                           backgroundColor: 'var(--color-brand-burgundy)',
                         }}
                       >
-                        New
+                        {texts.newBadge}
                       </span>
                     )}
                   </div>
@@ -238,7 +216,7 @@ export function Footer({ settings }: FooterProps) {
 
           {/* Contact */}
           <div>
-            <ColumnHeading>Contact</ColumnHeading>
+            <ColumnHeading>{texts.contactHeading}</ColumnHeading>
             <ul className="flex flex-col gap-3">
               {settings?.email && (
                 <li>
@@ -292,10 +270,12 @@ export function Footer({ settings }: FooterProps) {
             className="flex flex-wrap items-center gap-x-6 gap-y-2"
             style={{ fontFamily: 'var(--font-hanken)', fontSize: '11.5px', color: COLORS.muted }}
           >
-            <span>© {currentYear} Hovaz Winery</span>
-            {legalLinks.map((link) => (
+            <span>
+              © {currentYear} {texts.copyright}
+            </span>
+            {legalLinks.map((link, i) => (
               <Link
-                key={link.href}
+                key={`${link.href}-${i}`}
                 href={link.href}
                 className="transition-colors hover:text-[#f2eddd]"
               >
@@ -308,7 +288,7 @@ export function Footer({ settings }: FooterProps) {
             <span
               style={{ fontFamily: 'var(--font-hanken)', fontSize: '11.5px', color: COLORS.muted }}
             >
-              18+ · Please enjoy responsibly
+              {texts.responsibleText}
             </span>
             <LanguageSwitcher variant="pill" />
           </div>

@@ -4,12 +4,19 @@ import Link from 'next/link'
 import type { NewsItem } from '@/types/sanity'
 import { DragScroll } from '@/components/ui/DragScroll'
 import { NewsCard } from '@/components/ui/NewsCard'
+import { HOME_DEFAULTS, type NewsCardLabels } from '@/content/defaults'
 
 interface JournalPreviewProps {
   news: NewsItem[]
+  texts?: typeof HOME_DEFAULTS.journal
+  cardLabels?: NewsCardLabels
 }
 
-export function JournalPreview({ news }: JournalPreviewProps) {
+export function JournalPreview({
+  news,
+  texts = HOME_DEFAULTS.journal,
+  cardLabels,
+}: JournalPreviewProps) {
   if (!news?.length) return null
 
   return (
@@ -25,7 +32,7 @@ export function JournalPreview({ news }: JournalPreviewProps) {
             color: 'rgba(93,110,82,0.92)',
           }}
         >
-          The Journal
+          {texts.eyebrow}
         </p>
         <h2
           className="mb-4 capitalize"
@@ -38,7 +45,7 @@ export function JournalPreview({ news }: JournalPreviewProps) {
             lineHeight: 1.15,
           }}
         >
-          A Taste Of What&apos;s New
+          {texts.heading}
         </h2>
         <p
           className="mb-10 max-w-[860px]"
@@ -50,13 +57,12 @@ export function JournalPreview({ news }: JournalPreviewProps) {
             color: '#4f4542',
           }}
         >
-          New releases, harvest updates, and the small things worth knowing between visits — written
-          by the people actually making the wine.
+          {texts.text}
         </p>
 
         <DragScroll arrows className="flex gap-4 pb-2 snap-x snap-mandatory">
           {news.map((item) => (
-            <NewsCard key={item._id} item={item} />
+            <NewsCard key={item._id} item={item} labels={cardLabels} />
           ))}
         </DragScroll>
 
@@ -73,7 +79,7 @@ export function JournalPreview({ news }: JournalPreviewProps) {
             }}
           >
             <span className="transition-colors group-hover:text-[var(--color-brand-gold)]">
-              Read The Journal
+              {texts.linkText}
             </span>
             <span
               aria-hidden="true"

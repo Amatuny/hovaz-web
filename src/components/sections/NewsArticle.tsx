@@ -10,11 +10,20 @@ import { Ornament } from '@/components/ui/Ornament'
 import { NewsStoryCard } from '@/components/ui/NewsStoryCard'
 import { MoreStoriesCarousel } from '@/components/sections/MoreStoriesCarousel'
 import type { NewsItem, SanityImage } from '@/types/sanity'
+import { NEWS_DEFAULTS } from '@/content/defaults'
+import type { NewsContent } from '@/lib/sanity/pageContent'
 
 interface NewsArticleProps {
   item: NewsItem
   upNext: NewsItem | null
   moreStories: NewsItem[]
+  /** From Studio → Pages → News & Awards Page */
+  content?: Pick<NewsContent, 'stories' | 'cards'>
+}
+
+const DEFAULT_CONTENT: Pick<NewsContent, 'stories' | 'cards'> = {
+  stories: NEWS_DEFAULTS.stories,
+  cards: { card: NEWS_DEFAULTS.card, categories: NEWS_DEFAULTS.categories },
 }
 
 const eyebrowStyle: CSSProperties = {
@@ -125,7 +134,12 @@ function PhotoGrid({ item }: { item: NewsItem }) {
   )
 }
 
-export function NewsArticle({ item, upNext, moreStories }: NewsArticleProps) {
+export function NewsArticle({
+  item,
+  upNext,
+  moreStories,
+  content: t = DEFAULT_CONTENT,
+}: NewsArticleProps) {
   const month = formatNewsMonthLong(item.date)
   const meta = [month, item.place].filter(Boolean).join(' · ')
   const hasDetails = item.detailsTitle || toParagraphs(item.detailsText).length > 0
@@ -139,7 +153,7 @@ export function NewsArticle({ item, upNext, moreStories }: NewsArticleProps) {
             className="uppercase"
             style={{ ...eyebrowStyle, fontSize: fig(12), letterSpacing: fig(3) }}
           >
-            {newsCategoryLabel(item)}
+            {newsCategoryLabel(item, t.cards.categories)}
           </p>
           <h1
             style={{
@@ -252,14 +266,20 @@ export function NewsArticle({ item, upNext, moreStories }: NewsArticleProps) {
           {upNext && (
             <section className="flex flex-col" style={{ gap: fig(20) }}>
               <p className="uppercase" style={eyebrowStyle}>
-                Up Next
+                {t.stories.upNext}
               </p>
-              <NewsStoryCard item={upNext} />
+              <NewsStoryCard item={upNext} labels={t.cards} />
             </section>
           )}
         </div>
 
-        {moreStories.length > 0 && <MoreStoriesCarousel items={moreStories} />}
+        {moreStories.length > 0 && (
+          <MoreStoriesCarousel
+            items={moreStories}
+            heading={t.stories.moreHeading}
+            cardLabels={t.cards}
+          />
+        )}
 
         <Ornament variant="symbol" />
       </div>

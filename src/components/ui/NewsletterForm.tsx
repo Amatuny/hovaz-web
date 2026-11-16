@@ -9,9 +9,15 @@ type FormState = 'idle' | 'loading' | 'success' | 'error'
 
 interface NewsletterFormProps {
   source?: string
+  placeholder?: string
+  buttonText?: string
 }
 
-export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
+export function NewsletterForm({
+  source = 'homepage',
+  placeholder = 'your email address',
+  buttonText = 'Subscribe',
+}: NewsletterFormProps) {
   const [email, setEmail] = useState('')
   const [formState, setFormState] = useState<FormState>('idle')
   const [message, setMessage] = useState('')
@@ -81,7 +87,7 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
           disabled={isLoading}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="your email address"
+          placeholder={placeholder}
           className="flex-1 bg-transparent outline-none"
           style={{
             fontFamily: 'var(--font-hanken)',
@@ -101,7 +107,7 @@ export function NewsletterForm({ source = 'homepage' }: NewsletterFormProps) {
             cursor: isLoading ? 'not-allowed' : 'pointer',
           }}
         >
-          {isLoading ? 'Subscribing…' : 'Subscribe'}
+          {isLoading ? `${buttonText}…` : buttonText}
         </button>
       </div>
 

@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
 import type { MascotSettings } from '@/types/sanity'
+import { HOME_DEFAULTS } from '@/content/defaults'
 
 interface MascotSectionProps {
   mascot?: MascotSettings
@@ -31,7 +32,7 @@ export function MascotSection({ mascot }: MascotSectionProps) {
             color: 'rgba(93,110,82,0.92)',
           }}
         >
-          Meet The Mascot
+          {mascot.eyebrow || HOME_DEFAULTS.mascot.eyebrow}
         </p>
         <h2
           className="mb-4 max-w-[870px] capitalize"
@@ -135,7 +136,7 @@ export function MascotSection({ mascot }: MascotSectionProps) {
                   color: 'var(--color-brand-gold)',
                 }}
               >
-                His Story
+                {mascot.storyLabel || HOME_DEFAULTS.mascot.storyLabel}
               </p>
               <div className="flex flex-col gap-3">
                 {paragraphs.map((paragraph, i) => (

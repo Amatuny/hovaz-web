@@ -1,7 +1,9 @@
 import type { NewsItem } from '@/types/sanity'
+import { HOME_DEFAULTS } from '@/content/defaults'
 
 interface AwardsStripProps {
   awards: NewsItem[]
+  texts?: typeof HOME_DEFAULTS.awards
 }
 
 interface RecognitionItem {
@@ -15,13 +17,6 @@ const FALLBACK_AWARDS: RecognitionItem[] = [
   { key: 'decanter', icon: 'star', label: 'Decanter World Wine Awards' },
   { key: 'wine-spectator', icon: 'star', label: 'Wine Spectator' },
 ]
-
-const BRAND_FACT: RecognitionItem = {
-  key: 'women-led',
-  icon: 'pin',
-  label: 'Women-led Winery',
-  meta: 'Since 2018',
-}
 
 function StarIcon() {
   return (
@@ -62,7 +57,14 @@ function PinIcon() {
   )
 }
 
-export function AwardsStrip({ awards }: AwardsStripProps) {
+export function AwardsStrip({ awards, texts = HOME_DEFAULTS.awards }: AwardsStripProps) {
+  const brandFact: RecognitionItem = {
+    key: 'brand-fact',
+    icon: 'pin',
+    label: texts.brandFactLabel,
+    meta: texts.brandFactMeta,
+  }
+
   const realAwards: RecognitionItem[] = (awards ?? []).slice(0, 2).map((item) => ({
     key: item._id,
     icon: 'star',
@@ -72,7 +74,7 @@ export function AwardsStrip({ awards }: AwardsStripProps) {
 
   const items: RecognitionItem[] = [
     ...(realAwards.length > 0 ? realAwards : FALLBACK_AWARDS),
-    BRAND_FACT,
+    brandFact,
   ]
 
   return (
@@ -88,7 +90,7 @@ export function AwardsStrip({ awards }: AwardsStripProps) {
             color: 'rgba(93,110,82,0.92)',
           }}
         >
-          Recognition
+          {texts.eyebrow}
         </p>
         <h2
           className="mb-14 capitalize"
@@ -101,7 +103,7 @@ export function AwardsStrip({ awards }: AwardsStripProps) {
             lineHeight: 1.15,
           }}
         >
-          Quietly Awarded
+          {texts.heading}
         </h2>
 
         <div className="flex flex-wrap justify-center gap-x-16 gap-y-10">

@@ -6,6 +6,7 @@ import { useState, type CSSProperties } from 'react'
 import { TurnstileWidget } from '@/components/ui/TurnstileWidget'
 import { trackEvent } from '@/lib/analytics'
 import { fig } from '@/lib/figmaScale'
+import { CONTACT_DEFAULTS, type ContactFormLabels } from '@/content/defaults'
 
 type FormState = 'idle' | 'loading' | 'success' | 'error'
 
@@ -31,7 +32,12 @@ const errorStyle: CSSProperties = {
   color: '#f0a58c',
 }
 
-export function ContactMessageForm() {
+export function ContactMessageForm({
+  labels: t = CONTACT_DEFAULTS.form,
+}: {
+  /** From Contact Page → Message Form; built-in texts when omitted */
+  labels?: ContactFormLabels
+}) {
   const [formState, setFormState] = useState<FormState>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -98,7 +104,7 @@ export function ContactMessageForm() {
           color: CREAM,
         }}
       >
-        Send a Message
+        {t.heading}
       </h2>
 
       {formState === 'success' ? (
@@ -111,13 +117,13 @@ export function ContactMessageForm() {
             color: '#f2eddd',
           }}
         >
-          Thank you for reaching out. We will get back to you within 24 hours.
+          {t.successMessage}
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col" style={{ gap: fig(16) }} noValidate>
           <div className="flex flex-col" style={{ gap: fig(6) }}>
             <label htmlFor="contact-name" className="sr-only">
-              Your name
+              {t.namePlaceholder}
             </label>
             <input
               id="contact-name"
@@ -125,7 +131,7 @@ export function ContactMessageForm() {
               type="text"
               required
               autoComplete="name"
-              placeholder="Your name"
+              placeholder={t.namePlaceholder}
               aria-invalid={Boolean(fieldErrors.name)}
               className="placeholder:text-[#f2eddd] focus:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.45)]"
               style={{ ...fieldStyle, height: fig(50) }}
@@ -134,7 +140,7 @@ export function ContactMessageForm() {
           </div>
           <div className="flex flex-col" style={{ gap: fig(6) }}>
             <label htmlFor="contact-email" className="sr-only">
-              Email address
+              {t.emailPlaceholder}
             </label>
             <input
               id="contact-email"
@@ -142,7 +148,7 @@ export function ContactMessageForm() {
               type="email"
               required
               autoComplete="email"
-              placeholder="Email address"
+              placeholder={t.emailPlaceholder}
               aria-invalid={Boolean(fieldErrors.email)}
               className="placeholder:text-[#f2eddd] focus:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.45)]"
               style={{ ...fieldStyle, height: fig(50) }}
@@ -151,13 +157,13 @@ export function ContactMessageForm() {
           </div>
           <div className="flex flex-col" style={{ gap: fig(6) }}>
             <label htmlFor="contact-message" className="sr-only">
-              How can we help?
+              {t.messagePlaceholder}
             </label>
             <textarea
               id="contact-message"
               name="message"
               required
-              placeholder="How can we help?"
+              placeholder={t.messagePlaceholder}
               aria-invalid={Boolean(fieldErrors.message)}
               className="resize-none placeholder:text-[#f2eddd] focus:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.45)]"
               style={{ ...fieldStyle, height: fig(110) }}
@@ -190,7 +196,7 @@ export function ContactMessageForm() {
                 fontSize: fig(15),
               }}
             >
-              {isLoading ? 'Sending…' : 'Send Message'}
+              {isLoading ? t.sendingButton : t.submitButton}
             </button>
           </div>
         </form>

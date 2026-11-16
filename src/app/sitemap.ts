@@ -3,7 +3,6 @@ import type { MetadataRoute } from 'next'
 import {
   getAllWineSlugs,
   getAllTourSlugs,
-  getAllBlogSlugs,
   getAllEventSlugs,
   getAllNewsSlugs,
 } from '@/lib/sanity/queries'
@@ -11,10 +10,9 @@ import {
 const BASE_URL = 'https://hovazwines.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [wineSlugs, tourSlugs, blogSlugs, eventSlugs, newsSlugs] = await Promise.all([
+  const [wineSlugs, tourSlugs, eventSlugs, newsSlugs] = await Promise.all([
     getAllWineSlugs(),
     getAllTourSlugs(),
-    getAllBlogSlugs(),
     getAllEventSlugs(),
     getAllNewsSlugs(),
   ])
@@ -70,24 +68,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
-      url: `${BASE_URL}/news/awards`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/news/press`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/news/brand-news`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.5,
-    },
-    {
       url: `${BASE_URL}/contact`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
@@ -137,14 +117,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  // Dynamic blog pages
-  const blogPages: MetadataRoute.Sitemap = blogSlugs.map(({ slug }) => ({
-    url: `${BASE_URL}/blog/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  }))
-
   // Dynamic news articles
   const newsPages: MetadataRoute.Sitemap = newsSlugs.map(({ slug }) => ({
     url: `${BASE_URL}/news/${slug}`,
@@ -153,5 +125,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...staticPages, ...winePages, ...tourPages, ...eventPages, ...blogPages, ...newsPages]
+  return [...staticPages, ...winePages, ...tourPages, ...eventPages, ...newsPages]
 }

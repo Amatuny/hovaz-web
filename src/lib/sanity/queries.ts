@@ -5,13 +5,13 @@ import type {
   Tour,
   ExperienceTour,
   Event,
-  BlogPost,
   NewsItem,
   FaqItem,
-  Page,
   SiteSettings,
   Estate,
   Testimonial,
+  WinesPageDoc,
+  PageTextsDoc,
 } from '@/types/sanity'
 
 // `imageWithAlt` stores the actual image one level deeper (`asset.asset._ref`)
@@ -36,29 +36,57 @@ export async function getAllEstates(): Promise<Estate[]> {
 export async function getSiteSettings(): Promise<SiteSettings | null> {
   return client.fetch(`
     *[_type == "siteSettings"][0] {
-      heroHeadline, heroSubheadline, heroLocation, heroCtaText,
+      heroHeadline, heroSubheadline, heroLocation, heroCtaText, heroSecondaryCtaText,
+      heroHeadline_i18n, heroSubheadline_i18n, heroLocation_i18n, heroCtaText_i18n,
+      heroSecondaryCtaText_i18n,
       "heroGallery": heroGallery[]{${IMAGE_FIELDS}},
       "wineTourGallery": wineTourGallery[]{${IMAGE_FIELDS}},
+      homeEstates, homeWineTour, homeWines, homeAwards,
+      "homeStory": homeStory{..., "image": image{${IMAGE_FIELDS}}},
+      homeEvents, homeJournal, homeNewsletter,
+      footer, footerExploreLinks, footerHelpLinks, footerLocations, footerLegalLinks,
+      "navigation": navigation[]{
+        _key, label, label_i18n, href,
+        "children": children[]{ _key, label, label_i18n, href }
+      },
       "mascot": mascot{
-        heading, subtitle, imageBadgeTitle, imageBadgeSubtitle, story,
+        ...,
         "image": image{${IMAGE_FIELDS}},
         "gallery": gallery[]{${IMAGE_FIELDS}}
       },
-      email, phone, whatsapp, viber, telegram, address,
-      instagramWineRooms, instagramWines, facebook,
-      siteName, siteDescription, defaultOgImage,
-      "featuredWines": featuredWines[]->{
-        _id, name, slug, "mainImage": mainImage{${IMAGE_FIELDS}}, grapeVariety, vintage, wineType
-      },
-      "featuredTours": featuredTours[]->{
-        _id, title, slug, "mainImage": mainImage{${IMAGE_FIELDS}}, pricePerPerson, duration, tourType
-      },
-      "featuredEvents": featuredEvents[]->{
-        _id, title, slug, "mainImage": mainImage{${IMAGE_FIELDS}}, startDate, status, eventType
-      },
-      "featuredPosts": featuredBlogPosts[]->{
-        _id, title, slug, "featuredImage": featuredImage{${IMAGE_FIELDS}}, publishedAt, excerpt, author
-      }
+      email, phone, whatsapp, viber, telegram,
+      instagramWineRooms, instagramWines, facebook
+    }
+  `)
+}
+
+// ── Page texts (singletons) ──
+// Whole documents, so every text field and its `_i18n` translations come along.
+export async function getWinesPage(): Promise<WinesPageDoc | null> {
+  return client.fetch(`*[_type == "winesPage" && _id == "winesPage"][0]`)
+}
+
+export async function getEventsPage(): Promise<PageTextsDoc | null> {
+  return client.fetch(`*[_type == "eventsPage" && _id == "eventsPage"][0]`)
+}
+
+export async function getNewsPage(): Promise<PageTextsDoc | null> {
+  return client.fetch(`*[_type == "newsPage" && _id == "newsPage"][0]`)
+}
+
+export async function getContactPage(): Promise<PageTextsDoc | null> {
+  return client.fetch(`*[_type == "contactPage" && _id == "contactPage"][0]`)
+}
+
+export async function getOurStoryPage(): Promise<PageTextsDoc | null> {
+  return client.fetch(`
+    *[_type == "ourStoryPage" && _id == "ourStoryPage"][0] {
+      ...,
+      "heroImage": heroImage{${IMAGE_FIELDS}},
+      "mosaicMain": mosaicMain{${IMAGE_FIELDS}},
+      "mosaicSmall1": mosaicSmall1{${IMAGE_FIELDS}},
+      "mosaicSmall2": mosaicSmall2{${IMAGE_FIELDS}},
+      "teamMembers": teamMembers[]{..., "photo": photo{${IMAGE_FIELDS}}}
     }
   `)
 }
@@ -258,36 +286,6 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   `)
 }
 
-// ── Blog Posts ──
-export async function getAllBlogPosts(): Promise<BlogPost[]> {
-  return client.fetch(`
-    *[_type == "blogPost"] | order(publishedAt desc) {
-      _id, title, slug, excerpt, "featuredImage": featuredImage{${IMAGE_FIELDS}},
-      author, publishedAt, categories, readingTime, featured
-    }
-  `)
-}
-
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  return client.fetch(
-    `
-    *[_type == "blogPost" && slug.current == $slug][0] {
-      _id, title, slug, excerpt, "featuredImage": featuredImage{${IMAGE_FIELDS}},
-      body, author, publishedAt, categories,
-      readingTime, featured,
-      title_i18n, excerpt_i18n, seo
-    }
-  `,
-    { slug }
-  )
-}
-
-export async function getAllBlogSlugs(): Promise<{ slug: string }[]> {
-  return client.fetch(`
-    *[_type == "blogPost"] { "slug": slug.current }
-  `)
-}
-
 // ── News & Awards ──
 export async function getAllNews(): Promise<NewsItem[]> {
   return client.fetch(`
@@ -318,19 +316,6 @@ export async function getAllNewsSlugs(): Promise<{ slug: string }[]> {
   return client.fetch(`*[_type == "newsItem" && defined(slug.current)]{ "slug": slug.current }`)
 }
 
-export async function getNewsByCategory(category: string): Promise<NewsItem[]> {
-  return client.fetch(
-    `
-    *[_type == "newsItem" && category == $category] | order(date desc) {
-      _id, title, slug, category, date, excerpt,
-      "featuredImage": featuredImage{${IMAGE_FIELDS}}, awardOrganization, publication,
-      externalUrl, featured
-    }
-  `,
-    { category }
-  )
-}
-
 export async function getNewsItemBySlug(slug: string): Promise<NewsItem | null> {
   return client.fetch(
     `
@@ -338,20 +323,6 @@ export async function getNewsItemBySlug(slug: string): Promise<NewsItem | null> 
       _id, title, slug, category, date, excerpt,
       body, "featuredImage": featuredImage{${IMAGE_FIELDS}}, awardOrganization, awardYear,
       publication, externalUrl, featured, seo
-    }
-  `,
-    { slug }
-  )
-}
-
-// ── Pages (About section) ──
-export async function getPageBySlug(slug: string): Promise<Page | null> {
-  return client.fetch(
-    `
-    *[_type == "page" && slug.current == $slug][0] {
-      _id, title, slug, section, subtitle,
-      "featuredImage": featuredImage{${IMAGE_FIELDS}}, body, ctaText, ctaLink,
-      title_i18n, subtitle_i18n, seo
     }
   `,
     { slug }

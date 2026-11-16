@@ -1,23 +1,28 @@
 import type { Metadata } from 'next'
-import { getFaqByCategory } from '@/lib/sanity/queries'
+import { getContactPage, getFaqByCategory } from '@/lib/sanity/queries'
+import { CONTACT_DEFAULTS } from '@/content/defaults'
+import { currentLocale, resolveContactContent, seoToMetadata } from '@/lib/sanity/pageContent'
 
-export const metadata: Metadata = {
-  title: 'FAQ',
-  description: 'Frequently asked questions about HOVAZ Wine Rooms.',
+// Texts and SEO are edited in Studio → Pages → Contact Page → FAQ Page
+export async function generateMetadata(): Promise<Metadata> {
+  const [doc, locale] = await Promise.all([getContactPage(), currentLocale()])
+  return seoToMetadata(doc?.faqSeo, locale, {
+    title: CONTACT_DEFAULTS.seo.faq.metaTitle,
+    description: CONTACT_DEFAULTS.seo.faq.metaDescription,
+    url: 'https://hovazwines.com/contact/faq',
+  })
 }
 
 export const revalidate = 3600
 
-const categoryLabels: Record<string, string> = {
-  bookings: 'Bookings',
-  wine_tours: 'Wine Experiences',
-  getting_here: 'Getting Here',
-  wine: 'Wine',
-  general: 'General',
-}
-
 export default async function FaqPage() {
-  const faqs = await getFaqByCategory()
+  const [faqs, doc, locale] = await Promise.all([
+    getFaqByCategory(),
+    getContactPage(),
+    currentLocale(),
+  ])
+  const t = resolveContactContent(doc, locale)
+  const categoryLabels: Record<string, string> = t.faqCategories
 
   const byCategory = faqs.reduce((acc: Record<string, typeof faqs>, faq) => {
     const cat = faq.category ?? 'general'
@@ -31,9 +36,9 @@ export default async function FaqPage() {
       <div className="pt-32 pb-16" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
         <div className="container-content">
           <p className="text-label mb-3" style={{ color: 'var(--color-brand-gold)' }}>
-            Help
+            {t.faq.eyebrow}
           </p>
-          <h1 className="heading-display">Frequently Asked Questions</h1>
+          <h1 className="heading-display">{t.faq.heading}</h1>
         </div>
       </div>
 
@@ -41,7 +46,7 @@ export default async function FaqPage() {
         <div className="container-content max-w-prose mx-auto">
           {faqs.length === 0 ? (
             <p className="text-body" style={{ color: 'var(--color-brand-stone)' }}>
-              FAQ coming soon.
+              {t.faq.empty}
             </p>
           ) : (
             Object.entries(byCategory).map(([category, items]) => (

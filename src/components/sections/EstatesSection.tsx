@@ -7,12 +7,14 @@ import { urlFor } from '@/lib/sanity/image'
 import { estateHref } from '@/lib/estates'
 import { fig } from '@/lib/figmaScale'
 import type { Estate } from '@/types/sanity'
+import { HOME_DEFAULTS } from '@/content/defaults'
 
 interface EstatesSectionProps {
   estates: Estate[]
+  texts?: typeof HOME_DEFAULTS.estates
 }
 
-export function EstatesSection({ estates }: EstatesSectionProps) {
+export function EstatesSection({ estates, texts = HOME_DEFAULTS.estates }: EstatesSectionProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   if (!estates?.length) return null
@@ -34,7 +36,7 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
             color: 'rgba(93,110,82,0.92)',
           }}
         >
-          Two Estates
+          {texts.eyebrow}
         </p>
         <h2
           className="mb-10 capitalize"
@@ -47,7 +49,7 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
             lineHeight: 1.15,
           }}
         >
-          Choose Your Location First
+          {texts.heading}
         </h2>
 
         {/* Figma "Locations Row": two 750.5 × 595 cards, 24px gap = 1525px,
@@ -133,9 +135,10 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
                         lineHeight: 0.9,
                       }}
                     >
-                      <span>Type</span>
-                      <span>Of</span>
-                      <span>Experiences</span>
+                      {/* One word per line, as in the design */}
+                      {texts.statLabel.split(/\s+/).map((word, i) => (
+                        <span key={i}>{word}</span>
+                      ))}
                     </p>
                   </div>
                   <span
@@ -147,7 +150,7 @@ export function EstatesSection({ estates }: EstatesSectionProps) {
                       letterSpacing: '1px',
                     }}
                   >
-                    Find Your <span aria-hidden="true">→</span>
+                    {texts.linkText} <span aria-hidden="true">→</span>
                   </span>
                 </div>
 

@@ -13,6 +13,8 @@ import './globals.css'
 import { Navigation } from '@/components/layout/Navigation'
 import { Footer } from '@/components/layout/Footer'
 import { getSiteSettings } from '@/lib/sanity/queries'
+import { resolveFooterContent } from '@/lib/sanity/siteContent'
+import { defaultLocale, isLocale } from '@/i18n/config'
 import Script from 'next/script'
 
 const serif = Cormorant_Garamond({
@@ -119,6 +121,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [settings, locale] = await Promise.all([getSiteSettings(), getLocale()])
+  const footerContent = resolveFooterContent(settings, isLocale(locale) ? locale : defaultLocale)
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID
 
   return (
@@ -156,7 +159,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <NextIntlClientProvider>
           <Navigation settings={settings} />
           <main>{children}</main>
-          <Footer settings={settings} />
+          <Footer settings={settings} content={footerContent} />
         </NextIntlClientProvider>
       </body>
     </html>

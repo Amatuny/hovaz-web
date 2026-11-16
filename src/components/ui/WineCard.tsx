@@ -3,23 +3,23 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
 import type { Wine } from '@/types/sanity'
+import { WINES_DEFAULTS, type WineCardLabels } from '@/content/defaults'
 
 interface WineCardProps {
   wine: Wine
+  /** From Our Wines Page → Wine Cards; built-in labels when omitted */
+  labels?: WineCardLabels
 }
 
-const wineTypeLabels: Record<string, string> = {
-  red: 'Red · Dry',
-  white: 'White · Dry',
-  rose: 'Rosé · Dry',
-  sparkling: 'White · Sparkling',
-  orange: 'Orange · Dry',
-  dessert: 'Dessert · Sweet',
+const DEFAULT_LABELS: WineCardLabels = {
+  card: WINES_DEFAULTS.card,
+  wineTypes: WINES_DEFAULTS.wineTypes,
 }
 
-export function WineCard({ wine }: WineCardProps) {
+export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
   const tagLine = wine.tastingTags?.length ? wine.tastingTags.join(' · ') : undefined
-  const typeLabel = wine.wineType ? (wineTypeLabels[wine.wineType] ?? wine.wineType) : undefined
+  const wineTypes: Record<string, string> = labels.wineTypes
+  const typeLabel = wine.wineType ? (wineTypes[wine.wineType] ?? wine.wineType) : undefined
 
   return (
     <Link
@@ -180,7 +180,7 @@ export function WineCard({ wine }: WineCardProps) {
             borderColor: '#fdfcf8',
           }}
         >
-          Discover
+          {labels.card.discover}
           <Image src="/wines/discover-arrow.svg" alt="" width={15} height={7} />
         </span>
       </div>

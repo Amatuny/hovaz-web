@@ -7,8 +7,11 @@ import { DatePicker } from './BookingPickers'
 import { fig } from '@/lib/figmaScale'
 import { trackEvent } from '@/lib/analytics'
 import type { BookingInput } from '@/lib/validations/booking'
+import { EVENTS_DEFAULTS, type ReservationFormLabels } from '@/content/defaults'
 
 interface ReservationFormProps {
+  /** From Events Page → Reservation Form; built-in texts when omitted */
+  labels?: ReservationFormLabels
   experienceTitle: string
   experienceType: BookingInput['experienceType']
   location: string
@@ -72,8 +75,12 @@ export function ReservationForm({
   fixedDate,
   minGuests = 1,
   maxGuests = 12,
-  ctaText = 'Reserve Your Seat',
+  ctaText,
+  labels: t = EVENTS_DEFAULTS.form,
 }: ReservationFormProps) {
+  const buttonText = ctaText || t.submitButton
+  // "{title}" in the success message is replaced by the event name, in bold
+  const [successBefore, successAfter = ''] = t.successText.split('{title}')
   const [formState, setFormState] = useState<FormState>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -181,11 +188,12 @@ export function ReservationForm({
             color: '#1a1d17',
           }}
         >
-          Reservation Requested
+          {t.successTitle}
         </p>
         <p style={{ fontFamily: 'var(--font-hanken)', fontSize: fig(14), color: '#4f4542' }}>
-          Thank you for your interest in <strong>{experienceTitle}</strong>. We&apos;ll confirm
-          availability by email within 24 hours.
+          {successBefore}
+          {t.successText.includes('{title}') && <strong>{experienceTitle}</strong>}
+          {successAfter}
         </p>
       </div>
     )
@@ -201,7 +209,7 @@ export function ReservationForm({
     >
       {/* Date & Time */}
       <div className="flex flex-col" style={{ gap: fig(4) }}>
-        <FieldLabel>Date &amp; Time</FieldLabel>
+        <FieldLabel>{t.dateTimeLabel}</FieldLabel>
         {fixedDate ? (
           <p
             style={{
@@ -235,7 +243,7 @@ export function ReservationForm({
 
       {/* Location */}
       <div className="flex flex-col" style={{ gap: fig(4) }}>
-        <FieldLabel>Location</FieldLabel>
+        <FieldLabel>{t.locationLabel}</FieldLabel>
         <p style={{ fontFamily: 'var(--font-hanken)', fontSize: fig(15), color: '#1a1d17' }}>
           {location}
         </p>
@@ -244,7 +252,7 @@ export function ReservationForm({
       {/* Duration */}
       {duration && (
         <div className="flex flex-col" style={{ gap: fig(4) }}>
-          <FieldLabel>Duration</FieldLabel>
+          <FieldLabel>{t.durationLabel}</FieldLabel>
           <p style={{ fontFamily: 'var(--font-hanken)', fontSize: fig(15), color: '#1a1d17' }}>
             {duration}
           </p>
@@ -255,7 +263,7 @@ export function ReservationForm({
 
       {/* Guests */}
       <div className="flex flex-col" style={{ gap: fig(2) }}>
-        <FieldLabel>Number of Guests</FieldLabel>
+        <FieldLabel>{t.guestsLabel}</FieldLabel>
         <div className="flex flex-col" style={{ paddingTop: fig(8) }}>
           <div
             className="flex items-center justify-between"
@@ -268,7 +276,7 @@ export function ReservationForm({
             }}
           >
             <p style={{ fontFamily: 'var(--font-hanken)', fontSize: fig(15), color: '#1a1d17' }}>
-              {guestCount} guest{guestCount === 1 ? '' : 's'}
+              {guestCount} {guestCount === 1 ? t.guestSingular : t.guestPlural}
             </p>
             <div className="flex items-center">
               <button
@@ -317,13 +325,13 @@ export function ReservationForm({
           mockup, which only shows email, but the booking backend needs a name
           to address the confirmation to. */}
       <div className="flex flex-col" style={{ gap: fig(6) }}>
-        <FieldLabel>Full Name</FieldLabel>
+        <FieldLabel>{t.nameLabel}</FieldLabel>
         <input
           type="text"
           name="name"
           required
           disabled={isLoading}
-          placeholder="Your name"
+          placeholder={t.namePlaceholder}
           style={inputShellStyle}
         />
         {fieldErrors.name && (
@@ -335,13 +343,13 @@ export function ReservationForm({
 
       {/* Email */}
       <div className="flex flex-col" style={{ gap: fig(6) }}>
-        <FieldLabel>Email for Confirmation</FieldLabel>
+        <FieldLabel>{t.emailLabel}</FieldLabel>
         <input
           type="email"
           name="email"
           required
           disabled={isLoading}
-          placeholder="you@example.com"
+          placeholder={t.emailPlaceholder}
           style={inputShellStyle}
         />
         {fieldErrors.email && (
@@ -353,13 +361,13 @@ export function ReservationForm({
 
       {/* Phone — also required by the booking backend, not shown in Figma. */}
       <div className="flex flex-col" style={{ gap: fig(6) }}>
-        <FieldLabel>Phone Number</FieldLabel>
+        <FieldLabel>{t.phoneLabel}</FieldLabel>
         <input
           type="tel"
           name="phone"
           required
           disabled={isLoading}
-          placeholder="+374 77 000 000"
+          placeholder={t.phonePlaceholder}
           style={inputShellStyle}
         />
         {fieldErrors.phone && (
@@ -371,12 +379,12 @@ export function ReservationForm({
 
       {/* Notes */}
       <div className="flex flex-col" style={{ gap: fig(6) }}>
-        <FieldLabel>Allergies or Special Requests</FieldLabel>
+        <FieldLabel>{t.notesLabel}</FieldLabel>
         <textarea
           name="notes"
           rows={3}
           disabled={isLoading}
-          placeholder="e.g. nut allergy, dietary restrictions, accessibility needs"
+          placeholder={t.notesPlaceholder}
           style={{ ...inputShellStyle, minHeight: fig(88), resize: 'none' }}
         />
       </div>
@@ -425,14 +433,14 @@ export function ReservationForm({
           letterSpacing: fig(2),
         }}
       >
-        {isLoading ? 'Sending…' : ctaText}
+        {isLoading ? t.sendingButton : buttonText}
       </button>
 
       <p
         className="w-full text-center"
         style={{ fontFamily: 'var(--font-hanken)', fontSize: fig(12), color: '#a8a290' }}
       >
-        Free cancellation up to 48 hours before
+        {t.cancellationNote}
       </p>
     </form>
   )

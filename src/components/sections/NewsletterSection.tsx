@@ -1,7 +1,12 @@
 import { NewsletterForm } from '@/components/ui/NewsletterForm'
 import { SectionDivider } from '@/components/ui/SectionDivider'
+import { HOME_DEFAULTS } from '@/content/defaults'
 
-export function NewsletterSection() {
+interface NewsletterSectionProps {
+  texts?: typeof HOME_DEFAULTS.newsletter
+}
+
+export function NewsletterSection({ texts = HOME_DEFAULTS.newsletter }: NewsletterSectionProps) {
   return (
     <>
       <section
@@ -26,7 +31,7 @@ export function NewsletterSection() {
                 color: 'rgba(93,110,82,0.92)',
               }}
             >
-              Stay Close
+              {texts.eyebrow}
             </p>
             <h2
               className="mb-3"
@@ -37,7 +42,7 @@ export function NewsletterSection() {
                 color: 'var(--color-brand-forest)',
               }}
             >
-              Letters From The Forest
+              {texts.heading}
             </h2>
             <p
               className="mx-auto mb-8 max-w-sm"
@@ -47,11 +52,15 @@ export function NewsletterSection() {
                 color: 'var(--color-brand-stone)',
               }}
             >
-              Upcoming evenings, new releases, and notes from the cellar — a few times a season.
+              {texts.text}
             </p>
 
             <div className="mx-auto" style={{ maxWidth: '370px' }}>
-              <NewsletterForm source="homepage" />
+              <NewsletterForm
+                source="homepage"
+                placeholder={texts.placeholder}
+                buttonText={texts.buttonText}
+              />
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { fig } from '@/lib/figmaScale'
 import type { NewsItem } from '@/types/sanity'
+import { NEWS_DEFAULTS } from '@/content/defaults'
 
 const INITIAL_COUNT = 3
 
@@ -81,7 +82,14 @@ function AwardCard({ award }: { award: NewsItem }) {
   )
 }
 
-export function AwardsRecognition({ awards }: { awards: NewsItem[] }) {
+export function AwardsRecognition({
+  awards,
+  texts = NEWS_DEFAULTS.awards,
+}: {
+  awards: NewsItem[]
+  /** From News & Awards Page → Awards Block */
+  texts?: typeof NEWS_DEFAULTS.awards
+}) {
   const [showAll, setShowAll] = useState(false)
   const visible = showAll ? awards : awards.slice(0, INITIAL_COUNT)
 
@@ -100,7 +108,7 @@ export function AwardsRecognition({ awards }: { awards: NewsItem[] }) {
           color: '#8a9572',
         }}
       >
-        Recognition
+        {texts.eyebrow}
       </p>
       <h2
         className="text-center"
@@ -111,7 +119,7 @@ export function AwardsRecognition({ awards }: { awards: NewsItem[] }) {
           color: '#1a1d17',
         }}
       >
-        Award-winning estate wines
+        {texts.heading}
       </h2>
       <div
         className="grid w-full grid-cols-1 sm:grid-cols-3"
@@ -140,7 +148,7 @@ export function AwardsRecognition({ awards }: { awards: NewsItem[] }) {
             color: 'var(--color-brand-olive)',
           }}
         >
-          {showAll ? 'Show Fewer Awards' : 'See All Awards'}
+          {showAll ? texts.showFewer : texts.showAll}
         </button>
       )}
     </div>

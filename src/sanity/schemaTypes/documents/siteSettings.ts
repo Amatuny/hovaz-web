@@ -1,5 +1,7 @@
 import { defineType, defineField } from 'sanity'
 import { translatable } from '../helpers/translatable'
+import { linkList, textField, textGroup } from '../helpers/textGroup'
+import { FOOTER_DEFAULTS, HOME_DEFAULTS } from '../../../content/defaults'
 import { MdSettings } from 'react-icons/md'
 
 export const siteSettings = defineType({
@@ -9,9 +11,9 @@ export const siteSettings = defineType({
   icon: MdSettings,
   groups: [
     { name: 'homepage', title: 'Homepage', default: true },
-    { name: 'mascot', title: 'Mascot' },
+    { name: 'navigation', title: 'Navigation' },
+    { name: 'footer', title: 'Footer' },
     { name: 'contact', title: 'Contact & Social' },
-    { name: 'seo', title: 'Global SEO' },
   ],
   fields: [
     // ─── HOMEPAGE ───
@@ -63,24 +65,16 @@ export const siteSettings = defineType({
         initialValue: 'Book Your Experience',
       })
     ),
-    defineField({
-      name: 'featuredWines',
-      title: 'Featured Wines',
-      type: 'array',
-      group: 'homepage',
-      of: [{ type: 'reference', to: [{ type: 'wine' }] }],
-      validation: (Rule) => Rule.max(6).warning('Show maximum 6 featured wines'),
-      description: 'Select wines to feature on the homepage — max 6',
-    }),
-    defineField({
-      name: 'featuredTours',
-      title: 'Featured Experiences',
-      type: 'array',
-      group: 'homepage',
-      of: [{ type: 'reference', to: [{ type: 'tour' }] }],
-      validation: (Rule) => Rule.max(3).warning('Show maximum 3 featured experiences'),
-      description: 'Select experiences to feature on the homepage — max 3',
-    }),
+    ...translatable(
+      defineField({
+        name: 'heroSecondaryCtaText',
+        title: 'Hero Secondary Button Text',
+        type: 'string',
+        group: 'homepage',
+        description: 'Outline button next to the main CTA — links to the Wines page',
+        initialValue: 'Explore Our Wines',
+      })
+    ),
     defineField({
       name: 'wineTourGallery',
       title: 'Wine Experience Gallery',
@@ -91,34 +85,116 @@ export const siteSettings = defineType({
         'Photos for the homepage "Wine Experience" section — one large image plus 4 smaller ones (5 total).',
       validation: (Rule) => Rule.min(5).warning('Add 5 images: 1 large + 4 smaller'),
     }),
-    defineField({
-      name: 'featuredEvents',
-      title: 'Featured Events',
-      type: 'array',
-      group: 'homepage',
-      of: [{ type: 'reference', to: [{ type: 'event' }] }],
-      validation: (Rule) => Rule.max(3).warning('Show maximum 3 featured events'),
-      description: 'Select upcoming events to show on homepage — max 3',
-    }),
-    defineField({
-      name: 'featuredBlogPosts',
-      title: 'Featured Blog Posts',
-      type: 'array',
-      group: 'homepage',
-      of: [{ type: 'reference', to: [{ type: 'blogPost' }] }],
-      validation: (Rule) => Rule.max(3).warning('Show maximum 3 featured posts'),
-      description: 'Select blog posts to feature on homepage — max 3',
-    }),
 
-    // ─── MASCOT ───
+    // Homepage section texts — one collapsible box per section, top to bottom
+    textGroup({
+      name: 'homeEstates',
+      title: 'Estates Section — Texts',
+      group: 'homepage',
+      description: '"Choose Your Location First" — the two estate cards',
+      defaults: HOME_DEFAULTS.estates,
+      fields: [
+        { key: 'eyebrow', title: 'Small Label' },
+        { key: 'heading', title: 'Heading' },
+        {
+          key: 'statLabel',
+          title: 'Card Stat Label',
+          description: 'Shown next to the big number on each card, one word per line',
+        },
+        { key: 'linkText', title: 'Card Link Text' },
+      ],
+    }),
+    textGroup({
+      name: 'homeWineTour',
+      title: 'Wine Experience Section — Texts',
+      group: 'homepage',
+      defaults: HOME_DEFAULTS.wineTour,
+      fields: [
+        { key: 'eyebrow', title: 'Small Label' },
+        { key: 'heading', title: 'Heading' },
+        { key: 'text', title: 'Intro Text', rows: 3 },
+        { key: 'linkText', title: 'Link Text' },
+      ],
+    }),
+    textGroup({
+      name: 'homeWines',
+      title: 'Wines Section — Texts',
+      group: 'homepage',
+      defaults: HOME_DEFAULTS.wines,
+      fields: [
+        { key: 'eyebrow', title: 'Small Label' },
+        { key: 'heading', title: 'Heading' },
+        { key: 'text', title: 'Intro Text', rows: 3 },
+        { key: 'linkText', title: 'Link Text' },
+      ],
+    }),
+    textGroup({
+      name: 'homeStory',
+      title: 'Our Story Section',
+      group: 'homepage',
+      description: 'The short story teaser on the homepage, linking to the Our Story page',
+      defaults: HOME_DEFAULTS.story,
+      fields: [
+        { key: 'eyebrow', title: 'Small Label' },
+        { key: 'heading', title: 'Heading' },
+        { key: 'subtitle', title: 'Subtitle', rows: 3 },
+        { key: 'panelLabel', title: 'Dark Panel Label' },
+        {
+          key: 'panelText',
+          title: 'Dark Panel Text',
+          rows: 5,
+          description: 'Separate paragraphs with an empty line',
+        },
+        { key: 'linkText', title: 'Link Text' },
+      ],
+      extraFields: [
+        defineField({
+          name: 'image',
+          title: 'Photo',
+          type: 'imageWithAlt',
+          description: 'Shown left of the dark panel. Leave empty for a plain burgundy block.',
+        }),
+      ],
+    }),
+    textGroup({
+      name: 'homeAwards',
+      title: 'Recognition Section — Texts',
+      group: 'homepage',
+      description: 'Awards themselves come from News & Awards (category: Award)',
+      defaults: HOME_DEFAULTS.awards,
+      fields: [
+        { key: 'eyebrow', title: 'Small Label' },
+        { key: 'heading', title: 'Heading' },
+        { key: 'brandFactLabel', title: 'Last Item — Title' },
+        { key: 'brandFactMeta', title: 'Last Item — Subtitle' },
+      ],
+    }),
+    textGroup({
+      name: 'homeEvents',
+      title: 'Events Section — Texts',
+      group: 'homepage',
+      defaults: HOME_DEFAULTS.events,
+      fields: [
+        { key: 'eyebrow', title: 'Small Label' },
+        { key: 'heading', title: 'Heading' },
+        { key: 'text', title: 'Intro Text', rows: 3 },
+        { key: 'linkText', title: 'Link Text' },
+      ],
+    }),
     defineField({
       name: 'mascot',
       title: 'Mascot Section',
       type: 'object',
-      group: 'mascot',
+      group: 'homepage',
       description:
         'The homepage "Meet The Mascot" section. The section is hidden if Heading is empty.',
+      options: { collapsible: true, collapsed: true },
       fields: [
+        ...textField({ key: 'eyebrow', title: 'Small Label' }, HOME_DEFAULTS.mascot.eyebrow),
+        ...textField(
+          { key: 'storyLabel', title: 'Story Card Label' },
+          HOME_DEFAULTS.mascot.storyLabel
+        ),
         ...translatable(
           defineField({
             name: 'heading',
@@ -178,6 +254,193 @@ export const siteSettings = defineType({
         }),
       ],
     }),
+    textGroup({
+      name: 'homeJournal',
+      title: 'Journal Section — Texts',
+      group: 'homepage',
+      defaults: HOME_DEFAULTS.journal,
+      fields: [
+        { key: 'eyebrow', title: 'Small Label' },
+        { key: 'heading', title: 'Heading' },
+        { key: 'text', title: 'Intro Text', rows: 3 },
+        { key: 'linkText', title: 'Link Text' },
+      ],
+    }),
+    textGroup({
+      name: 'homeNewsletter',
+      title: 'Newsletter Section — Texts',
+      group: 'homepage',
+      defaults: HOME_DEFAULTS.newsletter,
+      fields: [
+        { key: 'eyebrow', title: 'Small Label' },
+        { key: 'heading', title: 'Heading' },
+        { key: 'text', title: 'Intro Text', rows: 2 },
+        { key: 'placeholder', title: 'Email Field Placeholder' },
+        { key: 'buttonText', title: 'Button Text' },
+      ],
+    }),
+
+    // ─── FOOTER ───
+    textGroup({
+      name: 'footer',
+      title: 'Footer Texts',
+      group: 'footer',
+      defaults: FOOTER_DEFAULTS.texts,
+      fields: [
+        { key: 'brandName', title: 'Brand Name' },
+        { key: 'tagline', title: 'Tagline', rows: 2 },
+        { key: 'exploreHeading', title: 'Column 1 Heading' },
+        { key: 'helpHeading', title: 'Column 2 Heading' },
+        { key: 'locationsHeading', title: 'Locations Heading' },
+        { key: 'contactHeading', title: 'Contact Heading' },
+        { key: 'newBadge', title: '"New" Badge Text' },
+        {
+          key: 'copyright',
+          title: 'Copyright Name',
+          description: 'Shown after "© <current year>"',
+        },
+        { key: 'responsibleText', title: 'Responsible Drinking Note' },
+      ],
+    }),
+    linkList({
+      name: 'footerExploreLinks',
+      title: 'Column 1 Links',
+      group: 'footer',
+      defaults: FOOTER_DEFAULTS.exploreLinks,
+    }),
+    linkList({
+      name: 'footerHelpLinks',
+      title: 'Column 2 Links',
+      group: 'footer',
+      defaults: FOOTER_DEFAULTS.helpLinks,
+    }),
+    defineField({
+      name: 'footerLocations',
+      title: 'Locations',
+      type: 'array',
+      group: 'footer',
+      description: `Leave empty to use the defaults: ${FOOTER_DEFAULTS.locations.map((l) => l.name).join(', ')}`,
+      of: [
+        {
+          type: 'object',
+          name: 'footerLocation',
+          title: 'Location',
+          fields: [
+            ...textField({ key: 'name', title: 'Name', description: '' }),
+            defineField({
+              name: 'href',
+              title: 'Link',
+              type: 'string',
+              description: 'e.g. /estates?estate=dilijan',
+            }),
+            ...textField({
+              key: 'detail',
+              title: 'Detail Line',
+              description: 'e.g. Proshyan · Ararat Valley',
+            }),
+            ...textField({
+              key: 'hours',
+              title: 'Opening Hours',
+              description: 'e.g. Tue-Sun · 11:00-20:00',
+            }),
+            defineField({
+              name: 'isNew',
+              title: 'Show "New" Badge',
+              type: 'boolean',
+              initialValue: false,
+            }),
+          ],
+          preview: { select: { title: 'name', subtitle: 'detail' } },
+        },
+      ],
+    }),
+    linkList({
+      name: 'footerLegalLinks',
+      title: 'Bottom Bar Links',
+      group: 'footer',
+      defaults: FOOTER_DEFAULTS.legalLinks,
+    }),
+
+    // ─── NAVIGATION ───
+    defineField({
+      name: 'navigation',
+      title: 'Header Navigation',
+      type: 'array',
+      group: 'navigation',
+      description:
+        'Links in the top navigation bar, in display order. Leave empty to use the built-in default menu.',
+      of: [
+        {
+          type: 'object',
+          name: 'navItem',
+          title: 'Menu Item',
+          fields: [
+            ...translatable(
+              defineField({
+                name: 'label',
+                title: 'Label',
+                type: 'string',
+                validation: (Rule) => Rule.required(),
+              })
+            ),
+            defineField({
+              name: 'href',
+              title: 'Link',
+              type: 'string',
+              description:
+                'Site path, e.g. /wines or /about/our-story. Optional when the item has dropdown items.',
+              validation: (Rule) =>
+                Rule.custom((value, context) => {
+                  const parent = context.parent as { children?: unknown[] } | undefined
+                  if (value || parent?.children?.length) return true
+                  return 'Add a link, or add dropdown items below'
+                }),
+            }),
+            defineField({
+              name: 'children',
+              title: 'Dropdown Items',
+              type: 'array',
+              description: 'Optional — turns this item into a dropdown menu',
+              of: [
+                {
+                  type: 'object',
+                  name: 'navSubItem',
+                  title: 'Dropdown Item',
+                  fields: [
+                    ...translatable(
+                      defineField({
+                        name: 'label',
+                        title: 'Label',
+                        type: 'string',
+                        validation: (Rule) => Rule.required(),
+                      })
+                    ),
+                    defineField({
+                      name: 'href',
+                      title: 'Link',
+                      type: 'string',
+                      description: 'e.g. /estates?estate=proshyan',
+                      validation: (Rule) => Rule.required(),
+                    }),
+                  ],
+                  preview: { select: { title: 'label', subtitle: 'href' } },
+                },
+              ],
+            }),
+          ],
+          preview: {
+            select: { title: 'label', subtitle: 'href', children: 'children' },
+            prepare({ title, subtitle, children }) {
+              const count = Array.isArray(children) ? children.length : 0
+              return {
+                title,
+                subtitle: count ? `${subtitle} · ${count} dropdown item(s)` : subtitle,
+              }
+            },
+          },
+        },
+      ],
+    }),
 
     // ─── CONTACT & SOCIAL ───
     defineField({
@@ -215,15 +478,6 @@ export const siteSettings = defineType({
       group: 'contact',
       description: 'Shown on the Contact page, e.g. @hovazwines',
     }),
-    ...translatable(
-      defineField({
-        name: 'address',
-        title: 'Address',
-        type: 'text',
-        rows: 3,
-        group: 'contact',
-      })
-    ),
     defineField({
       name: 'instagramWineRooms',
       title: 'Instagram — Wine Rooms',
@@ -243,44 +497,6 @@ export const siteSettings = defineType({
       title: 'Facebook URL',
       type: 'url',
       group: 'contact',
-    }),
-
-    // ─── GLOBAL SEO ───
-    ...translatable(
-      defineField({
-        name: 'siteName',
-        title: 'Site Name',
-        type: 'string',
-        group: 'seo',
-        initialValue: 'HOVAZ Wine Rooms',
-        validation: (Rule) => Rule.required(),
-      })
-    ),
-    ...translatable(
-      defineField({
-        name: 'siteDescription',
-        title: 'Default Meta Description',
-        type: 'text',
-        rows: 3,
-        group: 'seo',
-        description: 'Used on pages without their own meta description',
-        validation: (Rule) => Rule.max(160),
-      })
-    ),
-    defineField({
-      name: 'defaultOgImage',
-      title: 'Default Social Share Image',
-      type: 'image',
-      group: 'seo',
-      description: 'Fallback image when sharing pages that have no specific OG image',
-      options: { hotspot: true },
-    }),
-    defineField({
-      name: 'googleVerification',
-      title: 'Google Search Console Verification',
-      type: 'string',
-      group: 'seo',
-      description: 'Paste the content value from the Google verification meta tag',
     }),
   ],
 

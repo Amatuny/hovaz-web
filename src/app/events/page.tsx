@@ -1,19 +1,25 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { getAllEstates, getAllEventsForListing, getTestimonials } from '@/lib/sanity/queries'
+import {
+  getAllEstates,
+  getAllEventsForListing,
+  getEventsPage,
+  getTestimonials,
+} from '@/lib/sanity/queries'
 import { EventsFilterGrid } from '@/components/sections/EventsFilterGrid'
 import { TestimonialCard } from '@/components/ui/TestimonialCard'
 import { fig } from '@/lib/figmaScale'
+import { EVENTS_DEFAULTS } from '@/content/defaults'
+import { currentLocale, resolveEventsContent, seoToMetadata } from '@/lib/sanity/pageContent'
 
-export const metadata: Metadata = {
-  title: 'Evenings Worth The Drive',
-  description:
-    'Tastings, dinners, and cellar evenings across our two HOVAZ estates — browse and book upcoming events.',
-  openGraph: {
-    title: 'Events — HOVAZ',
-    description: 'Browse and book upcoming HOVAZ wine events.',
+// Texts and SEO are edited in Studio → Pages → Events Page
+export async function generateMetadata(): Promise<Metadata> {
+  const [doc, locale] = await Promise.all([getEventsPage(), currentLocale()])
+  return seoToMetadata(doc?.seo, locale, {
+    title: EVENTS_DEFAULTS.seo.metaTitle,
+    description: EVENTS_DEFAULTS.seo.metaDescription,
     url: 'https://hovazwines.com/events',
-  },
+  })
 }
 
 export const revalidate = 3600
@@ -78,11 +84,14 @@ function SectionHeader({
 }
 
 export default async function EventsPage() {
-  const [events, testimonials, estates] = await Promise.all([
+  const [events, testimonials, estates, doc, locale] = await Promise.all([
     getAllEventsForListing(),
     getTestimonials(),
     getAllEstates(),
+    getEventsPage(),
+    currentLocale(),
   ])
+  const t = resolveEventsContent(doc, locale)
 
   return (
     <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
@@ -93,9 +102,9 @@ export default async function EventsPage() {
         <div className="flex flex-col" style={{ gap: fig(82) }}>
           <SectionHeader
             as="h1"
-            eyebrow="Events"
-            heading="Evenings Worth The Drive"
-            paragraph="Tastings, dinners, and cellar evenings across our two estates. From crisp whites picked at first light to reds aged slow in old oak — each wine carries the same terraces, the same hands, the same patience."
+            eyebrow={t.list.eyebrow}
+            heading={t.list.heading}
+            paragraph={t.list.text}
           />
 
           {events.length === 0 ? (
@@ -106,10 +115,15 @@ export default async function EventsPage() {
                 color: 'var(--color-brand-stone)',
               }}
             >
-              No events scheduled right now — check back soon.
+              {t.list.empty}
             </p>
           ) : (
-            <EventsFilterGrid events={events} estateNames={estates.map((estate) => estate.name)} />
+            <EventsFilterGrid
+              events={events}
+              estateNames={estates.map((estate) => estate.name)}
+              labels={t.filters}
+              cardLabels={t.cards}
+            />
           )}
         </div>
 
@@ -129,7 +143,11 @@ export default async function EventsPage() {
         {testimonials.length > 0 && (
           <>
             <div className="flex flex-col" style={{ gap: fig(82) }}>
-              <SectionHeader eyebrow="Reviews" heading="What Guests Are Saying" headingSize={52} />
+              <SectionHeader
+                eyebrow={t.reviews.eyebrow}
+                heading={t.reviews.heading}
+                headingSize={52}
+              />
 
               <div
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"

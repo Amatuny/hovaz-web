@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
 import { fig } from '@/lib/figmaScale'
 import type { SanityImage } from '@/types/sanity'
+import { EVENTS_DEFAULTS, type EventCardLabels } from '@/content/defaults'
 
 // Shared by the /events grid and the homepage's horizontal "journal" strip —
 // one component, one hover implementation, so a fix here applies everywhere.
@@ -28,6 +29,8 @@ interface EventCardProps {
   // sized at a flat 0.75× of the grid's raw Figma numbers (240/320 = 0.75),
   // not responsive, since it's a fixed-size card regardless of viewport.
   variant?: 'grid' | 'strip'
+  /** From Events Page → Event Cards; built-in labels when omitted */
+  labels?: EventCardLabels
 }
 
 const STRIP_SCALE = 0.75
@@ -43,7 +46,11 @@ function badgeColor(key?: string) {
   return BADGE_COLORS[hash % BADGE_COLORS.length]
 }
 
-export function EventCard({ card, variant = 'grid' }: EventCardProps) {
+export function EventCard({
+  card,
+  variant = 'grid',
+  labels = EVENTS_DEFAULTS.card,
+}: EventCardProps) {
   const isStrip = variant === 'strip'
   // calc(var(--figma-scale) * Npx) for grid, flat "Npx" for strip.
   const size = (px: number) => (isStrip ? `${px * STRIP_SCALE}px` : fig(px))
@@ -96,7 +103,7 @@ export function EventCard({ card, variant = 'grid' }: EventCardProps) {
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <Link
           href={card.href}
-          aria-label={`Reserve your seat: ${card.title}`}
+          aria-label={`${labels.reserve}: ${card.title}`}
           // Fixed, not scaled by `size()`: this CTA isn't in the Figma design
           // at all (the card component has no button in its node tree), and
           // scaling its padding with the viewport made it overflow the card
@@ -112,7 +119,7 @@ export function EventCard({ card, variant = 'grid' }: EventCardProps) {
             borderRadius: '999px',
           }}
         >
-          Reserve Your Seat
+          {labels.reserve}
           <span aria-hidden="true">→</span>
         </Link>
       </div>
@@ -151,7 +158,7 @@ export function EventCard({ card, variant = 'grid' }: EventCardProps) {
               backgroundColor: 'rgba(0,0,0,0.6)',
             }}
           >
-            Past Event
+            {labels.pastEvent}
           </span>
         )}
       </div>

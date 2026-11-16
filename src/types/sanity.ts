@@ -189,23 +189,6 @@ export interface Testimonial {
   order?: number
 }
 
-export interface BlogPost {
-  _id: string
-  title: string
-  slug: SanitySlug
-  excerpt?: string
-  featuredImage?: SanityImage
-  body?: SanityBlock[]
-  author?: string
-  publishedAt?: string
-  categories?: string[]
-  readingTime?: number
-  featured?: boolean
-  title_i18n?: LocalizedString
-  excerpt_i18n?: LocalizedText
-  seo?: SeoMetadata
-}
-
 export interface NewsItem {
   _id: string
   title: string
@@ -256,22 +239,9 @@ export interface Estate {
   order?: number
 }
 
-export interface Page {
-  _id: string
-  title: string
-  slug: SanitySlug
-  section?: 'about' | 'contact' | 'other'
-  subtitle?: string
-  featuredImage?: SanityImage
-  body?: SanityBlock[]
-  ctaText?: string
-  ctaLink?: string
-  title_i18n?: LocalizedString
-  subtitle_i18n?: LocalizedString
-  seo?: SeoMetadata
-}
-
 export interface MascotSettings {
+  eyebrow?: string
+  storyLabel?: string
   heading?: string
   subtitle?: string
   image?: SanityImage
@@ -281,7 +251,56 @@ export interface MascotSettings {
   gallery?: SanityImage[]
 }
 
+export interface NavSubItem {
+  _key: string
+  label?: string
+  label_i18n?: { hy?: string; ru?: string }
+  href?: string
+}
+
+export interface NavItem extends NavSubItem {
+  children?: NavSubItem[]
+}
+
+/** Raw Sanity object of translatable texts — resolve with resolveTexts() */
+export type TextSource = Record<string, unknown>
+
+/** Any "Pages" singleton: named groups of translatable texts, plus `seo`. */
+export type PageTextsDoc = { [group: string]: TextSource | undefined }
+
+/** "Our Wines Page" singleton — raw text groups, resolved by resolveWinesContent() */
+export interface WinesPageDoc {
+  header?: TextSource
+  hovazCollection?: TextSource
+  goonehCollection?: TextSource
+  detailLabels?: TextSource
+  detailEvents?: TextSource
+  detailMore?: TextSource
+  card?: TextSource
+  wineTypes?: TextSource
+  seo?: TextSource
+}
+
 export interface SiteSettings {
+  navigation?: NavItem[]
+  homeEstates?: TextSource
+  homeWineTour?: TextSource
+  homeWines?: TextSource
+  homeStory?: TextSource
+  homeAwards?: TextSource
+  homeEvents?: TextSource
+  homeJournal?: TextSource
+  homeNewsletter?: TextSource
+  footer?: TextSource
+  footerExploreLinks?: TextSource[]
+  footerHelpLinks?: TextSource[]
+  footerLocations?: TextSource[]
+  footerLegalLinks?: TextSource[]
+  heroHeadline_i18n?: LocalizedString
+  heroSubheadline_i18n?: LocalizedString
+  heroLocation_i18n?: LocalizedString
+  heroCtaText_i18n?: LocalizedString
+  heroSecondaryCtaText_i18n?: LocalizedString
   heroHeadline?: string
   heroSubheadline?: string
   heroLocation?: string
@@ -289,21 +308,13 @@ export interface SiteSettings {
   wineTourGallery?: SanityImage[]
   mascot?: MascotSettings
   heroCtaText?: string
-  featuredWines?: Wine[]
-  featuredTours?: Tour[]
-  featuredEvents?: Event[]
-  featuredPosts?: BlogPost[]
+  heroSecondaryCtaText?: string
   email?: string
   phone?: string
   whatsapp?: string
   viber?: string
   telegram?: string
-  address?: string
   instagramWineRooms?: string
   instagramWines?: string
   facebook?: string
-  siteName?: string
-  siteDescription?: string
-  defaultOgImage?: SanityImage
-  googleVerification?: string
 }

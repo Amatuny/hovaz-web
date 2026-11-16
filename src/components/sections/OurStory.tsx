@@ -3,6 +3,8 @@
 import type { CSSProperties, ReactNode } from 'react'
 import Image from 'next/image'
 import { fig } from '@/lib/figmaScale'
+import { OUR_STORY_DEFAULTS } from '@/content/defaults'
+import type { OurStoryContent } from '@/lib/sanity/pageContent'
 
 const INK = '#1a1d17'
 const BODY = '#4f4542'
@@ -25,90 +27,32 @@ const bodyStyle: CSSProperties = {
   color: BODY,
 }
 
-const TIMELINE = [
-  {
-    year: '2018 — HOVAZ begins',
-    text: [
-      'HOVAZ is founded by a group of young Armenian wine enthusiasts with a shared passion for wine and viticulture.',
-    ],
-  },
-  {
-    year: '2022 — HOVAZ Wine Rooms, Dilijan',
-    text: [
-      'Our Wine Rooms became the first expression of our idea of bringing people closer to wine.',
-      'In Dilijan, we created an experience that allows guests to engage directly with the sparkling wine production process — going beyond tasting to discover how sparkling wine is actually made. It remains the only experience of its kind in Armenia.',
-    ],
-  },
-  {
-    year: '2026 — HOVAZ Wine Boutique, Proshyan',
-    text: ['Our new Wine Boutique takes participation one step further.'],
-  },
-]
+// All texts, lists and photos come from Studio → Pages → Our Story Page
+// (see resolveOurStoryContent); the photos below are used while it has none.
 
-const VALUES = [
-  {
-    title: 'SUSTAINABILITY:',
-    text: 'We believe a modern wine business should take responsibility for the resources it uses. Our HOVAZ Wine Boutique in Proshyan operates entirely on solar energy, supported by solar generators. It is one of the practical ways we are working to reduce our environmental footprint and make our operations more sustainable. For us, sustainability is not simply a principle. It is something we put into practice.',
-  },
-  {
-    title: 'WILDLIFE CONSERVATION:',
-    text: "HOVAZ takes its name from the Armenian word for leopard. The leopard is one of Armenia's most threatened wild animals, and its survival depends on it on continued protection of its habitat and population. HOVAZ has adopted an Armenian leopard and supports its conservation as part of: our commitment to protecting Armenia's wildlife. The leopard is not simply part of our name. It is part of what we stand behind.",
-  },
-  {
-    title: 'WOMEN EMPOWERMENT',
-    text: "HOVAZ is a women-founded business, and promoting women's participation in wine is an important part of who we are. We believe there should be more opportunities for women to build careers, lead, create and shape the future of the wine industry. We want HOVAZ to contribute to a wine culture where women are visible not only as: wine lovers, but as professionals, leaders, entrepreneurs and creators.",
-  },
-]
+/** Splits a text field into paragraphs on empty lines. */
+const paragraphs = (text: string) =>
+  text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
 
-const MILESTONES = [
-  { year: '2018', lines: ['Family rows above Dilijan become a working estate.'] },
-  { year: '2019', lines: ['First vintage released — 800 bottles, sold locally.'] },
-  { year: '2021', lines: ["Plans begin for a second site in Proshyan's Ararat Valley."] },
-  { year: '2023', lines: ['Reserve Collection introduced, our first library wines.'] },
-  {
-    year: '2026',
-    lines: [
-      'Proshyan Wine Rooms opens — two estates',
-      'now welcome tastings, tours and private events.',
-    ],
-  },
-]
+/** Splits a text field into its lines. */
+const lines = (text: string) =>
+  text
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
 
-const PRINCIPLES = [
-  {
-    glyph: '◈',
-    title: 'Hand-Grown',
-    text: 'Every parcel is hand-harvested and fermented in small, native-yeast batches.',
-  },
-  {
-    glyph: '✦',
-    title: 'Two Terroirs',
-    text: "Proshyan's high valley and Dilijan's forested hills, kept distinct, never blended for convenience.",
-  },
-  {
-    glyph: '❖',
-    title: 'Slow, on Purpose',
-    text: 'Small lots, patient aging, and releases only when a wine is ready — not on a schedule.',
-  },
-]
-
-// `imageFrame` positions the image box to reproduce Figma's zoomed crop where it isn't a plain cover-fit.
-const TEAM: {
-  name: string
-  role: string
+// Built-in team photos, matched by position to the built-in team members.
+// `imageFrame` reproduces Figma's zoomed crop where it isn't a plain cover-fit.
+const DEFAULT_TEAM_PHOTOS: {
   src: string
   imageClass?: string
   imageFrame?: CSSProperties
 }[] = [
+  { src: '/about/team-lilit.png', imageClass: 'object-cover object-[center_25%]' },
   {
-    name: 'Lilit Avetisyan',
-    role: 'Founder & Winemaker',
-    src: '/about/team-lilit.png',
-    imageClass: 'object-cover object-[center_25%]',
-  },
-  {
-    name: 'Nelli Petrosyan',
-    role: 'Estate Director, Dilijan',
     src: '/about/team-nelli.jpg',
     imageFrame: {
       width: '111.78%',
@@ -119,8 +63,29 @@ const TEAM: {
       bottom: 'auto',
     },
   },
-  { name: 'Sirvard Amatuni', role: 'Estate Director, Proshyan', src: '/about/team-sirvard.jpg' },
+  { src: '/about/team-sirvard.jpg' },
 ]
+
+/** Content used when the page is rendered without Sanity data. */
+const DEFAULT_CONTENT: OurStoryContent = {
+  intro: OUR_STORY_DEFAULTS.intro,
+  heroImage: undefined,
+  beginning: OUR_STORY_DEFAULTS.beginning,
+  timeline: OUR_STORY_DEFAULTS.timeline,
+  mosaicMain: undefined,
+  mosaicSmall1: undefined,
+  mosaicSmall2: undefined,
+  mosaicCard1: OUR_STORY_DEFAULTS.mosaicCard1,
+  mosaicCard2: OUR_STORY_DEFAULTS.mosaicCard2,
+  values: OUR_STORY_DEFAULTS.values,
+  valueItems: OUR_STORY_DEFAULTS.valueItems,
+  milestones: OUR_STORY_DEFAULTS.milestones,
+  milestoneItems: OUR_STORY_DEFAULTS.milestoneItems,
+  principles: OUR_STORY_DEFAULTS.principles,
+  principleItems: OUR_STORY_DEFAULTS.principleItems,
+  team: OUR_STORY_DEFAULTS.team,
+  teamMembers: undefined,
+}
 
 function SectionHead({
   eyebrow,
@@ -216,7 +181,9 @@ function DarkCard({
   )
 }
 
-export function OurStory() {
+export function OurStory({ content = DEFAULT_CONTENT }: { content?: OurStoryContent }) {
+  const c = content
+
   return (
     <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div
@@ -225,7 +192,7 @@ export function OurStory() {
       >
         <div className="w-full">
           <div className="flex flex-col" style={{ gap: fig(16), maxWidth: fig(860) }}>
-            <SectionHead as="h1" eyebrow="Our Story" title="The forest and the valley" />
+            <SectionHead as="h1" eyebrow={c.intro.eyebrow} title={c.intro.heading} />
             <p
               style={{
                 fontFamily: 'var(--font-hanken)',
@@ -234,8 +201,7 @@ export function OurStory() {
                 color: BODY,
               }}
             >
-              Founded in 2018 on terraces above Proshyan, Vineyard Reserve sits where wild forest
-              meets cultivated valley — a boundary we try to keep visible in every bottle.
+              {c.intro.text}
             </p>
           </div>
         </div>
@@ -246,8 +212,12 @@ export function OurStory() {
             style={{ aspectRatio: '1200 / 568', borderRadius: fig(24) }}
           >
             <Image
-              src="/about/hero-cellar.png"
-              alt="Stainless steel tanks and oak barrels in the HOVAZ cellar"
+              src={c.heroImage?.src ?? '/about/hero-cellar.png'}
+              alt={
+                c.heroImage
+                  ? c.heroImage.alt
+                  : 'Stainless steel tanks and oak barrels in the HOVAZ cellar'
+              }
               fill
               priority
               className="object-cover"
@@ -259,31 +229,35 @@ export function OurStory() {
 
           {/* The beginning */}
           <section className="flex flex-col" style={{ gap: fig(48) }}>
-            <SectionHead eyebrow="The Beginning" title="From family table to estate" />
+            <SectionHead eyebrow={c.beginning.eyebrow} title={c.beginning.heading} />
             <div className="flex flex-col" style={{ gap: fig(24) }}>
               <div style={bodyStyle}>
-                <p>
-                  HOVAZ began in 2018 with a passion for Armenian wine and a desire to explore how
-                  people could experience it differently. From the beginning, we have believed that
-                  wine is more interesting when you can get closer to what happens behind the
-                  bottle— to the craft, the decisions, the people and the process.
-                </p>
-                <p style={{ marginTop: fig(28), fontWeight: 600, fontSize: fig(20) }}>
-                  That idea has shaped how HOVAZ has evolved.
-                </p>
+                {paragraphs(c.beginning.text).map((paragraph, i) => (
+                  <p key={i} style={i > 0 ? { marginTop: fig(28) } : undefined}>
+                    {paragraph}
+                  </p>
+                ))}
+                {c.beginning.highlight && (
+                  <p style={{ marginTop: fig(28), fontWeight: 600, fontSize: fig(20) }}>
+                    {c.beginning.highlight}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col" style={{ ...bodyStyle, gap: fig(28) }}>
-                {TIMELINE.map((entry) => (
-                  <div key={entry.year} className="flex flex-col" style={{ gap: fig(28) }}>
-                    <div>
-                      <p style={{ fontWeight: 700 }}>{entry.year}</p>
-                      <p>{entry.text[0]}</p>
+                {c.timeline.map((entry, i) => {
+                  const [first, ...rest] = paragraphs(entry.text)
+                  return (
+                    <div key={i} className="flex flex-col" style={{ gap: fig(28) }}>
+                      <div>
+                        <p style={{ fontWeight: 700 }}>{entry.title}</p>
+                        {first && <p>{first}</p>}
+                      </div>
+                      {rest.map((paragraph, j) => (
+                        <p key={j}>{paragraph}</p>
+                      ))}
                     </div>
-                    {entry.text.slice(1).map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           </section>
@@ -303,11 +277,12 @@ export function OurStory() {
               style={{ borderRadius: fig(24) }}
             >
               <Image
-                src="/about/mosaic-grapes.jpg"
-                alt="Ripe grape clusters on the vine"
+                src={c.mosaicMain?.src ?? '/about/mosaic-grapes.jpg'}
+                alt={c.mosaicMain ? c.mosaicMain.alt : 'Ripe grape clusters on the vine'}
                 fill
                 className="object-cover"
-                style={{ objectPosition: '88% top' }}
+                // The built-in photo is framed on the grapes; CMS photos use their hotspot crop
+                style={c.mosaicMain ? undefined : { objectPosition: '88% top' }}
                 sizes="(max-width: 1024px) 100vw, 590px"
               />
               <div
@@ -318,22 +293,19 @@ export function OurStory() {
               />
             </div>
             <DarkCard
-              eyebrow="The Beginning"
-              title="From family table to estate"
+              eyebrow={c.mosaicCard1.eyebrow}
+              title={c.mosaicCard1.title}
               className="col-span-2"
             >
-              Hovaz began with a handful of family rows above Dilijan, planted for the household
-              table long before they were planted for a label. In 2018 that plot became an estate —
-              small, deliberately so, working with growers who still pick fruit by hand and ferment
-              in native-yeast batches.
+              {c.mosaicCard1.text}
             </DarkCard>
             <div
               className="relative min-h-[180px] overflow-hidden lg:min-h-0"
               style={{ borderRadius: fig(24) }}
             >
               <Image
-                src="/about/mosaic-bottles.jpg"
-                alt=""
+                src={c.mosaicSmall1?.src ?? '/about/mosaic-bottles.jpg'}
+                alt={c.mosaicSmall1?.alt ?? ''}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 50vw, 290px"
@@ -344,30 +316,28 @@ export function OurStory() {
               style={{ borderRadius: fig(24) }}
             >
               <Image
-                src="/about/mosaic-barrels.jpg"
-                alt=""
+                src={c.mosaicSmall2?.src ?? '/about/mosaic-barrels.jpg'}
+                alt={c.mosaicSmall2?.alt ?? ''}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 50vw, 290px"
               />
             </div>
             <DarkCard
-              eyebrow="How we decided"
-              title="Built for the long table"
+              eyebrow={c.mosaicCard2.eyebrow}
+              title={c.mosaicCard2.title}
               className="col-span-2 lg:col-span-4"
             >
-              We wanted a red that could sit through a whole evening — poured early, still good
-              three hours later. Twelve months in Caucasian oak softened the tannins without masking
-              the fruit, and it&apos;s stayed our benchmark for every reserve since.
+              {c.mosaicCard2.text}
             </DarkCard>
           </div>
 
           {/* What we stand for */}
           <section className="flex flex-col" style={{ gap: fig(48) }}>
-            <SectionHead title="What we stand for" />
+            <SectionHead title={c.values.heading} />
             <div className="flex flex-col" style={{ ...bodyStyle, gap: fig(28) }}>
-              {VALUES.map((value) => (
-                <div key={value.title}>
+              {c.valueItems.map((value, i) => (
+                <div key={i}>
                   <p style={{ fontWeight: 700 }}>{value.title}</p>
                   <p>{value.text}</p>
                 </div>
@@ -378,12 +348,12 @@ export function OurStory() {
           {/* Milestones */}
           <section className="flex flex-col items-center" style={{ gap: fig(48) }}>
             <div className="w-full">
-              <SectionHead eyebrow="Milestones" title="Along the way" />
+              <SectionHead eyebrow={c.milestones.eyebrow} title={c.milestones.heading} />
             </div>
             <ol className="flex w-full flex-col" style={{ maxWidth: fig(900), gap: fig(24) }}>
-              {MILESTONES.map((milestone) => (
+              {c.milestoneItems.map((milestone, i) => (
                 <li
-                  key={milestone.year}
+                  key={i}
                   className="flex items-center justify-between"
                   style={{
                     backgroundColor: '#f2eddd',
@@ -398,8 +368,8 @@ export function OurStory() {
                 >
                   <span style={{ fontWeight: 600, color: SAGE }}>{milestone.year}</span>
                   <span className="text-right" style={{ fontWeight: 400, color: '#160805' }}>
-                    {milestone.lines.map((line) => (
-                      <span key={line} className="lg:block lg:whitespace-nowrap">
+                    {lines(milestone.text).map((line, j) => (
+                      <span key={j} className="lg:block lg:whitespace-nowrap">
                         {line}{' '}
                       </span>
                     ))}
@@ -411,11 +381,11 @@ export function OurStory() {
 
           {/* Principles */}
           <section className="flex flex-col" style={{ gap: fig(48) }}>
-            <SectionHead eyebrow="What Guides Us" title="Principles over process" />
+            <SectionHead eyebrow={c.principles.eyebrow} title={c.principles.heading} />
             <div className="flex flex-wrap" style={{ gap: fig(24) }}>
-              {PRINCIPLES.map((principle) => (
+              {c.principleItems.map((principle, i) => (
                 <div
-                  key={principle.title}
+                  key={i}
                   className="flex min-w-[260px] flex-[1_0_0] flex-col bg-white"
                   style={{
                     borderRadius: fig(20),
@@ -435,7 +405,7 @@ export function OurStory() {
                       color: '#3d4a38',
                     }}
                   >
-                    {principle.glyph}
+                    {principle.symbol}
                   </span>
                   <h3
                     style={{
@@ -467,68 +437,84 @@ export function OurStory() {
 
         {/* Team */}
         <section className="flex w-full flex-col" style={{ maxWidth: fig(1200), gap: fig(48) }}>
-          <SectionHead title="The people behind HOVAZ" />
+          <SectionHead title={c.team.heading} />
           <div style={{ ...bodyStyle, maxWidth: fig(900), fontWeight: 700 }}>
-            <p>
-              HOVAZ is built by people who care about wine and about what happens around it. Our
-              team brings together winemaking, hospitality, creativity and a willingness to
-              experiment. We believe the best experiences come from people who know their craft,
-              enjoy sharing it and remain curious about what comes next.
-            </p>
-            <h3
-              style={{
-                marginTop: fig(28),
-                fontFamily: 'var(--font-hanken)',
-                fontSize: fig(24),
-                fontWeight: 700,
-                color: BODY,
-              }}
-            >
-              Meet the HOVAZ team
-            </h3>
+            {paragraphs(c.team.text).map((paragraph, i) => (
+              <p key={i} style={i > 0 ? { marginTop: fig(28) } : undefined}>
+                {paragraph}
+              </p>
+            ))}
+            {c.team.subheading && (
+              <h3
+                style={{
+                  marginTop: fig(28),
+                  fontFamily: 'var(--font-hanken)',
+                  fontSize: fig(24),
+                  fontWeight: 700,
+                  color: BODY,
+                }}
+              >
+                {c.team.subheading}
+              </h3>
+            )}
           </div>
           <ul className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: fig(24) }}>
-            {TEAM.map((member) => (
-              <li key={member.name} className="flex flex-col" style={{ gap: fig(14) }}>
-                <div
-                  className="relative w-full overflow-hidden"
-                  style={{ height: fig(300), borderRadius: fig(20) }}
-                >
-                  <div className="absolute inset-0" style={member.imageFrame}>
-                    <Image
-                      src={member.src}
-                      alt={member.name}
-                      fill
-                      className={member.imageClass ?? 'object-cover'}
-                      sizes="(max-width: 640px) 100vw, 400px"
-                    />
+            {(c.teamMembers ?? OUR_STORY_DEFAULTS.teamMembers).map((member, i) => {
+              // CMS members use their own photo (cropped by Sanity); built-in
+              // members keep their static photo and Figma crop.
+              const cmsPhoto = c.teamMembers
+                ? (member as { photo?: { src: string } }).photo
+                : undefined
+              const builtIn = c.teamMembers ? undefined : DEFAULT_TEAM_PHOTOS[i]
+              const src = cmsPhoto?.src ?? builtIn?.src
+              return (
+                <li key={i} className="flex flex-col" style={{ gap: fig(14) }}>
+                  <div
+                    className="relative w-full overflow-hidden"
+                    style={{
+                      height: fig(300),
+                      borderRadius: fig(20),
+                      backgroundColor: 'var(--color-brand-sand)',
+                    }}
+                  >
+                    {src && (
+                      <div className="absolute inset-0" style={builtIn?.imageFrame}>
+                        <Image
+                          src={src}
+                          alt={member.name}
+                          fill
+                          className={builtIn?.imageClass ?? 'object-cover'}
+                          sizes="(max-width: 640px) 100vw, 400px"
+                        />
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="flex flex-col" style={{ gap: fig(2) }}>
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-playfair)',
-                      fontWeight: 500,
-                      fontSize: fig(19),
-                      lineHeight: 1.33,
-                      color: INK,
-                    }}
-                  >
-                    {member.name}
-                  </p>
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-hanken)',
-                      fontSize: fig(13),
-                      lineHeight: 1.3,
-                      color: SAGE,
-                    }}
-                  >
-                    {member.role}
-                  </p>
-                </div>
-              </li>
-            ))}
+                  <div className="flex flex-col" style={{ gap: fig(2) }}>
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-playfair)',
+                        fontWeight: 500,
+                        fontSize: fig(19),
+                        lineHeight: 1.33,
+                        color: INK,
+                      }}
+                    >
+                      {member.name}
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-hanken)',
+                        fontSize: fig(13),
+                        lineHeight: 1.3,
+                        color: SAGE,
+                      }}
+                    >
+                      {member.role}
+                    </p>
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         </section>
 

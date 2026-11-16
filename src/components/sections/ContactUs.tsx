@@ -4,13 +4,9 @@ import Image from 'next/image'
 import { fig } from '@/lib/figmaScale'
 import { ContactMessageForm } from '@/components/ui/ContactMessageForm'
 import type { SiteSettings } from '@/types/sanity'
+import type { ContactContent } from '@/lib/sanity/pageContent'
 
 const INK = '#1a1d17'
-
-const ESTATES = [
-  'Proshyan Estate — Proshyan Valley Road, Yerevan, Armenia',
-  'Dilijan Estate — Dilijan National Park Road, Armenia',
-]
 
 interface Channel {
   label: string
@@ -23,11 +19,11 @@ interface Channel {
 const digits = (phone: string) => phone.replace(/\D/g, '')
 
 // Only channels with a value in Site Settings are shown.
-function getChannels(settings: SiteSettings | null): Channel[] {
+function getChannels(settings: SiteSettings | null, labels: ContactContent['channels']): Channel[] {
   const channels: (Channel | null)[] = [
     settings?.email
       ? {
-          label: 'Email',
+          label: labels.email,
           value: settings.email,
           href: `mailto:${settings.email}`,
           glyph: '✉',
@@ -36,7 +32,7 @@ function getChannels(settings: SiteSettings | null): Channel[] {
       : null,
     settings?.whatsapp
       ? {
-          label: 'WhatsApp',
+          label: labels.whatsapp,
           value: settings.whatsapp,
           href: `https://wa.me/${digits(settings.whatsapp)}`,
           glyph: '☏',
@@ -45,7 +41,7 @@ function getChannels(settings: SiteSettings | null): Channel[] {
       : null,
     settings?.viber
       ? {
-          label: 'Viber',
+          label: labels.viber,
           value: settings.viber,
           href: `viber://chat?number=%2B${digits(settings.viber)}`,
           glyph: '◔',
@@ -54,7 +50,7 @@ function getChannels(settings: SiteSettings | null): Channel[] {
       : null,
     settings?.telegram
       ? {
-          label: 'Telegram',
+          label: labels.telegram,
           value: settings.telegram,
           href: `https://t.me/${settings.telegram.replace(/^@/, '')}`,
           glyph: '➤',
@@ -122,8 +118,15 @@ function ChannelCard({ channel }: { channel: Channel }) {
   )
 }
 
-export function ContactUs({ settings }: { settings: SiteSettings | null }) {
-  const channels = getChannels(settings)
+export function ContactUs({
+  settings,
+  content: t,
+}: {
+  settings: SiteSettings | null
+  /** From Studio → Pages → Contact Page */
+  content: ContactContent
+}) {
+  const channels = getChannels(settings, t.channels)
 
   return (
     <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
@@ -143,7 +146,7 @@ export function ContactUs({ settings }: { settings: SiteSettings | null }) {
                 color: '#8a9572',
               }}
             >
-              Get in Touch
+              {t.contact.eyebrow}
             </p>
             <h1
               style={{
@@ -154,7 +157,7 @@ export function ContactUs({ settings }: { settings: SiteSettings | null }) {
                 color: INK,
               }}
             >
-              Contact Us
+              {t.contact.heading}
             </h1>
             <p
               style={{
@@ -164,8 +167,7 @@ export function ContactUs({ settings }: { settings: SiteSettings | null }) {
                 color: '#4f4542',
               }}
             >
-              Questions about a visit, a booking, or the wines themselves — reach us however&apos;s
-              easiest.
+              {t.contact.text}
             </p>
           </div>
         </div>
@@ -185,14 +187,14 @@ export function ContactUs({ settings }: { settings: SiteSettings | null }) {
             </div>
           )}
           <div className="flex min-w-[min(320px,100%)] flex-[538_0_0]">
-            <ContactMessageForm />
+            <ContactMessageForm labels={t.form} />
           </div>
         </div>
 
         <address className="flex w-full flex-col not-italic" style={{ gap: fig(10) }}>
-          {ESTATES.map((estate) => (
+          {t.addresses.map((address, i) => (
             <p
-              key={estate}
+              key={i}
               style={{
                 fontFamily: 'var(--font-hanken)',
                 fontSize: fig(24),
@@ -200,7 +202,7 @@ export function ContactUs({ settings }: { settings: SiteSettings | null }) {
                 color: INK,
               }}
             >
-              {estate}
+              {address.text}
             </p>
           ))}
         </address>
