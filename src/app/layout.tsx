@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import {
-  Cormorant_Garamond,
+  EB_Garamond,
+  Fraunces,
   Inter,
   Hanken_Grotesk,
   Montserrat,
   Noto_Sans_Armenian,
   Playfair_Display,
+  Work_Sans,
 } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale } from 'next-intl/server'
@@ -16,17 +18,14 @@ import { getSiteSettings } from '@/lib/sanity/queries'
 import { resolveFooterContent } from '@/lib/sanity/siteContent'
 import { defaultLocale, isLocale } from '@/i18n/config'
 import Script from 'next/script'
-
-const serif = Cormorant_Garamond({
-  variable: '--font-serif',
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-})
+import { cookies } from 'next/headers'
+import { AgeGate } from '@/components/layout/AgeGate'
+import { AGE_COOKIE } from '@/lib/ageGate'
+import { urlFor } from '@/lib/sanity/image'
 
 const sans = Inter({
   variable: '--font-sans',
-  subsets: ['latin'],
+  subsets: ['latin', 'cyrillic'],
   display: 'swap',
 })
 
@@ -38,10 +37,11 @@ const hankenGrotesk = Hanken_Grotesk({
   display: 'swap',
 })
 
+// Figma uses Medium, SemiBold and Bold (+ Italic, Medium Italic, Bold Italic)
 const playfairDisplay = Playfair_Display({
   variable: '--font-playfair',
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700'],
   style: ['normal', 'italic'],
   display: 'swap',
 })
@@ -50,6 +50,35 @@ const montserrat = Montserrat({
   variable: '--font-montserrat',
   subsets: ['latin', 'cyrillic'],
   weight: ['300', '500', '600', '700'],
+  display: 'swap',
+})
+
+// Three fonts used by single spots in the Figma design. One weight each to
+// keep the download small. None of them has Armenian letters, so every use
+// falls back to Noto Sans Armenian for hy (see the font stacks in components).
+
+/** "View all" cards: Regular on the wines card, Medium on the others */
+const ebGaramond = EB_Garamond({
+  variable: '--font-eb-garamond',
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500'],
+  display: 'swap',
+})
+
+/** Leopard photo caption ("Rescued 2021") — Fraunces SemiBold, SOFT 0 / WONK 1.
+ *  Loaded as the variable font so those two axes are available. Latin only. */
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
+  subsets: ['latin'],
+  axes: ['SOFT', 'WONK'],
+  display: 'swap',
+})
+
+/** Line under each review ("Guided Tasting, Dilijan") — Work Sans Regular. Latin only. */
+const workSans = Work_Sans({
+  variable: '--font-work-sans',
+  subsets: ['latin'],
+  weight: ['400'],
   display: 'swap',
 })
 
@@ -120,14 +149,25 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [settings, locale] = await Promise.all([getSiteSettings(), getLocale()])
+  const [settings, locale, cookieStore] = await Promise.all([
+    getSiteSettings(),
+    getLocale(),
+    cookies(),
+  ])
   const footerContent = resolveFooterContent(settings, isLocale(locale) ? locale : defaultLocale)
+  const ageVerified = cookieStore.get(AGE_COOKIE)?.value === '1'
+  const ageGateImage = settings?.ageGateImage?.asset
+    ? settings.ageGateImage
+    : settings?.heroGallery?.[0]
+  const ageGateImageUrl = ageGateImage?.asset
+    ? urlFor(ageGateImage).width(920).height(1100).url()
+    : undefined
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID
 
   return (
     <html
       lang={locale}
-      className={`${serif.variable} ${sans.variable} ${hankenGrotesk.variable} ${montserrat.variable} ${notoSansArmenian.variable} ${playfairDisplay.variable}`}
+      className={`${sans.variable} ${hankenGrotesk.variable} ${montserrat.variable} ${notoSansArmenian.variable} ${playfairDisplay.variable} ${ebGaramond.variable} ${fraunces.variable} ${workSans.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -160,6 +200,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <Navigation settings={settings} />
           <main>{children}</main>
           <Footer settings={settings} content={footerContent} />
+          <AgeGate verified={ageVerified} imageUrl={ageGateImageUrl} imageAlt={ageGateImage?.alt} />
         </NextIntlClientProvider>
       </body>
     </html>

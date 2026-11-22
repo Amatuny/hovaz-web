@@ -8,19 +8,15 @@ interface TestimonialCardProps {
   testimonial: Testimonial
 }
 
+// Figma "star_filled": 16px, solid #b37d09; empty stars use a faint outline
 function StarIcon({ filled }: { filled: boolean }) {
   return (
-    <svg
-      width={fig(16)}
-      height={fig(16)}
-      viewBox="0 0 24 24"
-      fill={filled ? 'var(--color-brand-gold)' : 'none'}
-    >
+    <svg width={fig(16)} height={fig(16)} viewBox="0 0 16 16" aria-hidden="true">
       <path
-        d="M12 2.5l2.9 6.4 6.9.6-5.3 4.7 1.6 6.8-6.1-3.7-6.1 3.7 1.6-6.8-5.3-4.7 6.9-.6L12 2.5z"
-        stroke={filled ? 'var(--color-brand-gold)' : 'rgba(35,24,20,0.3)'}
-        strokeWidth="1.2"
-        strokeLinejoin="round"
+        d="M3.88333 14.6667L4.96667 9.98333L1.33333 6.83333L6.13333 6.41667L8 2L9.86667 6.41667L14.6667 6.83333L11.0333 9.98333L12.1167 14.6667L8 12.1833L3.88333 14.6667Z"
+        fill={filled ? '#b37d09' : 'none'}
+        stroke={filled ? 'none' : 'rgba(35,24,20,0.3)'}
+        strokeWidth="0.8"
       />
     </svg>
   )
@@ -30,9 +26,16 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
   const rating = testimonial.rating ?? 5
 
   return (
+    // Figma "review": 376x272, white, 1px rgba(35,24,20,.25) border, radius 24,
+    // 32px padding, 16px gaps; the quote is clipped to two lines
     <div
-      className="flex h-full flex-col rounded-[24px] border bg-white"
-      style={{ gap: fig(16), padding: fig(32), borderColor: 'rgba(35,24,20,0.25)' }}
+      className="flex flex-col overflow-hidden rounded-[24px] border bg-white"
+      style={{
+        height: `max(200px, ${fig(272)})`,
+        gap: fig(16),
+        padding: fig(32),
+        borderColor: 'rgba(35,24,20,0.25)',
+      }}
     >
       <div className="flex items-center" style={{ gap: fig(24) }}>
         <div
@@ -64,14 +67,14 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
         </p>
       </div>
 
-      <div className="flex items-center" style={{ gap: fig(6) }}>
+      <div className="flex items-center" style={{ gap: fig(10) }}>
         {Array.from({ length: 5 }, (_, i) => (
           <StarIcon key={i} filled={i < rating} />
         ))}
       </div>
 
       <p
-        className="italic"
+        className="line-clamp-2 italic"
         style={{
           fontFamily: 'var(--font-hanken)',
           fontWeight: 500,
@@ -86,7 +89,15 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
       {testimonial.context && (
         <p
           className="mt-auto capitalize"
-          style={{ fontFamily: 'var(--font-sans)', fontSize: fig(14), color: '#4a4e44' }}
+          // Figma: Work Sans Regular 14, line height 1.224 (Latin only — other
+          // scripts fall back to Noto Sans Armenian / Inter)
+          style={{
+            fontFamily: 'var(--font-work-sans), var(--font-armenian), var(--font-sans), sans-serif',
+            fontWeight: 400,
+            fontSize: fig(14),
+            lineHeight: 1.224,
+            color: '#4a4e44',
+          }}
         >
           {testimonial.context}
         </p>

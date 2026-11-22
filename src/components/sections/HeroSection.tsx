@@ -28,6 +28,9 @@ const NARROW = 'var(--narrow)'
 const WIDE = 'var(--wide)'
 const GAP = 'var(--gap)'
 const STEP = `(${NARROW} + ${GAP})`
+// Shift that centres the wide card: 0 on desktop (narrow+gap+wide+gap+narrow
+// = 100%), negative on mobile where the side cards hang off the screen edges.
+const CENTRE = `((100cqw - ${WIDE}) / 2 - ${GAP} - ${NARROW})`
 
 // Clones kept on each side of the real slides so neighbours always exist,
 // whichever way the carousel moves.
@@ -35,10 +38,12 @@ const CLONES = 2
 
 const mod = (n: number, m: number) => ((n % m) + m) % m
 
-// Figma hero buttons on desktop: 48px tall (24 line + 12×2), 64px side
-// padding, 16px text with 2px tracking.
+// Figma hero buttons — mobile: 10px text, 24px line, 2px tracking, no
+// vertical padding (27px pills with the 1.5px border); desktop: 16px text, 24px line + 12×2
+// padding. Side padding lives in .hero-ctas so it can give way when the
+// labels are long.
 const HERO_BUTTON =
-  'lg:px-[calc(var(--figma-scale)*64px)] lg:py-[calc(var(--figma-scale)*12px)] lg:text-[calc(var(--figma-scale)*16px)] lg:leading-[calc(var(--figma-scale)*24px)] lg:tracking-[calc(var(--figma-scale)*2px)]'
+  'py-0 text-[10px] leading-6 tracking-[2px] lg:py-[calc(var(--figma-scale)*12px)] lg:text-[calc(var(--figma-scale)*16px)] lg:leading-[calc(var(--figma-scale)*24px)] lg:tracking-[calc(var(--figma-scale)*2px)]'
 
 export function HeroSection({
   headline = 'More Than Wine Grows Here',
@@ -103,22 +108,23 @@ export function HeroSection({
     animate ? properties.map((p) => `${p} ${TRANSITION_MS}ms ${SPRING_EASING}`).join(', ') : 'none'
 
   return (
-    <section
-      className="pt-6 pb-14 lg:pt-10 lg:pb-20"
-      style={{ backgroundColor: 'var(--color-brand-cream)' }}
-    >
+    // No vertical padding of its own — .home-hero (48px under the header)
+    // and the section stack's 32px top padding space it.
+    <section style={{ backgroundColor: 'var(--color-brand-cream)' }}>
       <div className="container-content">
-        <div
-          className="relative overflow-hidden [container-type:inline-size] [--gap:2cqw] [--narrow:15cqw] [--wide:66cqw] lg:[--narrow:23cqw] lg:[--wide:50cqw]"
-          style={{ height: 'clamp(420px, 72vh, 640px)' }}
-        >
+        {/* Mobile (Figma 428 frame): edge to edge, 146 | 8 | 320 | 8 | 146
+            cards × 255 tall, all as shares of the screen width. Tablet
+            (Figma 1027 frame, 1024-1279px): also edge to edge, the desktop
+            368 | 32 | 800 cards × 640 tall, × scale. Desktop (1280+): inside
+            the column, 23 | 2 | 50 | 2 | 23 %. */}
+        <div className="relative -mx-4 h-[59.58vw] overflow-hidden [container-type:inline-size] [--gap:1.869cqw] [--narrow:34.11cqw] [--wide:74.77cqw] sm:-mx-6 lg:-mx-[7.1vw] lg:h-[calc(var(--figma-scale)*640px)] lg:[--gap:calc(var(--figma-scale)*32px)] lg:[--narrow:calc(var(--figma-scale)*368px)] lg:[--wide:calc(var(--figma-scale)*800px)] xl:mx-0 xl:h-[clamp(420px,72vh,640px)] xl:[--gap:2cqw] xl:[--narrow:23cqw] xl:[--wide:50cqw]">
           {/* Sliding track — the middle card shrinks away to the left while the
               next one grows into its place. Every card left of the middle is
               narrow, so one step is always narrow + gap. */}
           <div
             className="flex h-full"
             style={{
-              transform: `translateX(calc(-1 * ${trackIndex - 1} * ${STEP}))`,
+              transform: `translateX(calc(${CENTRE} - ${trackIndex - 1} * ${STEP}))`,
               transition: transition(['transform']),
             }}
           >
@@ -173,6 +179,13 @@ export function HeroSection({
                         />
                       )}
                     </div>
+                    {/* Figma: every panel carries a top-to-bottom dark wash */}
+                    <div
+                      className="pointer-events-none absolute inset-0"
+                      style={{
+                        background: 'linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.55))',
+                      }}
+                    />
                   </div>
                 </div>
               )
@@ -182,29 +195,35 @@ export function HeroSection({
           {/* Fixed content overlay — headline & buttons stay put; only the imagery behind them slides */}
           <div
             className="pointer-events-none absolute inset-y-0 z-10 overflow-hidden rounded-2xl lg:rounded-3xl"
-            style={{ left: `calc(${STEP})`, width: WIDE }}
+            style={{ left: `calc((100cqw - ${WIDE}) / 2)`, width: WIDE }}
           >
             {/* Desktop sizes are raw Figma px (1900 canvas) × --figma-scale.
-                Left-aligned 64px in, buttons 116px above the card's bottom; the
-                right side gets less padding so the two pills stay on one row. */}
-            <div className="pointer-events-auto absolute inset-0 flex flex-col items-start justify-end px-8 pb-10 text-left lg:pr-[calc(var(--figma-scale)*32px)] lg:pb-[calc(var(--figma-scale)*116px)] lg:pl-[calc(var(--figma-scale)*64px)]">
+                Figma "Container": 64px padding, items 28px apart, and the
+                container itself ends 48px above the panel's bottom edge — so
+                the buttons sit 48 + 64 = 112px up. The right side gets less
+                padding so the two pills stay on one row. */}
+            <div className="pointer-events-auto absolute inset-0 flex flex-col items-start justify-end p-4 text-left lg:pr-[calc(var(--figma-scale)*32px)] lg:pb-[calc(var(--figma-scale)*112px)] lg:pl-[calc(var(--figma-scale)*64px)]">
               {location && (
                 <p
-                  className="text-eyebrow mb-3 lg:mb-[calc(var(--figma-scale)*26px)] lg:text-[calc(var(--figma-scale)*12px)] lg:tracking-[calc(var(--figma-scale)*3.6px)]"
-                  style={{ textShadow: '0 1px 8px rgba(0,0,0,0.35)' }}
+                  // Not in the mobile design — desktop only
+                  className="text-eyebrow mb-3 hidden lg:block lg:mb-[calc(var(--figma-scale)*28px)] lg:text-[calc(var(--figma-scale)*12px)] lg:tracking-[calc(var(--figma-scale)*3px)]"
+                  style={{ color: '#d4d0c0' }}
                 >
                   {location}
                 </p>
               )}
 
               <h1
-                className="heading-hero mb-6 text-[clamp(1.75rem,6vw,2.5rem)] leading-[1.05] lg:mb-[calc(var(--figma-scale)*40px)] lg:text-[calc(var(--figma-scale)*64px)] lg:leading-[calc(var(--figma-scale)*62px)]"
-                style={{ textShadow: '0 2px 16px rgba(0,0,0,0.3)' }}
+                // Mobile Figma: Playfair SemiBold 32px (at 428), normal line
+                // height, 1px tracking (from .heading-hero); 16px down to the buttons
+                className="heading-hero mb-4 max-w-[calc(var(--figma-scale)*699px)] text-[7.477vw] leading-[normal] lg:mb-[calc(var(--figma-scale)*36px)] lg:text-[calc(var(--figma-scale)*60px)] lg:leading-[calc(var(--figma-scale)*63px)]"
               >
                 {headline}
               </h1>
 
-              <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap lg:gap-[calc(var(--figma-scale)*16px)]">
+              {/* Stacked below lg, one row from lg up that never wraps — the
+                  buttons stay in the same spot whatever the label/language. */}
+              <div className="hero-ctas flex flex-col items-start gap-2 lg:flex-row lg:gap-[calc(var(--figma-scale)*16px)]">
                 <a href="#estates" className={`btn-pill ${HERO_BUTTON}`}>
                   {resolvedCtaText}
                 </a>
@@ -218,22 +237,24 @@ export function HeroSection({
 
         {/* Pagination dots — manual override, autoplay resumes on its own */}
         {count > 1 && (
-          <div className="mt-8 flex items-center justify-center gap-2">
+          // Figma "Slider Controls": 48×4 bars, 16px apart
+          // The row is exactly the 4px bar tall (as in Figma) so nothing below
+          // shifts; each button's 16px hit area overhangs it by 6px each side.
+          <div className="mt-8 flex h-1 items-center justify-center gap-4 lg:mt-[82px]">
             {slides.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => goTo(CLONES + i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className="h-2 rounded-full transition-all duration-300"
-                style={{
-                  width: i === active ? '1.5rem' : '0.5rem',
-                  backgroundColor:
-                    i === active
-                      ? 'var(--color-brand-olive)'
-                      : 'color-mix(in srgb, var(--color-brand-stone) 40%, transparent)',
-                }}
-              />
+                // 4px bar inside a taller hit area
+                className="-my-1.5 flex h-4 w-12 cursor-pointer items-center"
+              >
+                <span
+                  className="block h-1 w-full rounded-[24px] transition-colors duration-300"
+                  style={{ backgroundColor: i === active ? '#2e3a28' : 'rgba(0,0,0,0.5)' }}
+                />
+              </button>
             ))}
           </div>
         )}

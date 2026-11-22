@@ -16,7 +16,8 @@
   --color-brand-olive:    #2E3A28;
 
   /* ── Typography ── */
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  /* Cormorant Garamond isn't in the design — every serif heading is Playfair */
+  --font-serif: var(--font-playfair), Georgia, serif;
   --font-sans:  'Inter', system-ui, sans-serif;
   --font-playfair: 'Playfair Display', Georgia, serif;
 
@@ -80,12 +81,19 @@
       screens). Multiply any raw Figma px value by it: calc(var(--figma-scale) * 44px).
     */
     --figma-scale: clamp(0.6, calc(100vw / 1900px), 1);
+    /* 0 below lg, 1 from lg up — lets mfig() (lib/figmaScale) pick the
+       mobile-Figma px on phones/tablets and the scaled desktop px above. */
+    --lg: 0;
+  }
+  @media (min-width: 1024px) {
+    html { --lg: 1; }
   }
 
   body {
     background-color: var(--color-brand-cream);
     color: var(--color-brand-charcoal);
-    font-family: var(--font-sans);
+    /* Figma body text is Hanken Grotesk; Inter is only for badges/labels */
+    font-family: var(--font-hanken), var(--font-sans);
   }
 
   h1, h2, h3, h4, h5 {
@@ -111,10 +119,18 @@
 @layer components {
 
   /* ── Layout ── */
+  /* content-box: max-width is the CONTENT width (Figma's 1600px column), and
+     the side padding sits outside it. With Tailwind's default border-box the
+     150px padding was eaten out of the 1600 and the column measured 1300. */
   .container-content {
+    box-sizing: content-box;
     max-width: var(--max-width-content);
     margin-inline: auto;
-    padding-inline: 1.5rem;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-content { padding-inline: 1.5rem; }
   }
 
   @media (min-width: 1024px) {
@@ -138,6 +154,119 @@
 
   @media (min-width: 1024px) {
     .home-sections .section-padding { padding-block: 2.5rem; }
+  }
+
+  /* ── Page shell (handoff §1) ──
+     Sections stack with one constant 82px gap and 82px at the bottom. Top
+     padding has exactly three values: 48 default, 32 home, 16 wine detail.
+     Sections inside the shell drop their own vertical padding — the gap
+     does the spacing, so nothing doubles up. */
+  .page-main {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-top: 32px;
+    padding-bottom: 48px;
+  }
+  /* Mobile Figma ("wine landing — Mobile", 428): 32px top and 32px between
+     every item on the homepage. */
+  .page-main--home { padding-top: 32px; gap: 32px; }
+  .page-main--wine { padding-top: 16px; }
+
+  @media (min-width: 1024px) {
+    .page-main { gap: 82px; padding-top: 48px; padding-bottom: 82px; }
+    .page-main--home { padding-top: 32px; gap: 82px; }
+    .page-main--wine { padding-top: 16px; }
+  }
+
+  /* Tablet homepage (Figma "tablet", 1027px wide), 1024–1279px: the tablet
+     frame keeps components near full size in a narrower column (881 of 1027,
+     ~7.1% margins). We keep proportional scaling but never below 75% here
+     (vw/1900 is ≤ 0.67 in this range, so it's a flat 0.75), with the tablet
+     margins. From 1280 up the normal desktop scaling applies. */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .home-hero, .home-sections { --figma-scale: 0.75; --story-h: calc(0.75 * 460px); }
+    .home-hero .container-content,
+    .home-sections .container-content { padding-inline: 7.1vw; }
+  }
+
+  .page-main .section-padding,
+  .page-main .section-padding-sm { padding-block: 0; }
+
+  /* Homepage hero sits above the stack: 48px under the header on desktop;
+     on mobile (Figma) the carousel starts right under the 78px header. */
+  .home-hero { padding-top: 0; }
+  @media (min-width: 1024px) { .home-hero { padding-top: 48px; } }
+
+  /* Items that belong together inside the stack sit 48px apart, not 82. */
+  .section-group { display: flex; flex-direction: column; gap: 32px; }
+  @media (min-width: 1024px) { .section-group { gap: 48px; } }
+
+  /* Mascot grid (Figma "Hovaz"): rows 320 + 220 on desktop */
+  @media (min-width: 1024px) {
+    .mascot-grid {
+      grid-template-rows: calc(var(--figma-scale) * 320px) calc(var(--figma-scale) * 220px);
+    }
+  }
+
+  /* ── Homepage events carousel ──
+     Shows N½ cards so the last one is visibly cut off (4½ on desktop, per the
+     design). The strip is a size container; each card is
+     (strip width − visible gaps) / N½, and EventCard scales its insides
+     off --card-w. */
+  .event-strip {
+    container-type: inline-size;
+    --cards: 1.5;
+    --gaps: 1;
+    --gap: 16px;
+    --card-w: calc((100cqw - var(--gaps) * var(--gap)) / var(--cards));
+    gap: var(--gap);
+  }
+  /* Phones (Figma mobile): 320 × 400 cards, 8px apart */
+  @media (max-width: 639px) {
+    .event-strip { --gap: 8px; --card-w: min(320px, calc(100cqw - 48px)); }
+  }
+  @media (min-width: 640px)  { .event-strip { --cards: 2.5; --gaps: 2; --gap: 20px; } }
+  @media (min-width: 900px)  { .event-strip { --cards: 3.5; --gaps: 3; } }
+  @media (min-width: 1024px) {
+    /* Tablet + desktop: Figma's own sizing — 320px cards, 32px gaps, both ×
+       the page scale. Exactly 320×400 at the 1900px design width, and since
+       the column is always 1600 × scale, 1600 / (320 + 32) ≈ 4.55 cards show
+       at any desktop width (the tablet frame shows ~2.6 in its 881 column). */
+    .event-strip {
+      --gap: calc(var(--figma-scale) * 32px);
+      --card-w: calc(var(--figma-scale) * 320px);
+    }
+  }
+
+  /* ── Events page grid ──
+     Same card width as the carousel on desktop: (column − 4 gaps) / 4.5, so
+     4 cards per row with the leftover split evenly either side (112px each
+     at 1600). The outer div is the size container; the inner grid uses it. */
+  .event-grid {
+    container-type: inline-size;
+    --gap: 16px;
+    --card-w: min(360px, 100cqw);
+  }
+  .event-grid__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, var(--card-w));
+    justify-content: center;
+    gap: var(--gap);
+  }
+  @media (min-width: 640px) {
+    .event-grid { --gap: 20px; --card-w: calc((100cqw - var(--gap)) / 2); }
+  }
+  @media (min-width: 900px) {
+    .event-grid { --card-w: calc((100cqw - 2 * var(--gap)) / 3); }
+  }
+  @media (min-width: 1200px) {
+    .event-grid {
+      /* Same card as the homepage carousel: 320 × scale (exactly 320×400 at
+         1900px, 4 per row with 32px gaps, 112px free each side, centred) */
+      --gap: calc(var(--figma-scale) * 32px);
+      --card-w: calc(var(--figma-scale) * 320px);
+    }
   }
 
   /* ── Buttons ── */
@@ -263,11 +392,57 @@
     cursor: pointer;
   }
 
-  .btn-pill-outline:hover { background-color: rgba(255, 255, 255, 0.15); border-color: white; }
+  /* Figma Ghost hover: 15% white fill, label drops to Regular */
+  .btn-pill-outline:hover { background-color: rgba(255, 255, 255, 0.15); border-color: white; font-weight: 400; }
 
   @media (max-width: 640px) {
     .btn-pill, .btn-pill-outline { padding: 0.625rem 1.25rem; font-size: 0.8125rem; }
   }
+
+  /* ── Footer scale ──
+     The footer sizes its type, gaps and paddings as Figma px × --fs (fs() in
+     lib/figmaScale). Desktop: the page scale, never under 0.75 — exact Figma
+     proportions from ~1425px up. Below lg: a fixed, readable 0.9. */
+  .site-footer { --fs: 0.9; }
+  @media (min-width: 1024px) {
+    .site-footer { --fs: max(0.75, var(--figma-scale)); }
+  }
+
+  /* ── Hero buttons ──
+     The pair sits on one row that never wraps, so a longer label (Armenian,
+     or whatever is typed in Sanity) can't push a button onto a second row and
+     shove the headline up. The side padding is two flexible pseudo-element
+     spacers instead of real padding: full size (64px in Figma) when there's
+     room, shrinking towards --hero-pad-min only when the labels need it. The
+     label itself never shrinks or wraps. */
+  /* Mobile Figma: 16px side padding on the stacked 26px pills */
+  .hero-ctas { --hero-pad: 16px; --hero-pad-min: 10px; max-width: 100%; }
+  @media (min-width: 640px) {
+    .hero-ctas { --hero-pad: 3.25rem; --hero-pad-min: 1rem; }
+  }
+  @media (min-width: 1024px) {
+    .hero-ctas {
+      --hero-pad: calc(var(--figma-scale) * 64px);
+      --hero-pad-min: calc(var(--figma-scale) * 20px);
+      max-width: 100%;
+      flex-wrap: nowrap;
+    }
+    .hero-ctas > a { flex: 0 1 auto; }
+  }
+  /* min-width 0 lets the button narrow; the spacers give way first and the
+     label (an anonymous flex item, min-width auto) never shrinks. */
+  .hero-ctas > a { padding-inline: 0; min-width: 0; max-width: 100%; }
+  /* width, not flex-basis: an empty item's flex-basis doesn't count towards
+     the button's own max-content width, so it would always sit at the min. */
+  .hero-ctas > a::before,
+  .hero-ctas > a::after {
+    content: '';
+    width: var(--hero-pad);
+    flex-shrink: 1;
+    min-width: var(--hero-pad-min);
+  }
+  /* Same 1.5px border on both so the filled and outline pills match in height */
+  .hero-ctas > .btn-pill { border: 1.5px solid transparent; }
 
   /* ── Typography ── */
   .heading-hero    { font-family: var(--font-playfair); font-weight: 600; font-size: var(--font-size-display-xl); color: var(--color-brand-offwhite); letter-spacing: 1px; line-height: 1.05; }
@@ -277,9 +452,9 @@
   .heading-section { font-family: var(--font-serif); font-size: var(--font-size-display-md); color: var(--color-brand-burgundy); }
   .heading-card    { font-family: var(--font-serif); font-size: var(--font-size-display-sm); color: var(--color-brand-charcoal); }
 
-  .text-label   { font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-brand-stone); }
-  .text-body    { font-family: var(--font-sans); font-size: 1rem; color: color-mix(in srgb, var(--color-brand-charcoal) 80%, transparent); line-height: 1.7; }
-  .text-caption { font-family: var(--font-sans); font-size: 0.875rem; color: var(--color-brand-stone); }
+  .text-label   { font-family: var(--font-hanken), var(--font-sans); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-brand-stone); }
+  .text-body    { font-family: var(--font-hanken), var(--font-sans); font-size: 1rem; color: color-mix(in srgb, var(--color-brand-charcoal) 80%, transparent); line-height: 1.7; }
+  .text-caption { font-family: var(--font-hanken), var(--font-sans); font-size: 0.875rem; color: var(--color-brand-stone); }
 
   /* ── Forms ── */
   .input-field {
@@ -376,14 +551,16 @@
   .nav-link-active::after { width: 100%; }
 
   /* ── Header (Figma: node 785:9369) ── */
+  /* Figma "Nav Link/*": Hanken Grotesk Medium 14px, 2px tracking, black 90%.
+     Hover fades the link to 55% opacity (120ms ease-out) - no colour change. */
   .header-nav-link {
     font-family: var(--font-hanken);
     font-weight: 500;
-    font-size: 11px;
-    letter-spacing: 1.5px;
+    font-size: max(11px, calc(var(--figma-scale) * 14px));
+    letter-spacing: max(1.5px, calc(var(--figma-scale) * 2px));
     text-transform: uppercase;
     color: rgba(0, 0, 0, 0.9);
-    transition: color 200ms;
+    transition: opacity 120ms ease-out;
     position: relative;
     text-decoration: none;
     white-space: nowrap;
@@ -399,21 +576,9 @@
     letter-spacing: 0.25px;
   }
 
-  .header-nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background-color: var(--color-brand-gold);
-    transition: width 300ms;
-  }
-
-  .header-nav-link:hover { color: var(--color-brand-burgundy); }
-  .header-nav-link:hover::after { width: 100%; }
-  .header-nav-link-active { color: var(--color-brand-burgundy); }
-  .header-nav-link-active::after { width: 100%; }
+  /* Hover and the current page share Figma's hover state: 55% opacity, no underline */
+  .header-nav-link:hover,
+  .header-nav-link-active { opacity: 0.55; }
 
   .header-lang-link {
     font-family: var(--font-montserrat);
@@ -422,10 +587,11 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     color: #4f4542;
-    transition: color 200ms;
+    transition: opacity 120ms ease-out;
   }
 
   .header-lang-link[aria-current='true'] { color: #231814; }
+  .header-lang-link:hover { opacity: 0.55; }
 }
 
 /* ─────────────────────────────────────────

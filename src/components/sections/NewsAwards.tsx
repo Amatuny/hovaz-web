@@ -40,7 +40,7 @@ export function NewsAwards({
 
   return (
     <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
-      <div className="container-content flex flex-col pt-12 pb-12" style={{ gap: fig(82) }}>
+      <div className="container-content page-main">
         <div className="flex flex-col" style={{ gap: fig(16), maxWidth: fig(860) }}>
           <p
             className="uppercase"

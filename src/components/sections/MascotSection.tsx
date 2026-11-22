@@ -1,12 +1,18 @@
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
+import { fig, mfig } from '@/lib/figmaScale'
 import type { MascotSettings } from '@/types/sanity'
 import { HOME_DEFAULTS } from '@/content/defaults'
+import { SectionHead } from '@/components/ui/SectionHead'
+import { DarkPanelEmblem, darkPanelLabelStyle, darkPanelTextStyle } from '@/components/ui/DarkPanel'
 
 interface MascotSectionProps {
   mascot?: MascotSettings
 }
 
+// Figma "Hovaz" (3179:4896): section head, then a 4-column grid with rows of
+// 320 and 220px (24px gaps): the main photo spans 2×2, the dark story panel
+// spans the top-right two columns, two small photos sit under it.
 // Content comes from Site Settings → Mascot.
 export function MascotSection({ mascot }: MascotSectionProps) {
   const heading = mascot?.heading
@@ -14,6 +20,7 @@ export function MascotSection({ mascot }: MascotSectionProps) {
 
   const paragraphs = (mascot.story ?? []).filter(Boolean).slice(0, 3)
   const gallery = (mascot.gallery ?? []).slice(0, 2)
+  const radius = `max(16px, ${fig(24)})`
 
   return (
     <section
@@ -21,158 +28,136 @@ export function MascotSection({ mascot }: MascotSectionProps) {
       className="section-padding scroll-mt-24"
       style={{ backgroundColor: 'var(--color-brand-cream)' }}
     >
-      <div className="container-content">
-        <p
-          className="mb-4 uppercase"
-          style={{
-            fontFamily: 'var(--font-montserrat)',
-            fontWeight: 600,
-            fontSize: '10px',
-            letterSpacing: '2.5px',
-            color: 'rgba(93,110,82,0.92)',
-          }}
-        >
-          {mascot.eyebrow || HOME_DEFAULTS.mascot.eyebrow}
-        </p>
-        <h2
-          className="mb-4 max-w-[870px] capitalize"
-          style={{
-            fontFamily: 'var(--font-playfair)',
-            fontWeight: 600,
-            fontSize: 'clamp(26px, 2.6vw, 36px)',
-            color: '#1a1d17',
-            letterSpacing: '0.5px',
-            lineHeight: 1.15,
-          }}
-        >
-          {heading}
-        </h2>
-        {mascot.subtitle && (
-          <p
-            className="mb-10 max-w-[860px]"
-            style={{
-              fontFamily: 'var(--font-hanken)',
-              fontWeight: 400,
-              fontSize: '16px',
-              lineHeight: '26px',
-              color: '#4f4542',
-            }}
-          >
-            {mascot.subtitle}
-          </p>
-        )}
+      <div className="container-content flex flex-col" style={{ gap: mfig(32, 48) }}>
+        <SectionHead
+          eyebrow={mascot.eyebrow || HOME_DEFAULTS.mascot.eyebrow}
+          title={heading}
+          text={mascot.subtitle}
+        />
 
-        <div
-          className="flex flex-col gap-4 md:flex-row"
-          style={{ height: 'clamp(480px, 66vh, 620px)' }}
-        >
-          {/* Main photo */}
+        <div className="relative overflow-hidden">
           <div
-            className="relative overflow-hidden rounded-2xl lg:rounded-3xl"
-            style={{ flex: '1.4 1 0%', minWidth: 0 }}
+            className="mascot-grid relative grid grid-cols-1 lg:grid-cols-4"
+            style={{ gap: mfig(16, 24) }}
           >
-            {mascot.image?.asset?._ref ? (
-              <Image
-                src={urlFor(mascot.image).width(1000).height(1300).url()}
-                alt={mascot.image.alt ?? heading}
-                fill
-                className="object-cover"
-                sizes="(min-width: 768px) 40vw, 100vw"
-              />
-            ) : (
+            {/* Main photo — 2×2 */}
+            <div
+              className="relative aspect-[396/564] overflow-hidden lg:col-span-2 lg:row-span-2 lg:aspect-auto"
+              style={{ borderRadius: radius }}
+            >
+              {mascot.image?.asset?._ref ? (
+                <Image
+                  src={urlFor(mascot.image).width(1600).height(1134).url()}
+                  alt={mascot.image.alt ?? heading}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                />
+              ) : (
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundColor: 'var(--color-brand-burgundy)' }}
+                />
+              )}
               <div
                 className="absolute inset-0"
-                style={{ backgroundColor: 'var(--color-brand-burgundy)' }}
-              />
-            )}
-
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  'linear-gradient(to top, rgba(26,10,13,0.75) 0%, rgba(26,10,13,0.05) 40%, rgba(26,10,13,0.1) 100%)',
-              }}
-            />
-
-            {(mascot.imageBadgeTitle || mascot.imageBadgeSubtitle) && (
-              <div className="absolute inset-x-0 bottom-0 p-6 lg:p-9">
-                {mascot.imageBadgeTitle && (
-                  <h3
-                    className="mb-1 text-white"
-                    style={{
-                      fontFamily: 'var(--font-playfair)',
-                      fontWeight: 600,
-                      fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
-                    }}
-                  >
-                    {mascot.imageBadgeTitle}
-                  </h3>
-                )}
-                {mascot.imageBadgeSubtitle && (
-                  <p
-                    className="text-white/80"
-                    style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px' }}
-                  >
-                    {mascot.imageBadgeSubtitle}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Story + gallery */}
-          <div className="flex flex-col gap-4" style={{ flex: '1 1 0%', minWidth: 0 }}>
-            <div
-              className="flex flex-col overflow-y-auto rounded-2xl p-6 lg:rounded-3xl lg:p-9"
-              style={{ backgroundColor: 'var(--color-brand-dark)', flex: '1.6 1 0%' }}
-            >
-              <p
-                className="mb-4 uppercase"
                 style={{
-                  fontFamily: 'var(--font-montserrat)',
-                  fontWeight: 600,
-                  fontSize: '10px',
-                  letterSpacing: '1.5px',
-                  color: 'var(--color-brand-gold)',
+                  background: 'linear-gradient(to top, rgba(18,8,5,0.75) 0%, rgba(18,8,5,0) 55%)',
                 }}
+              />
+
+              {(mascot.imageBadgeTitle || mascot.imageBadgeSubtitle) && (
+                <div
+                  className="absolute flex flex-col"
+                  style={{
+                    left: fig(24),
+                    right: fig(24),
+                    bottom: `max(16px, ${fig(22)})`,
+                    gap: fig(4),
+                  }}
+                >
+                  {mascot.imageBadgeTitle && (
+                    <h3
+                      style={{
+                        // Figma: Fraunces SemiBold, SOFT 0 / WONK 1 (Latin only —
+                        // Armenian/Russian fall back to Noto Sans Armenian / Playfair)
+                        fontFamily:
+                          'var(--font-fraunces), var(--font-armenian), var(--font-playfair), serif',
+                        fontWeight: 600,
+                        fontVariationSettings: '"SOFT" 0, "WONK" 1',
+                        fontSize: `max(22px, ${fig(28)})`,
+                        color: '#fbf8f5',
+                      }}
+                    >
+                      {mascot.imageBadgeTitle}
+                    </h3>
+                  )}
+                  {mascot.imageBadgeSubtitle && (
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: `max(13px, ${fig(15)})`,
+                        color: '#eae3de',
+                      }}
+                    >
+                      {mascot.imageBadgeSubtitle}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Story panel — top right, 2 columns */}
+            <div
+              className="relative flex min-h-[320px] flex-col justify-center overflow-y-auto lg:col-span-2 lg:min-h-0"
+              style={{ borderRadius: radius, backgroundColor: '#231814' }}
+            >
+              <div
+                className="flex flex-col"
+                style={{ padding: mfig(32, 48, 28), gap: mfig(14, 14) }}
               >
-                {mascot.storyLabel || HOME_DEFAULTS.mascot.storyLabel}
-              </p>
-              <div className="flex flex-col gap-3">
-                {paragraphs.map((paragraph, i) => (
-                  <p
-                    key={i}
-                    className="text-white/80"
-                    style={{ fontFamily: 'var(--font-hanken)', fontSize: '14px', lineHeight: 1.75 }}
-                  >
-                    {paragraph}
-                  </p>
-                ))}
+                <p className="uppercase" style={darkPanelLabelStyle}>
+                  {mascot.storyLabel || HOME_DEFAULTS.mascot.storyLabel}
+                </p>
+                <div className="flex flex-col">
+                  {paragraphs.map((paragraph, i) => (
+                    <p key={i} style={darkPanelTextStyle}>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {gallery.length > 0 && (
-              <div className="grid grid-cols-2 gap-4" style={{ flex: '1 1 0%' }}>
-                {gallery.map((image, i) => (
-                  <div key={i} className="relative overflow-hidden rounded-2xl lg:rounded-3xl">
-                    {image?.asset?._ref ? (
-                      <Image
-                        src={urlFor(image).width(500).height(500).url()}
-                        alt={image.alt ?? heading}
-                        fill
-                        className="object-cover"
-                        sizes="(min-width: 768px) 20vw, 50vw"
-                      />
-                    ) : (
-                      <div
-                        className="absolute inset-0"
-                        style={{ backgroundColor: 'var(--color-brand-stone)' }}
-                      />
-                    )}
-                  </div>
-                ))}
+            {/* Two small photos */}
+            {gallery.map((image, i) => (
+              <div
+                key={i}
+                className="relative aspect-[396/220] overflow-hidden lg:aspect-auto"
+                style={{ borderRadius: radius }}
+              >
+                {image?.asset?._ref ? (
+                  <Image
+                    src={urlFor(image).width(800).height(460).url()}
+                    alt={image.alt ?? heading}
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 1024px) 25vw, 100vw"
+                  />
+                ) : (
+                  <div
+                    className="absolute inset-0"
+                    style={{ backgroundColor: 'var(--color-brand-stone)' }}
+                  />
+                )}
               </div>
-            )}
+            ))}
+          </div>
+
+          {/* Emblem watermark over the right of the grid, as in Figma
+              (desktop only - hidden in the mobile design) */}
+          <div className="hidden lg:contents">
+            <DarkPanelEmblem src="/home/emblem-mascot.svg" inset="-2.02% -15% -45.73% 68%" />
           </div>
         </div>
       </div>

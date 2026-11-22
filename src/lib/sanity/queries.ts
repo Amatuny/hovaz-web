@@ -41,6 +41,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       heroSecondaryCtaText_i18n,
       "heroGallery": heroGallery[]{${IMAGE_FIELDS}},
       "wineTourGallery": wineTourGallery[]{${IMAGE_FIELDS}},
+      "ageGateImage": ageGateImage{${IMAGE_FIELDS}},
       homeEstates, homeWineTour, homeWines, homeAwards,
       "homeStory": homeStory{..., "image": image{${IMAGE_FIELDS}}},
       homeEvents, homeJournal, homeNewsletter,

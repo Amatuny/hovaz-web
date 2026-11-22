@@ -405,7 +405,10 @@ export function ExperienceDetail({
                 <p
                   className="text-center"
                   style={{
-                    fontFamily: 'var(--font-serif)',
+                    // Figma "Grid Card" heading: EB Garamond Medium 20
+                    fontFamily:
+                      'var(--font-eb-garamond), var(--font-armenian), var(--font-serif), serif',
+                    fontWeight: 500,
                     fontSize: fig(20),
                     lineHeight: fig(24),
                     color: 'white',

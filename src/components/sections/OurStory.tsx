@@ -186,10 +186,7 @@ export function OurStory({ content = DEFAULT_CONTENT }: { content?: OurStoryCont
 
   return (
     <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
-      <div
-        className="container-content flex flex-col items-center pt-12"
-        style={{ gap: fig(82), paddingBottom: fig(82) }}
-      >
+      <div className="container-content page-main items-center">
         <div className="w-full">
           <div className="flex flex-col" style={{ gap: fig(16), maxWidth: fig(860) }}>
             <SectionHead as="h1" eyebrow={c.intro.eyebrow} title={c.intro.heading} />

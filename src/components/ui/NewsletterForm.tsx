@@ -75,11 +75,10 @@ export function NewsletterForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      {/* Figma "newsletter-form": 43px row, 1px #3d4a38 underline */}
       <div
-        className="flex items-center justify-between gap-4 pb-2"
-        style={{
-          borderBottom: '1px solid color-mix(in srgb, var(--color-brand-stone) 40%, transparent)',
-        }}
+        className="flex items-stretch justify-between"
+        style={{ minHeight: '43px', borderBottom: '1px solid #3d4a38' }}
       >
         <input
           type="email"
@@ -88,9 +87,10 @@ export function NewsletterForm({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 bg-transparent outline-none"
+          className="min-w-0 flex-1 bg-transparent px-1 py-3 text-left outline-none placeholder:text-[#757575]"
           style={{
             fontFamily: 'var(--font-hanken)',
+            fontWeight: 300,
             fontSize: '14px',
             color: 'var(--color-brand-charcoal)',
           }}
@@ -98,11 +98,13 @@ export function NewsletterForm({
         <button
           type="submit"
           disabled={isLoading}
-          className="shrink-0 uppercase transition-colors hover:text-[var(--color-brand-gold)]"
+          className="shrink-0 px-2 uppercase text-[#3d4a38] transition-colors hover:text-[var(--color-brand-gold)]"
           style={{
             fontFamily: 'var(--font-hanken)',
-            fontSize: '10px',
-            letterSpacing: '1.5px',
+            fontWeight: 600,
+            fontSize: '12px',
+            lineHeight: '14px',
+            letterSpacing: '2.5px',
             opacity: isLoading ? 0.6 : 1,
             cursor: isLoading ? 'not-allowed' : 'pointer',
           }}

@@ -259,7 +259,8 @@ export function EventsFilterGrid({
   }
 
   return (
-    <div className="flex flex-col" style={{ gap: fig(48) }}>
+    // Figma: search bar, grid and pagination are 82px apart (48px on phones)
+    <div className="flex flex-col gap-12 lg:gap-[82px]">
       <form
         onSubmit={handleSubmit}
         className="flex flex-wrap items-center bg-white"
@@ -272,7 +273,8 @@ export function EventsFilterGrid({
         }}
       >
         <div
-          className="flex min-w-[240px] flex-[2] items-center border-r"
+          // Figma field widths 474 : 319.5 : 318.5
+          className="flex min-w-[240px] flex-[474_1_0] items-center border-r"
           style={{ height: fig(38), gap: fig(10), paddingInline: fig(12), borderColor: '#e6e1d2' }}
         >
           <SearchIcon />
@@ -287,7 +289,7 @@ export function EventsFilterGrid({
         </div>
 
         <div
-          className="min-w-[200px] flex-1 border-r"
+          className="min-w-[200px] flex-[319.5_1_0] border-r"
           style={{ paddingInline: fig(12), borderColor: '#e6e1d2' }}
         >
           <DateFilterCalendar
@@ -309,7 +311,7 @@ export function EventsFilterGrid({
           />
         </div>
 
-        <div className="min-w-[200px] flex-1" style={{ paddingInline: fig(12) }}>
+        <div className="min-w-[200px] flex-[318.5_1_0]" style={{ paddingInline: fig(12) }}>
           <FilterSelect
             label={labels.locationLabel}
             placeholder={labels.locationPlaceholder}
@@ -321,7 +323,8 @@ export function EventsFilterGrid({
 
         <button
           type="submit"
-          className="shrink-0 rounded-full capitalize transition-colors hover:bg-[#dcdbd1]"
+          // Figma Button / Outline: hover adds a 15% forest tint
+          className="shrink-0 rounded-full capitalize transition-colors duration-150 ease-out hover:bg-[rgba(46,58,40,0.15)]"
           style={{
             borderWidth: '1.5px',
             borderStyle: 'solid',
@@ -339,14 +342,14 @@ export function EventsFilterGrid({
         </button>
       </form>
 
-      {/* Figma insets the "All Events" grid an extra 112px on each side beyond
-          the search bar/pagination edges (first card at x=112 of a 1600-wide
-          frame, last card ending at x=1488) — the grid is narrower than the
-          rest of the section, not full width. */}
+      {/* Event grid (handoff §4): 4 columns, centred, same card size as the
+          homepage carousel — at 1600px that's 4 × 320 + 3 × 32 = 1376px with
+          112px free each side. Columns are fixed-width tracks, so a short last
+          row stays on the column lines. Sizing lives in .event-grid. */}
       {pageEvents.length === 0 ? (
         <p
+          className="text-center"
           style={{
-            paddingInline: fig(112),
             fontFamily: 'var(--font-hanken)',
             fontSize: '14px',
             color: 'var(--color-brand-stone)',
@@ -355,18 +358,17 @@ export function EventsFilterGrid({
           {labels.noResults}
         </p>
       ) : (
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          style={{ gap: fig(32), paddingInline: fig(112) }}
-        >
-          {pageEvents.map((event) => (
-            <EventCard
-              key={event._id}
-              card={toEventCardData(event)}
-              variant="grid"
-              labels={cardLabels}
-            />
-          ))}
+        <div className="event-grid">
+          <div className="event-grid__cards">
+            {pageEvents.map((event) => (
+              <EventCard
+                key={event._id}
+                card={toEventCardData(event)}
+                variant="grid"
+                labels={cardLabels}
+              />
+            ))}
+          </div>
         </div>
       )}
 

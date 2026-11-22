@@ -27,6 +27,9 @@ export const HOME_DEFAULTS = {
     heading: 'Wines of the Valley',
     text: 'Estate-grown across Vayots Dzor, Aragatsotn and the Ararat Valley — small lots, made slowly.',
     linkText: 'Explore The Cellar',
+    /** Last card in the wines carousel — two lines each */
+    endHeading: 'Browse\nAll Wines',
+    endButton: 'See Every\nVintage',
   },
   story: {
     eyebrow: 'Our Story',
@@ -44,12 +47,16 @@ export const HOME_DEFAULTS = {
     heading: 'Quietly Awarded',
     brandFactLabel: 'Women-led Winery',
     brandFactMeta: 'Since 2018',
+    linkText: 'See All Awards',
   },
   events: {
     eyebrow: 'Upcoming',
     heading: 'Discover All Events',
     text: "Small-group tastings and dinners in the cellar and among the vines — see what's coming next, or look back at what we've hosted across both estates.",
     linkText: "See What's Coming",
+    /** Last card in the events carousel — two lines each */
+    endHeading: 'View the\nFull Calendar',
+    endButton: 'See Every\nEvent',
   },
   mascot: {
     eyebrow: 'Meet The Mascot',
@@ -60,6 +67,9 @@ export const HOME_DEFAULTS = {
     heading: "A Taste Of What's New",
     text: 'New releases, harvest updates, and the small things worth knowing between visits — written by the people actually making the wine.',
     linkText: 'Read The Journal',
+    /** Last card in the journal carousel — two lines each */
+    endHeading: 'View the\nFull Journal',
+    endButton: 'See All\nNews',
   },
   newsletter: {
     eyebrow: 'Stay Close',
@@ -137,6 +147,9 @@ export const EVENTS_DEFAULTS = {
     heading: 'Evenings Worth The Drive',
     text: 'Tastings, dinners, and cellar evenings across our two estates. From crisp whites picked at first light to reds aged slow in old oak — each wine carries the same terraces, the same hands, the same patience.',
     empty: 'No events scheduled right now — check back soon.',
+    /** Second, smaller heading above the search bar */
+    searchHeading: 'Find Your Next Hovaz Experience',
+    searchText: 'Search events by name, date, or location.',
   },
   /** /events — search bar above the grid */
   filters: {
@@ -464,7 +477,8 @@ export const FOOTER_DEFAULTS = {
       "Dedicated to the pursuit of excellence in viticulture across Armenia's most historic terroirs.",
     exploreHeading: 'Explore',
     helpHeading: 'Help',
-    locationsHeading: 'Locations',
+    locationsHeading: 'Estates',
+    directionsButton: 'Get directions →',
     contactHeading: 'Contact',
     newBadge: 'New',
     copyright: 'Hovaz Winery',
@@ -489,16 +503,19 @@ export const FOOTER_DEFAULTS = {
     {
       name: 'Dilijan Wine Rooms',
       href: '/estates?estate=dilijan',
-      detail: 'Founding estate · Dilijan, Tavush',
-      hours: 'Tue-Sun · 11:00-20:00',
+      detail: 'Founding estate · Dilijan, Tavush, Armenia',
+      hours: 'Tue–Sun · 11:00–20:00',
       isNew: false,
+      /** Footer map pin / directions — address or "lat,lng"; empty = name + place */
+      mapQuery: '',
     },
     {
       name: 'Hovaz Wine Boutique',
       href: '/estates?estate=proshyan',
-      detail: 'Proshyan · Ararat Valley',
-      hours: 'Tue-Sun · 11:00-20:00',
+      detail: 'Proshyan · Ararat Valley, Armenia',
+      hours: 'Tue–Sun · 11:00–20:00',
       isNew: true,
+      mapQuery: '',
     },
   ],
   legalLinks: [

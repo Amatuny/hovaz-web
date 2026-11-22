@@ -36,12 +36,12 @@ export function NewsCard({
           src={urlFor(item.featuredImage).width(800).height(560).url()}
           alt={item.featuredImage.alt ?? item.title}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-110 group-focus-within:scale-110"
+          className="object-cover transition-transform duration-200 ease-out group-hover:scale-[1.04] group-focus-within:scale-[1.04]"
           sizes="400px"
           draggable={false}
         />
       )}
-      <div className="absolute inset-0 bg-white opacity-0 transition-opacity duration-700 group-hover:opacity-35 group-focus-within:opacity-35" />
+      <div className="absolute inset-0 bg-white opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-30 group-focus-within:opacity-30" />
       <div
         className="absolute inset-0"
         style={{
@@ -98,7 +98,7 @@ export function NewsCard({
             <Link
               href={href}
               aria-label={`${labels.card.learnMore}: ${item.title}`}
-              className="inline-flex items-center border-b-2 border-white transition-colors duration-300 hover:border-[#bdbdbd] hover:text-[#bdbdbd]"
+              className="inline-flex items-center border-b-2 border-[#fdfcf8] text-[#fdfcf8] transition-opacity duration-150 ease-out hover:opacity-[0.78] active:translate-y-px"
               style={{
                 marginTop: fig(16),
                 paddingInline: fig(8),
@@ -107,10 +107,17 @@ export function NewsCard({
                 fontFamily: 'var(--font-hanken)',
                 fontWeight: 600,
                 fontSize: fig(16),
-                letterSpacing: fig(1.5),
+                letterSpacing: fig(2),
               }}
             >
-              {labels.card.learnMore} <span aria-hidden="true">→</span>
+              {labels.card.learnMore}
+              <Image
+                src="/wines/discover-arrow.svg"
+                alt=""
+                aria-hidden="true"
+                width={15}
+                height={7}
+              />
             </Link>
           </div>
         </div>

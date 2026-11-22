@@ -76,6 +76,14 @@ export const siteSettings = defineType({
       })
     ),
     defineField({
+      name: 'ageGateImage',
+      title: 'Age Check Image',
+      type: 'imageWithAlt',
+      group: 'homepage',
+      description:
+        'Photo in the "Are you 18 or older?" window shown on a first visit. Falls back to the first hero image.',
+    }),
+    defineField({
       name: 'wineTourGallery',
       title: 'Wine Experience Gallery',
       type: 'array',
@@ -126,6 +134,20 @@ export const siteSettings = defineType({
         { key: 'heading', title: 'Heading' },
         { key: 'text', title: 'Intro Text', rows: 3 },
         { key: 'linkText', title: 'Link Text' },
+        {
+          key: 'endHeading',
+          title: 'Last Card — Heading',
+          rows: 2,
+          description:
+            'Two lines — press Enter between them. Leave empty to use the text shown in grey',
+        },
+        {
+          key: 'endButton',
+          title: 'Last Card — Button',
+          rows: 2,
+          description:
+            'Two lines — press Enter between them. Leave empty to use the text shown in grey',
+        },
       ],
     }),
     textGroup({
@@ -167,6 +189,11 @@ export const siteSettings = defineType({
         { key: 'heading', title: 'Heading' },
         { key: 'brandFactLabel', title: 'Last Item — Title' },
         { key: 'brandFactMeta', title: 'Last Item — Subtitle' },
+        {
+          key: 'linkText',
+          title: 'Link Text',
+          description: 'Link under the awards (e.g. "See All Awards")',
+        },
       ],
     }),
     textGroup({
@@ -179,6 +206,20 @@ export const siteSettings = defineType({
         { key: 'heading', title: 'Heading' },
         { key: 'text', title: 'Intro Text', rows: 3 },
         { key: 'linkText', title: 'Link Text' },
+        {
+          key: 'endHeading',
+          title: 'Last Card — Heading',
+          rows: 2,
+          description:
+            'Two lines — press Enter between them. Leave empty to use the text shown in grey',
+        },
+        {
+          key: 'endButton',
+          title: 'Last Card — Button',
+          rows: 2,
+          description:
+            'Two lines — press Enter between them. Leave empty to use the text shown in grey',
+        },
       ],
     }),
     defineField({
@@ -264,6 +305,20 @@ export const siteSettings = defineType({
         { key: 'heading', title: 'Heading' },
         { key: 'text', title: 'Intro Text', rows: 3 },
         { key: 'linkText', title: 'Link Text' },
+        {
+          key: 'endHeading',
+          title: 'Last Card — Heading',
+          rows: 2,
+          description:
+            'Two lines — press Enter between them. Leave empty to use the text shown in grey',
+        },
+        {
+          key: 'endButton',
+          title: 'Last Card — Button',
+          rows: 2,
+          description:
+            'Two lines — press Enter between them. Leave empty to use the text shown in grey',
+        },
       ],
     }),
     textGroup({
@@ -291,7 +346,8 @@ export const siteSettings = defineType({
         { key: 'tagline', title: 'Tagline', rows: 2 },
         { key: 'exploreHeading', title: 'Column 1 Heading' },
         { key: 'helpHeading', title: 'Column 2 Heading' },
-        { key: 'locationsHeading', title: 'Locations Heading' },
+        { key: 'locationsHeading', title: 'Estates Heading' },
+        { key: 'directionsButton', title: 'Get Directions Button' },
         { key: 'contactHeading', title: 'Contact Heading' },
         { key: 'newBadge', title: '"New" Badge Text' },
         {
@@ -348,6 +404,14 @@ export const siteSettings = defineType({
               title: 'Show "New" Badge',
               type: 'boolean',
               initialValue: false,
+            }),
+            defineField({
+              name: 'mapQuery',
+              title: 'Map Location',
+              type: 'string',
+              description:
+                'Where the footer map pin and "Get directions" point. Best: coordinates as "lat,lng" (in Google Maps, right-click the spot and click the numbers to copy them), e.g. 40.7406,44.8630. A full address also works. Leave empty to search by name + detail line.',
+              validation: (rule) => rule.max(200),
             }),
           ],
           preview: { select: { title: 'name', subtitle: 'detail' } },

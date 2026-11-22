@@ -46,7 +46,8 @@ const nextConfig: NextConfig = {
               "font-src 'self' https://fonts.gstatic.com data:",
               "img-src 'self' data: blob: https://cdn.sanity.io https://www.google-analytics.com https://www.facebook.com https://www.googletagmanager.com",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://analytics.google.com https://challenges.cloudflare.com https://api.resend.com https://*.cloudflare.com",
-              "frame-src 'self' https://challenges.cloudflare.com https://www.googletagmanager.com https://www.facebook.com",
+              // www.google.com: the footer's Google Maps embed
+              "frame-src 'self' https://challenges.cloudflare.com https://www.googletagmanager.com https://www.facebook.com https://www.google.com",
               "worker-src 'self' blob:",
             ].join('; '),
           },

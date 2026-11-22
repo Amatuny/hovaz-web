@@ -45,6 +45,11 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600
 
+// Homepage sections that are switched off for now — set to true to bring
+// them back (their code and Sanity content are untouched).
+const SHOW_JOURNAL = false
+const SHOW_NEWSLETTER = false
+
 export default async function HomePage() {
   const [
     settings,
@@ -77,40 +82,57 @@ export default async function HomePage() {
   const awards = ((news as NewsItem[]) ?? []).filter((item: NewsItem) => item.category === 'award')
 
   return (
-    <div className="home-sections">
-      <HeroSection
-        headline={content.hero.headline}
-        subheadline={content.hero.subheadline}
-        location={content.hero.location}
-        ctaText={content.hero.ctaText}
-        secondaryCtaText={content.hero.secondaryCtaText}
-        gallery={settings?.heroGallery}
-      />
-      <EstatesSection estates={estates ?? []} texts={content.estates} />
-      <SectionDivider variant="vine" />
-      <WineTourSection images={settings?.wineTourGallery ?? []} texts={content.wineTour} />
-      <WinePreview
-        wines={wines ?? []}
-        texts={content.wines}
-        cardLabels={resolveWineCardLabels(winesPage, locale)}
-      />
-      <SectionDivider variant="symbol" />
-      <StorySection texts={content.story} image={content.storyImage} />
-      <AwardsStrip awards={awards} texts={content.awards} />
-      <EventsStrip
-        tours={tours ?? []}
-        events={events ?? []}
-        texts={content.events}
-        cardLabels={resolveEventCardLabels(eventsPage, locale)}
-      />
-      <SectionDivider variant="symbol" />
-      <MascotSection mascot={content.mascot} />
-      <JournalPreview
-        news={news ?? []}
-        texts={content.journal}
-        cardLabels={resolveNewsCardLabels(newsPage, locale)}
-      />
-      <NewsletterSection texts={content.newsletter} />
+    <>
+      {/* Hero sits above the section stack (Figma "hero"): 48px under the
+          header, dots 82px below the carousel. */}
+      <div className="home-hero">
+        <HeroSection
+          headline={content.hero.headline}
+          subheadline={content.hero.subheadline}
+          location={content.hero.location}
+          ctaText={content.hero.ctaText}
+          secondaryCtaText={content.hero.secondaryCtaText}
+          gallery={settings?.heroGallery}
+        />
+      </div>
+
+      {/* Section stack (Figma "main"): 32px top, 82px between items, 82px
+          bottom. Dividers are their own 100px items with 82px either side;
+          inside a .section-group things sit 48px apart. */}
+      <div className="home-sections page-main page-main--home">
+        <div className="section-group">
+          <EstatesSection estates={estates ?? []} texts={content.estates} />
+          <WineTourSection images={settings?.wineTourGallery ?? []} texts={content.wineTour} />
+        </div>
+        <SectionDivider variant="symbol" />
+        <div className="section-group">
+          <WinePreview
+            wines={wines ?? []}
+            texts={content.wines}
+            cardLabels={resolveWineCardLabels(winesPage, locale)}
+          />
+          <SectionDivider variant="symbol" />
+          <StorySection texts={content.story} image={content.storyImage} />
+        </div>
+        <AwardsStrip awards={awards} texts={content.awards} />
+        <EventsStrip
+          tours={tours ?? []}
+          events={events ?? []}
+          texts={content.events}
+          cardLabels={resolveEventCardLabels(eventsPage, locale)}
+        />
+        <SectionDivider variant="symbol" />
+        <MascotSection mascot={content.mascot} />
+        {SHOW_JOURNAL && (
+          <JournalPreview
+            news={news ?? []}
+            texts={content.journal}
+            cardLabels={resolveNewsCardLabels(newsPage, locale)}
+          />
+        )}
+        {SHOW_NEWSLETTER && <NewsletterSection texts={content.newsletter} />}
+        <SectionDivider variant="symbol" />
+      </div>
       <JsonLd
         data={{
           '@context': 'https://schema.org',
@@ -129,6 +151,6 @@ export default async function HomePage() {
           ],
         }}
       />
-    </div>
+    </>
   )
 }
