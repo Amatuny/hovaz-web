@@ -1,7 +1,10 @@
-import Link from 'next/link'
 import { WineCard } from '@/components/ui/WineCard'
 import type { Wine } from '@/types/sanity'
 import { DragScroll } from '@/components/ui/DragScroll'
+import { SectionHead } from '@/components/ui/SectionHead'
+import { StripEndCard } from '@/components/ui/StripEndCard'
+import { TextLink } from '@/components/ui/TextLink'
+import { mfig } from '@/lib/figmaScale'
 import { HOME_DEFAULTS, type WineCardLabels } from '@/content/defaults'
 
 interface WinePreviewProps {
@@ -10,81 +13,32 @@ interface WinePreviewProps {
   cardLabels?: WineCardLabels
 }
 
+// Figma "wine" (3179:4672): section head, a strip of 350px wine cards 32px
+// apart ending in a "Browse all wines" card, then the text link.
 export function WinePreview({ wines, texts = HOME_DEFAULTS.wines, cardLabels }: WinePreviewProps) {
   if (!wines?.length) return null
 
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
-      <div className="container-content">
-        <p
-          className="mb-4 uppercase"
-          style={{
-            fontFamily: 'var(--font-montserrat)',
-            fontWeight: 600,
-            fontSize: '10px',
-            letterSpacing: '2.5px',
-            color: 'rgba(93,110,82,0.92)',
-          }}
-        >
-          {texts.eyebrow}
-        </p>
-        <h2
-          className="mb-4 capitalize"
-          style={{
-            fontFamily: 'var(--font-playfair)',
-            fontWeight: 600,
-            fontSize: 'clamp(26px, 2.6vw, 36px)',
-            color: '#1a1d17',
-            letterSpacing: '0.5px',
-            lineHeight: 1.15,
-          }}
-        >
-          {texts.heading}
-        </h2>
-        <p
-          className="mb-10 max-w-[860px]"
-          style={{
-            fontFamily: 'var(--font-hanken)',
-            fontWeight: 400,
-            fontSize: '16px',
-            lineHeight: '26px',
-            color: '#4f4542',
-          }}
-        >
-          {texts.text}
-        </p>
+      <div className="container-content flex flex-col" style={{ gap: mfig(32, 48) }}>
+        <SectionHead eyebrow={texts.eyebrow} title={texts.heading} text={texts.text} />
 
-        <DragScroll arrows className="flex gap-4 pb-2 snap-x snap-mandatory">
+        {/* Figma "event card sec": 32px between cards, scaled like the cards */}
+        <DragScroll arrows className="flex snap-x snap-mandatory" style={{ gap: mfig(32, 32, 16) }}>
           {wines.map((wine) => (
-            <div key={wine._id} className="shrink-0 snap-start" style={{ width: '250px' }}>
+            <div key={wine._id} className="shrink-0 snap-start">
               <WineCard wine={wine} labels={cardLabels} />
             </div>
           ))}
+          <StripEndCard
+            href="/wines"
+            variant="wines"
+            heading={texts.endHeading}
+            button={texts.endButton}
+          />
         </DragScroll>
 
-        <div className="mt-8">
-          <Link
-            href="/wines"
-            className="group inline-flex items-center gap-2 border-b-2 border-[#1a1d17] px-2 pb-1 transition-colors hover:border-[var(--color-brand-gold)]"
-            style={{
-              fontFamily: 'var(--font-hanken)',
-              fontWeight: 600,
-              fontSize: '14px',
-              letterSpacing: '1px',
-              color: '#1a1d17',
-            }}
-          >
-            <span className="transition-colors group-hover:text-[var(--color-brand-gold)]">
-              {texts.linkText}
-            </span>
-            <span
-              aria-hidden="true"
-              className="transition-colors group-hover:text-[var(--color-brand-gold)]"
-            >
-              →
-            </span>
-          </Link>
-        </div>
+        <TextLink href="/wines">{texts.linkText}</TextLink>
       </div>
     </section>
   )

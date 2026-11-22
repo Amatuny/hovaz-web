@@ -1,5 +1,5 @@
+import { SectionDivider } from '@/components/ui/SectionDivider'
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import {
   getAllEstates,
   getAllEventsForListing,
@@ -26,7 +26,7 @@ export const revalidate = 3600
 
 interface SectionHeaderProps {
   as?: 'h1' | 'h2'
-  eyebrow: string
+  eyebrow?: string
   heading: string
   headingSize?: number
   paragraph?: string
@@ -41,18 +41,20 @@ function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <div className="flex flex-col" style={{ maxWidth: fig(860), gap: fig(16) }}>
-      <p
-        className="uppercase"
-        style={{
-          fontFamily: 'var(--font-montserrat)',
-          fontWeight: 600,
-          fontSize: fig(12),
-          letterSpacing: fig(3),
-          color: 'rgba(93,110,82,0.92)',
-        }}
-      >
-        {eyebrow}
-      </p>
+      {eyebrow && (
+        <p
+          className="uppercase"
+          style={{
+            fontFamily: 'var(--font-montserrat)',
+            fontWeight: 600,
+            fontSize: fig(12),
+            letterSpacing: fig(3),
+            color: 'rgba(93,110,82,0.92)',
+          }}
+        >
+          {eyebrow}
+        </p>
+      )}
       <Heading
         className="capitalize"
         style={{
@@ -95,17 +97,22 @@ export default async function EventsPage() {
 
   return (
     <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
-      <div
-        className="container-content flex flex-col"
-        style={{ paddingTop: fig(48), paddingBottom: fig(48), gap: fig(82) }}
-      >
-        <div className="flex flex-col" style={{ gap: fig(82) }}>
-          <SectionHeader
-            as="h1"
-            eyebrow={t.list.eyebrow}
-            heading={t.list.heading}
-            paragraph={t.list.text}
-          />
+      <div className="container-content page-main">
+        <div className="flex flex-col gap-12 lg:gap-[82px]">
+          {/* Figma "Frame 200": page title, then the search intro 36px below */}
+          <div className="flex flex-col" style={{ gap: fig(36) }}>
+            <SectionHeader
+              as="h1"
+              eyebrow={t.list.eyebrow}
+              heading={t.list.heading}
+              paragraph={t.list.text}
+            />
+            <SectionHeader
+              heading={t.list.searchHeading}
+              headingSize={32}
+              paragraph={t.list.searchText}
+            />
+          </div>
 
           {events.length === 0 ? (
             <p
@@ -127,22 +134,13 @@ export default async function EventsPage() {
           )}
         </div>
 
-        {/* Divider */}
-        <div className="flex items-center justify-center overflow-hidden">
-          <Image
-            src="/wines/vine-divider.svg"
-            alt=""
-            width={677}
-            height={78}
-            className="h-auto w-full"
-            style={{ maxWidth: fig(420) }}
-          />
-        </div>
+        {/* Divider (Figma "symbol" with the vine art, 677px) */}
+        <SectionDivider variant="vine" />
 
         {/* Reviews */}
         {testimonials.length > 0 && (
           <>
-            <div className="flex flex-col" style={{ gap: fig(82) }}>
+            <div className="flex flex-col gap-12 lg:gap-[82px]">
               <SectionHeader
                 eyebrow={t.reviews.eyebrow}
                 heading={t.reviews.heading}
@@ -159,16 +157,7 @@ export default async function EventsPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-center overflow-hidden">
-              <Image
-                src="/wines/collection-symbol.svg"
-                alt=""
-                width={667}
-                height={83}
-                className="h-auto w-full"
-                style={{ maxWidth: fig(380) }}
-              />
-            </div>
+            <SectionDivider variant="symbol" />
           </>
         )}
       </div>

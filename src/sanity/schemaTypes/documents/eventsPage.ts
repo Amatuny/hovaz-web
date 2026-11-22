@@ -32,6 +32,17 @@ export const eventsPage = defineType({
         { key: 'heading', title: 'Heading' },
         { key: 'text', title: 'Intro Text', rows: 3 },
         { key: 'empty', title: 'No Events Text', description: 'Shown when there are no events' },
+        {
+          key: 'searchHeading',
+          title: 'Search Heading',
+          description: 'Smaller heading above the search bar',
+        },
+        {
+          key: 'searchText',
+          title: 'Search Text',
+          rows: 2,
+          description: 'Line under the search heading',
+        },
       ],
     }),
     textGroup({

@@ -17,10 +17,7 @@ const POLICY = [
 export function CancelReservation() {
   return (
     <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
-      <div
-        className="container-content flex flex-col items-center"
-        style={{ gap: fig(82), paddingBlock: fig(100) }}
-      >
+      <div className="container-content page-main items-center">
         <div
           className="flex w-full flex-wrap items-start justify-between"
           style={{ maxWidth: fig(1086), gap: fig(56) }}

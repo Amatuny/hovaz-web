@@ -8,5 +8,14 @@
     "twoLocations": "Two Locations",
     "proshyan": "Wine Boutique, Proshyan",
     "dilijan": "Wine Rooms, Dilijan"
+  },
+  "AgeGate": {
+    "tagline": "More Than Wine Grows Here",
+    "eyebrow": "Before we start",
+    "title": "Are you 18 or older?",
+    "message": "This site is about wine. Please confirm you're of legal drinking age in your country.",
+    "declined": "Sorry, you must be of legal drinking age to visit this site.",
+    "confirm": "Yes, I'm 18+",
+    "decline": "No, I'm Under 18"
   }
 }

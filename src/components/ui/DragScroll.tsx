@@ -138,19 +138,14 @@ function ArrowButton({
       onClick={onClick}
       tabIndex={visible ? 0 : -1}
       aria-hidden={!visible}
-      className={`absolute top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#1a1d17] shadow-[0_4px_16px_rgba(26,29,23,0.14)] transition-[opacity,transform,background-color] duration-200 hover:scale-105 hover:bg-[var(--color-brand-cream)] md:flex ${
+      className={`absolute top-1/2 z-10 hidden h-[52px] w-[52px] -translate-y-1/2 items-center justify-center rounded-full bg-white text-[18px] text-[#1a1d17] shadow-[0_4px_16px_rgba(26,29,23,0.15)] transition-[opacity,background-color,color] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-[#2e3a28] hover:text-white md:flex ${
         isNext ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'
       } ${visible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
     >
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path
-          d={isNext ? 'M5 2.5 9.5 7 5 11.5' : 'M9 2.5 4.5 7 9 11.5'}
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      {/* Figma "Button arrow": Arial 18px chevron */}
+      <span aria-hidden="true" style={{ fontFamily: 'Arial, sans-serif', lineHeight: 1 }}>
+        {isNext ? '›' : '‹'}
+      </span>
     </button>
   )
 }

@@ -28,8 +28,14 @@ export function LanguageSwitcher({ variant = 'header' }: LanguageSwitcherProps) 
   if (variant === 'pill') {
     return (
       <div
-        className="inline-flex items-center rounded-full p-1"
-        style={{ backgroundColor: '#211612' }}
+        // Figma footer switcher (3577:10748): 4px padding and gap, 12/7px
+        // buttons — all × --figma-scale like the rest of the footer
+        className="inline-flex items-center rounded-full"
+        style={{
+          backgroundColor: 'rgba(242,237,221,0.06)',
+          padding: 'calc(var(--fs, 1) * 4px)',
+          gap: 'calc(var(--fs, 1) * 4px)',
+        }}
         aria-label="Language"
       >
         {locales.map((locale) => {
@@ -41,15 +47,17 @@ export function LanguageSwitcher({ variant = 'header' }: LanguageSwitcherProps) 
               onClick={() => handleSelect(locale)}
               disabled={isPending}
               aria-current={isActive}
-              className={`rounded-full px-4 py-1.5 uppercase transition-colors disabled:cursor-wait ${
-                isActive ? 'bg-[#f2eddd] text-[#130805]' : 'text-[#f2eddd] hover:text-white'
+              className={`rounded-full uppercase transition-colors disabled:cursor-wait ${
+                isActive ? 'bg-[#f2eddd] text-[#1a1d17]' : 'text-[#f2eddd] hover:text-white'
               }`}
               style={{
+                paddingInline: 'calc(var(--fs, 1) * 12px)',
+                paddingBlock: 'calc(var(--fs, 1) * 7px)',
                 fontFamily: 'var(--font-montserrat)',
                 fontWeight: 600,
-                fontSize: '11px',
+                fontSize: 'calc(var(--fs, 1) * 11px)',
                 letterSpacing: '1px',
-                lineHeight: 1,
+                lineHeight: 'normal',
               }}
             >
               {localeLabels[locale]}

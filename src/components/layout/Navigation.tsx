@@ -4,7 +4,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { useState, useEffect, useRef } from 'react'
+import { Fragment, useState, useEffect, useRef } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher'
 import { fig } from '@/lib/figmaScale'
@@ -75,6 +75,7 @@ export function Navigation({ settings }: NavigationProps) {
   ]
 
   const navLinks = sanityLinks.length ? sanityLinks : defaultLinks
+  const isWineDetail = /^\/wines\/[^/]+/.test(pathname)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
@@ -129,7 +130,13 @@ export function Navigation({ settings }: NavigationProps) {
       style={{ backgroundColor: 'var(--color-brand-cream)' }}
     >
       <div className="container-content">
-        <div className="relative flex items-center justify-between py-3 min-[1200px]:min-h-22 min-[1200px]:py-4">
+        {/* Desktop header: 128px tall, 120px on a wine detail page (handoff §1) */}
+        <div
+          // Mobile Figma: 78px tall; desktop 128 (120 on a wine detail page)
+          className={`relative flex h-[78px] items-center justify-between ${
+            isWineDetail ? 'min-[1200px]:h-[120px]' : 'min-[1200px]:h-[128px]'
+          }`}
+        >
           {/*
             Logo: in normal flow on mobile (shares the row with the menu button),
             but absolutely positioned on desktop — matching Figma, where the logo
@@ -148,7 +155,7 @@ export function Navigation({ settings }: NavigationProps) {
               alt="Hovaz"
               width={101}
               height={120}
-              className="h-16 w-auto min-[1200px]:h-22"
+              className="h-14 w-auto min-[1200px]:h-22"
               priority
             />
           </Link>
@@ -156,7 +163,7 @@ export function Navigation({ settings }: NavigationProps) {
           {/* Desktop nav + language — full-width row, unaffected by the logo's footprint */}
           <div className="hidden w-full items-center justify-between gap-4 min-[1200px]:flex">
             <div className="flex flex-1 items-center justify-center">
-              <nav className="flex items-center" style={{ gap: fig(50) }}>
+              <nav className="flex items-center" style={{ gap: fig(48) }}>
                 {navLinks.map((link) => {
                   const isOpen = openDropdown === link.key
                   return link.children ? (
@@ -190,17 +197,38 @@ export function Navigation({ settings }: NavigationProps) {
                           so the menu stays open while the pointer moves down */}
                       {isOpen && (
                         <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-4">
-                          <div className="flex flex-col divide-y divide-black/15 rounded-xl bg-white px-4 py-1 shadow-lg">
-                            {link.children.map((child) => (
-                              <div key={child.href} className="px-3 py-4">
+                          {/* Figma "estates-dropdown" (3462:4714): 260px, white,
+                              1px black/10 border, radius 8, 16px padding, shadow
+                              0 8 24 black/12; options 12px apart with a 1px
+                              #d8d6d5 rule between them. Options: 15px Hanken
+                              Regular, 1.6px tracking, 12px padding, radius 8.
+                              Hover → cream #f2eddd; pressed → forest #2e3a28,
+                              white text. */}
+                          {/* Scaled by --figma-scale like the nav links above it, so
+                              it keeps the design's proportions below 1900px. */}
+                          <div
+                            className="flex flex-col rounded-lg border border-black/10 bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+                            style={{ width: fig(260), padding: fig(16), gap: fig(12) }}
+                          >
+                            {link.children.map((child, i) => (
+                              <Fragment key={child.href}>
+                                {i > 0 && <div aria-hidden="true" className="h-px bg-[#d8d6d5]" />}
                                 <Link
                                   href={child.href}
                                   onClick={() => setOpenDropdown(null)}
-                                  className="header-nav-link text-[13px] normal-case tracking-[0.5px]"
+                                  className="rounded-lg text-black transition-colors duration-[120ms] ease-out hover:bg-[#f2eddd] active:bg-[#2e3a28] active:text-white"
+                                  style={{
+                                    padding: fig(12),
+                                    fontFamily: 'var(--font-hanken)',
+                                    fontWeight: 400,
+                                    fontSize: `max(12px, ${fig(15)})`,
+                                    lineHeight: 1.33,
+                                    letterSpacing: fig(1.6),
+                                  }}
                                 >
                                   {child.label}
                                 </Link>
-                              </div>
+                              </Fragment>
                             ))}
                           </div>
                         </div>

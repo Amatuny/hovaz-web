@@ -60,6 +60,7 @@ export function resolveFooterContent(settings: SiteSettings | null, locale: Loca
         detail: pick(loc, 'detail', locale) ?? '',
         hours: pick(loc, 'hours', locale) ?? '',
         isNew: loc.isNew === true,
+        mapQuery: typeof loc.mapQuery === 'string' ? loc.mapQuery.trim() : '',
       },
     ]
   })

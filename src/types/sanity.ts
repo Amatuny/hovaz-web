@@ -306,6 +306,7 @@ export interface SiteSettings {
   heroLocation?: string
   heroGallery?: SanityImage[]
   wineTourGallery?: SanityImage[]
+  ageGateImage?: SanityImage
   mascot?: MascotSettings
   heroCtaText?: string
   heroSecondaryCtaText?: string

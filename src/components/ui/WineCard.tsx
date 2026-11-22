@@ -1,4 +1,8 @@
 // src/components/ui/WineCard.tsx
+// Figma "wine-card" (wine--reserve 35:578): 350×529 at the 1900px design
+// width, radius 24. Default: 360px photo window over a cream body panel.
+// Hover (smart-animate 200ms ease-out): the photo fills the card under a dark
+// scrim with a larger name and a "Discover" text link.
 import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
@@ -16,46 +20,80 @@ const DEFAULT_LABELS: WineCardLabels = {
   wineTypes: WINES_DEFAULTS.wineTypes,
 }
 
+// The card scales with --figma-scale like the rest of the page (350px at the
+// 1900px design width), never below 250px so it stays legible on phones.
+// Every inner value is the Figma px scaled by the card's width, so the card
+// keeps the design's proportions at any size.
+// Mobile Figma: a full 350px card (narrower only on phones under ~382px).
+const CARD_WIDTH =
+  'calc(min(350px, calc(100vw - 32px)) * (1 - var(--lg, 1)) + max(250px, calc(var(--figma-scale) * 350px)) * var(--lg, 1))'
+const w = (px: number) => `calc(var(--wcw) * ${+(px / 350).toFixed(5)})`
+
 export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
   const tagLine = wine.tastingTags?.length ? wine.tastingTags.join(' · ') : undefined
   const wineTypes: Record<string, string> = labels.wineTypes
   const typeLabel = wine.wineType ? (wineTypes[wine.wineType] ?? wine.wineType) : undefined
 
   return (
-    <Link
-      href={`/wines/${wine.slug.current}`}
-      className="group relative flex w-full flex-col overflow-hidden rounded-[24px]"
-      style={{ aspectRatio: '350 / 529' }}
+    // Only the "Discover" button navigates — the card itself is not a link.
+    <article
+      className="group relative flex max-w-full flex-none flex-col overflow-hidden"
+      style={
+        {
+          '--wcw': CARD_WIDTH,
+          // Sizes the hover state animates — set as variables so the
+          // group-hover classes below can override them.
+          '--wc-photo': w(360),
+          '--wc-body-max': w(220),
+          '--wc-body-pad': w(32),
+          width: 'var(--wcw)',
+          aspectRatio: '350 / 529',
+          borderRadius: w(24),
+        } as React.CSSProperties
+      }
     >
-      {/* Photo — fills exactly whatever height the panel below doesn't use, so there's never a gap */}
+      {/* Photo window — 360px tall; grows to the full card on hover as the
+          body panel collapses. Figma "photo ph": the image itself is 406px
+          tall, pinned to the top of the window (its bottom 46px is cropped),
+          and fills the whole card on hover. */}
       <div
-        className="relative min-h-0 flex-1 overflow-hidden"
+        className="relative h-[var(--wc-photo)] shrink-0 overflow-hidden transition-[height] duration-200 ease-out group-focus-within:h-full group-hover:h-full"
         style={{
           background: 'linear-gradient(to bottom, rgba(53,63,48,0.12), rgba(160,174,152,0.12))',
         }}
       >
         {wine.mainImage?.asset?._ref ? (
-          <Image
-            src={urlFor(wine.mainImage).width(700).height(812).url()}
-            alt={wine.mainImage.alt ?? wine.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          />
+          <div
+            className="absolute inset-x-0 top-0 h-[var(--wc-img)] transition-[height] duration-200 ease-out group-focus-within:h-full group-hover:h-full"
+            style={{ '--wc-img': w(406) } as React.CSSProperties}
+          >
+            <Image
+              src={urlFor(wine.mainImage).width(700).height(1058).url()}
+              alt={wine.mainImage.alt ?? wine.name}
+              fill
+              className="object-cover"
+              sizes="(min-width: 1900px) 350px, (min-width: 714px) 18.4vw, 250px"
+            />
+          </div>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <div
-              className="h-48 w-20 rounded-sm"
-              style={{ backgroundColor: 'var(--color-brand-burgundy)' }}
+              className="rounded-sm"
+              style={{
+                width: w(80),
+                height: w(192),
+                backgroundColor: 'var(--color-brand-burgundy)',
+              }}
             />
           </div>
         )}
       </div>
 
-      {/* Default state — cream body panel; collapses away on hover so the photo above grows to fill the card */}
+      {/* Default state — cream body panel (32px padding, 8px gaps); collapses
+          away on hover so the photo above grows to fill the card */}
       <div
-        className="flex max-h-[220px] flex-col gap-1 overflow-hidden p-5 opacity-100 transition-[max-height,opacity,padding] duration-300 ease-out group-hover:max-h-0 group-hover:p-0 group-hover:opacity-0"
-        style={{ backgroundColor: '#f2eddd' }}
+        className="flex max-h-[var(--wc-body-max)] flex-1 flex-col overflow-hidden p-[var(--wc-body-pad)] opacity-100 transition-[max-height,opacity,padding] duration-200 ease-out group-focus-within:max-h-0 group-focus-within:p-0 group-focus-within:opacity-0 group-hover:max-h-0 group-hover:p-0 group-hover:opacity-0"
+        style={{ backgroundColor: '#f2eddd', gap: w(8) }}
       >
         {typeLabel && (
           <p
@@ -63,8 +101,9 @@ export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
             style={{
               fontFamily: 'var(--font-hanken)',
               fontWeight: 400,
-              fontSize: '9px',
-              letterSpacing: '1.5px',
+              fontSize: w(12),
+              lineHeight: w(13),
+              letterSpacing: w(3),
               color: '#581009',
             }}
           >
@@ -73,12 +112,13 @@ export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
         )}
 
         <p
-          className="capitalize italic"
+          className="truncate capitalize"
           style={{
             fontFamily: 'var(--font-playfair)',
             fontWeight: 600,
-            fontSize: '16px',
-            letterSpacing: '0.3px',
+            fontSize: w(24),
+            lineHeight: 1.333,
+            letterSpacing: w(0.5),
             color: '#3d4a38',
           }}
         >
@@ -91,7 +131,8 @@ export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
             style={{
               fontFamily: 'var(--font-hanken)',
               fontWeight: 300,
-              fontSize: '12px',
+              fontSize: w(16),
+              lineHeight: 1.3,
               color: '#4a4e44',
             }}
           >
@@ -100,11 +141,13 @@ export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
         )}
 
         <div
-          className="flex flex-wrap items-start gap-3"
+          className="flex flex-wrap items-start"
           style={{
+            gap: w(16),
             fontFamily: 'var(--font-hanken)',
-            fontSize: '11px',
-            letterSpacing: '0.3px',
+            fontSize: w(14),
+            lineHeight: w(15),
+            letterSpacing: w(0.5),
             color: '#4a4e44',
           }}
         >
@@ -121,12 +164,15 @@ export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
         </div>
       </div>
 
-      {/* Hover state — full-bleed dark scrim + Discover action */}
+      {/* Hover state — full-bleed scrim (clear → 80% at 55% → 95%), body 48px
+          in, items 12px apart */}
       <div
-        className="absolute inset-0 flex flex-col justify-end gap-1.5 p-7 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
+        className="pointer-events-none absolute inset-0 flex flex-col justify-end opacity-0 transition-opacity duration-200 ease-out group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100"
         style={{
+          padding: w(48),
+          gap: w(12),
           background:
-            'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.66) 55%, rgba(0,0,0,0.78) 100%)',
+            'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 55%, rgba(0,0,0,0.95) 100%)',
         }}
       >
         {typeLabel && (
@@ -135,8 +181,9 @@ export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
             style={{
               fontFamily: 'var(--font-hanken)',
               fontWeight: 400,
-              fontSize: '10px',
-              letterSpacing: '1.5px',
+              fontSize: w(14),
+              lineHeight: w(28),
+              letterSpacing: w(3),
             }}
           >
             {typeLabel}
@@ -144,13 +191,13 @@ export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
         )}
 
         <p
-          className="capitalize italic text-white"
+          className="capitalize text-white"
           style={{
             fontFamily: 'var(--font-playfair)',
             fontWeight: 600,
-            fontSize: '24px',
-            letterSpacing: '0.4px',
-            lineHeight: 1.15,
+            fontSize: w(42),
+            lineHeight: 1.333,
+            letterSpacing: w(1),
           }}
         >
           {wine.name}
@@ -158,32 +205,42 @@ export function WineCard({ wine, labels = DEFAULT_LABELS }: WineCardProps) {
 
         {tagLine && (
           <p
-            className="text-white"
+            className="truncate text-white"
             style={{
               fontFamily: 'var(--font-hanken)',
               fontWeight: 300,
-              fontSize: '12px',
+              fontSize: w(16),
+              lineHeight: 1.3,
             }}
           >
             {tagLine}
           </p>
         )}
 
-        <span
-          className="inline-flex w-fit items-center gap-2 border-b-2 pb-1 capitalize"
+        {/* Figma white text link: 16px, 2px tracking, 8/4 padding, 8px gap.
+            Its own hover (863:7579) fades it to 78%; pressed nudges it 1px. */}
+        <Link
+          href={`/wines/${wine.slug.current}`}
+          aria-label={`${labels.card.discover}: ${wine.name}`}
+          className="inline-flex w-fit items-center border-b-2 capitalize transition-opacity duration-150 ease-out hover:opacity-[0.78] active:translate-y-px"
           style={{
+            gap: w(8),
+            paddingInline: w(8),
+            paddingBlock: w(4),
             fontFamily: 'var(--font-hanken)',
             fontWeight: 600,
-            fontSize: '12px',
-            letterSpacing: '1.5px',
+            fontSize: w(16),
+            letterSpacing: w(2),
             color: '#fdfcf8',
             borderColor: '#fdfcf8',
           }}
         >
           {labels.card.discover}
-          <Image src="/wines/discover-arrow.svg" alt="" width={15} height={7} />
-        </span>
+          <span className="relative shrink-0" style={{ width: w(15), height: w(7) }}>
+            <Image src="/wines/discover-arrow.svg" alt="" aria-hidden="true" fill />
+          </span>
+        </Link>
       </div>
-    </Link>
+    </article>
   )
 }

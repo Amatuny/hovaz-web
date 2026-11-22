@@ -71,25 +71,33 @@ const components = {
     ),
     h2: ({ children }: { children?: React.ReactNode }) => (
       <h2
-        className="font-serif text-2xl mt-10 mb-4"
+        // Figma article: Playfair Display SemiBold 28
+        className="font-serif text-[28px] font-semibold mt-10 mb-4"
         style={{ color: 'var(--color-brand-burgundy)' }}
       >
         {children}
       </h2>
     ),
     h3: ({ children }: { children?: React.ReactNode }) => (
-      <h3 className="font-serif text-xl mt-8 mb-3" style={{ color: 'var(--color-brand-charcoal)' }}>
+      <h3
+        className="font-serif text-xl font-semibold mt-8 mb-3"
+        style={{ color: 'var(--color-brand-charcoal)' }}
+      >
         {children}
       </h3>
     ),
     h4: ({ children }: { children?: React.ReactNode }) => (
-      <h4 className="font-serif text-lg mt-6 mb-2" style={{ color: 'var(--color-brand-charcoal)' }}>
+      <h4
+        className="font-serif text-lg font-semibold mt-6 mb-2"
+        style={{ color: 'var(--color-brand-charcoal)' }}
+      >
         {children}
       </h4>
     ),
     blockquote: ({ children }: { children?: React.ReactNode }) => (
       <blockquote
-        className="font-serif text-xl italic my-8 pl-6"
+        // Figma article quote: Playfair Display Italic 19
+        className="font-serif text-[19px] font-normal italic my-8 pl-6"
         style={{
           borderLeft: '2px solid var(--color-brand-gold)',
           color: 'var(--color-brand-burgundy)',

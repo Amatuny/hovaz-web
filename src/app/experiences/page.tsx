@@ -20,7 +20,7 @@ export default async function ExperiencesPage() {
 
   return (
     <div style={{ backgroundColor: 'var(--color-brand-cream)' }}>
-      <div className="container-content flex flex-col pt-12 pb-12">
+      <div className="container-content page-main">
         {estates.length === 0 ? (
           <p
             style={{

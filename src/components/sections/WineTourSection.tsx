@@ -1,12 +1,53 @@
-import Link from 'next/link'
 import Image from 'next/image'
 import { urlFor } from '@/lib/sanity/image'
+import { fig, mfig } from '@/lib/figmaScale'
 import type { SanityImage } from '@/types/sanity'
 import { HOME_DEFAULTS } from '@/content/defaults'
+import { SectionHead } from '@/components/ui/SectionHead'
 
 interface WineTourSectionProps {
   images: SanityImage[]
   texts?: typeof HOME_DEFAULTS.wineTour
+}
+
+// Figma "tour section" (wine--reserve 3179:4643): one large photo (788×814 at
+// 1600) beside a 2×2 grid of 382×395 photos, 24px gaps, 24px radius, each with
+// a dark bottom gradient.
+const LARGE_GRADIENT =
+  'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 66.8%, rgba(0,0,0,1) 100%)'
+const SMALL_GRADIENT =
+  'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.39) 45%, rgba(0,0,0,0.86) 100%)'
+
+function Photo({
+  image,
+  gradient,
+  aspectClass,
+  width,
+  height,
+  sizes,
+}: {
+  image: SanityImage
+  gradient: string
+  aspectClass: string
+  width: number
+  height: number
+  sizes: string
+}) {
+  return (
+    <div
+      className={`relative overflow-hidden ${aspectClass}`}
+      style={{ borderRadius: `max(16px, ${fig(24)})` }}
+    >
+      <Image
+        src={urlFor(image).width(width).height(height).url()}
+        alt={image.alt ?? 'Wine experience'}
+        fill
+        className="object-cover"
+        sizes={sizes}
+      />
+      <div className="absolute inset-0" style={{ background: gradient }} />
+    </div>
+  )
 }
 
 export function WineTourSection({ images, texts = HOME_DEFAULTS.wineTour }: WineTourSectionProps) {
@@ -17,118 +58,56 @@ export function WineTourSection({ images, texts = HOME_DEFAULTS.wineTour }: Wine
 
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-brand-cream)' }}>
-      <div className="container-content">
-        <p
-          className="mb-4 uppercase"
-          style={{
-            fontFamily: 'var(--font-montserrat)',
-            fontWeight: 600,
-            fontSize: '10px',
-            letterSpacing: '2.5px',
-            color: 'rgba(93,110,82,0.92)',
-          }}
-        >
-          {texts.eyebrow}
-        </p>
-        <h2
-          className="mb-4 max-w-[870px] capitalize"
-          style={{
-            fontFamily: 'var(--font-playfair)',
-            fontWeight: 600,
-            fontSize: 'clamp(26px, 2.6vw, 36px)',
-            color: '#1a1d17',
-            letterSpacing: '0.5px',
-            lineHeight: 1.15,
-          }}
-        >
-          {texts.heading}
-        </h2>
-        <p
-          className="mb-10 max-w-[860px]"
-          style={{
-            fontFamily: 'var(--font-hanken)',
-            fontWeight: 400,
-            fontSize: '16px',
-            lineHeight: '26px',
-            color: '#4f4542',
-          }}
-        >
-          {texts.text}
-        </p>
+      <div className="container-content flex flex-col" style={{ gap: mfig(32, 48) }}>
+        <SectionHead eyebrow={texts.eyebrow} title={texts.heading} text={texts.text} />
 
-        <div className="flex flex-col gap-6 lg:flex-row">
-          {/* Large photo */}
-          <div
-            className="relative flex-1 overflow-hidden rounded-2xl lg:rounded-3xl"
-            style={{ aspectRatio: '788 / 814' }}
-          >
-            <Image
-              src={urlFor(large).width(900).height(950).url()}
-              alt={large.alt ?? 'Wine experience'}
-              fill
-              className="object-cover"
-              sizes="(min-width: 1024px) 50vw, 100vw"
-            />
+        {/* Mobile Figma: a sideways strip of 320 x 361 cards, 24px apart,
+            running off the right edge */}
+        <div className="-mr-4 flex snap-x snap-mandatory gap-6 overflow-x-auto pr-4 [scrollbar-width:none] sm:-mr-6 sm:pr-6 lg:hidden [&::-webkit-scrollbar]:hidden">
+          {images.slice(0, 5).map((image, i) => (
             <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.7) 100%)',
-              }}
-            />
-          </div>
+              key={i}
+              className="relative h-[361px] w-[min(320px,calc(100vw-48px))] shrink-0 snap-start overflow-hidden rounded-[24px]"
+            >
+              <Image
+                src={urlFor(image).width(640).height(722).url()}
+                alt={image.alt ?? 'Wine experience'}
+                fill
+                className="object-cover"
+                sizes="320px"
+              />
+              <div className="absolute inset-0" style={{ background: SMALL_GRADIENT }} />
+            </div>
+          ))}
+        </div>
 
-          {/* 2x2 photo grid */}
+        {/* Tablet (1024-1279, Figma 1027 frame): the large photo full width
+            (878 x 814), the 2x2 grid below. Desktop: side by side. */}
+        <div className="hidden grid-cols-1 lg:grid xl:grid-cols-2" style={{ gap: fig(24) }}>
+          <Photo
+            image={large}
+            gradient={LARGE_GRADIENT}
+            aspectClass="aspect-[878/814] xl:aspect-[788/814]"
+            width={1000}
+            height={1033}
+            sizes="(min-width: 1280px) 50vw, 100vw"
+          />
+
           {gridImages.length > 0 && (
-            <div className="grid flex-1 grid-cols-2 gap-6">
+            <div className="grid grid-cols-2" style={{ gap: fig(24) }}>
               {gridImages.map((image, i) => (
-                <div
+                <Photo
                   key={i}
-                  className="relative overflow-hidden rounded-2xl lg:rounded-3xl"
-                  style={{ aspectRatio: '382 / 395' }}
-                >
-                  <Image
-                    src={urlFor(image).width(500).height(500).url()}
-                    alt={image.alt ?? 'Wine experience'}
-                    fill
-                    className="object-cover"
-                    sizes="(min-width: 1024px) 25vw, 50vw"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 45%, rgba(0,0,0,0.65) 100%)',
-                    }}
-                  />
-                </div>
+                  image={image}
+                  gradient={SMALL_GRADIENT}
+                  aspectClass="aspect-[428.5/395] xl:aspect-[382/395]"
+                  width={600}
+                  height={620}
+                  sizes="(min-width: 1024px) 25vw, 50vw"
+                />
               ))}
             </div>
           )}
-        </div>
-
-        <div className="mt-8">
-          <Link
-            href="/events"
-            className="group inline-flex items-center gap-2 border-b-2 border-[#1a1d17] px-2 pb-1 transition-colors hover:border-[var(--color-brand-gold)]"
-            style={{
-              fontFamily: 'var(--font-hanken)',
-              fontWeight: 600,
-              fontSize: '14px',
-              letterSpacing: '1px',
-              color: '#1a1d17',
-            }}
-          >
-            <span className="capitalize transition-colors group-hover:text-[var(--color-brand-gold)]">
-              {texts.linkText}
-            </span>
-            <span
-              aria-hidden="true"
-              className="transition-colors group-hover:text-[var(--color-brand-gold)]"
-            >
-              →
-            </span>
-          </Link>
         </div>
       </div>
     </section>
