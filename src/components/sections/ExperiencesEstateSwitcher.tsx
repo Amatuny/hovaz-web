@@ -30,7 +30,7 @@ function OutlineButton({ href, children }: { href: string; children: React.React
   return (
     <Link
       href={href}
-      className="inline-flex shrink-0 items-center justify-center rounded-full capitalize transition-colors hover:bg-[var(--color-brand-olive)] hover:text-[#fdfcf8]"
+      className="inline-flex shrink-0 items-center justify-center rounded-full capitalize text-[var(--color-brand-olive)] transition-colors duration-200 ease-out hover:bg-[rgba(46,58,40,0.15)] active:bg-[rgba(46,58,40,0.45)] active:duration-[60ms]"
       style={{
         borderWidth: '1.5px',
         borderStyle: 'solid',
@@ -42,7 +42,6 @@ function OutlineButton({ href, children }: { href: string; children: React.React
         fontWeight: 600,
         fontSize: fig(16),
         letterSpacing: fig(2),
-        color: 'var(--color-brand-olive)',
       }}
     >
       {children}

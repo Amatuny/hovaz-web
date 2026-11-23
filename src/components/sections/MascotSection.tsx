@@ -12,14 +12,15 @@ interface MascotSectionProps {
 
 // Figma "Hovaz" (3179:4896): section head, then a 4-column grid with rows of
 // 320 and 220px (24px gaps): the main photo spans 2×2, the dark story panel
-// spans the top-right two columns, two small photos sit under it.
+// sits in column 3 with one small photo under it, and the WWF adoption
+// certificate fills column 4 across both rows (382 × 564).
 // Content comes from Site Settings → Mascot.
 export function MascotSection({ mascot }: MascotSectionProps) {
   const heading = mascot?.heading
   if (!mascot || !heading) return null
 
   const paragraphs = (mascot.story ?? []).filter(Boolean).slice(0, 3)
-  const gallery = (mascot.gallery ?? []).slice(0, 2)
+  const smallPhoto = mascot.gallery?.[0]
   const radius = `max(16px, ${fig(24)})`
 
   return (
@@ -107,9 +108,9 @@ export function MascotSection({ mascot }: MascotSectionProps) {
               )}
             </div>
 
-            {/* Story panel — top right, 2 columns */}
+            {/* Story panel — column 3, top row */}
             <div
-              className="relative flex min-h-[320px] flex-col justify-center overflow-y-auto lg:col-span-2 lg:min-h-0"
+              className="relative flex min-h-[320px] flex-col justify-center overflow-y-auto lg:col-start-3 lg:row-start-1 lg:min-h-0"
               style={{ borderRadius: radius, backgroundColor: '#231814' }}
             >
               <div
@@ -129,17 +130,16 @@ export function MascotSection({ mascot }: MascotSectionProps) {
               </div>
             </div>
 
-            {/* Two small photos */}
-            {gallery.map((image, i) => (
+            {/* Small photo — column 3, under the story panel */}
+            {smallPhoto && (
               <div
-                key={i}
-                className="relative aspect-[396/220] overflow-hidden lg:aspect-auto"
+                className="relative aspect-[382/220] overflow-hidden lg:col-start-3 lg:row-start-2 lg:aspect-auto"
                 style={{ borderRadius: radius }}
               >
-                {image?.asset?._ref ? (
+                {smallPhoto.asset?._ref ? (
                   <Image
-                    src={urlFor(image).width(800).height(460).url()}
-                    alt={image.alt ?? heading}
+                    src={urlFor(smallPhoto).width(800).height(460).url()}
+                    alt={smallPhoto.alt ?? heading}
                     fill
                     className="object-cover"
                     sizes="(min-width: 1024px) 25vw, 100vw"
@@ -151,7 +151,36 @@ export function MascotSection({ mascot }: MascotSectionProps) {
                   />
                 )}
               </div>
-            ))}
+            )}
+
+            {/* Certificate — column 4, full height of both rows (382 × 564).
+                From Studio when set; otherwise the scan from the design,
+                cropped as in Figma (scaled 118% × 115%, so the scan's edges
+                fall outside the card). */}
+            <div
+              className="relative aspect-[382/564] overflow-hidden lg:col-start-4 lg:row-span-2 lg:row-start-1 lg:aspect-auto"
+              style={{ borderRadius: radius, backgroundColor: '#f2eddd' }}
+            >
+              {mascot.certificate?.asset?._ref ? (
+                <Image
+                  src={urlFor(mascot.certificate).width(764).height(1128).url()}
+                  alt={mascot.certificate.alt ?? heading}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 25vw, 100vw"
+                />
+              ) : (
+                <Image
+                  src="/home/mascot-certificate.jpg"
+                  alt="WWF leopard adoption certificate for Hovaz"
+                  width={779}
+                  height={1123}
+                  className="absolute max-w-none"
+                  style={{ width: '118%', height: '115.21%', left: '-9%', top: '-7.61%' }}
+                  sizes="(min-width: 1024px) 30vw, 118vw"
+                />
+              )}
+            </div>
           </div>
 
           {/* Emblem watermark over the right of the grid, as in Figma

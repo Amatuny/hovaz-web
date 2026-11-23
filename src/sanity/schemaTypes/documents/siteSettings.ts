@@ -290,8 +290,15 @@ export const siteSettings = defineType({
           type: 'array',
           of: [{ type: 'imageWithAlt' }],
           options: { layout: 'grid' },
-          validation: (Rule) => Rule.max(2),
-          description: 'Up to 2 photos shown under the story card',
+          validation: (Rule) => Rule.max(1).warning('Only the first photo is shown on the site'),
+          description: 'The small photo shown under the story card',
+        }),
+        defineField({
+          name: 'certificate',
+          title: 'Certificate Photo',
+          type: 'imageWithAlt',
+          description:
+            'Tall photo on the right of the grid (the WWF adoption certificate). Portrait, about 382 × 564. Leave empty to use the built-in scan.',
         }),
       ],
     }),

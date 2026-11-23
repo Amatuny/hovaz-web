@@ -215,6 +215,22 @@ export interface NewsItem {
   seo?: SeoMetadata
 }
 
+/** A News & Awards item with category "award", as listed on /awards */
+export interface AwardItem {
+  _id: string
+  title: string
+  excerpt?: string
+  date?: string
+  featuredImage?: SanityImage
+  awardOrganization?: string
+  awardYear?: number
+  awardTier?: string
+  awardedWine?: string
+  awardWineLine?: string
+  wine?: Pick<Wine, 'name' | 'slug' | 'grapeVariety' | 'vintage' | 'mainImage'> | null
+  [key: `${string}_i18n`]: Record<string, string> | undefined
+}
+
 export interface FaqItem {
   _id: string
   question: string
@@ -249,6 +265,7 @@ export interface MascotSettings {
   imageBadgeSubtitle?: string
   story?: string[]
   gallery?: SanityImage[]
+  certificate?: SanityImage
 }
 
 export interface NavSubItem {

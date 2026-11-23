@@ -70,6 +70,7 @@ export function resolveNewsContent(doc: PageTextsDoc | null, locale: Locale) {
   return {
     list: resolveTexts(doc?.header, NEWS_DEFAULTS.list, locale),
     awards: resolveTexts(doc?.awards, NEWS_DEFAULTS.awards, locale),
+    awardsPage: resolveTexts(doc?.awardsPage, NEWS_DEFAULTS.awardsPage, locale),
     stories: resolveTexts(doc?.stories, NEWS_DEFAULTS.stories, locale),
     cards: resolveNewsCardLabels(doc, locale),
   }

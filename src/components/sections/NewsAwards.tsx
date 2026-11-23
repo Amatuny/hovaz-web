@@ -14,6 +14,7 @@ const FEATURED_COUNT = 3
 const DEFAULT_CONTENT: NewsContent = {
   list: NEWS_DEFAULTS.list,
   awards: NEWS_DEFAULTS.awards,
+  awardsPage: NEWS_DEFAULTS.awardsPage,
   stories: NEWS_DEFAULTS.stories,
   cards: { card: NEWS_DEFAULTS.card, categories: NEWS_DEFAULTS.categories },
 }

@@ -6,6 +6,7 @@ import type {
   ExperienceTour,
   Event,
   NewsItem,
+  AwardItem,
   FaqItem,
   SiteSettings,
   Estate,
@@ -53,7 +54,8 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       "mascot": mascot{
         ...,
         "image": image{${IMAGE_FIELDS}},
-        "gallery": gallery[]{${IMAGE_FIELDS}}
+        "gallery": gallery[]{${IMAGE_FIELDS}},
+        "certificate": certificate{${IMAGE_FIELDS}}
       },
       email, phone, whatsapp, viber, telegram,
       instagramWineRooms, instagramWines, facebook
@@ -294,6 +296,22 @@ export async function getAllNews(): Promise<NewsItem[]> {
       _id, title, slug, category, date, excerpt,
       "featuredImage": featuredImage{${IMAGE_FIELDS}}, awardOrganization, awardYear, awardTier,
       awardedWine, publication, externalUrl, featured
+    }
+  `)
+}
+
+// Awards for the /awards page — newest first, with the linked wine's name,
+// photo and slug. Translations (`*_i18n`) come along for pick().
+export async function getAllAwards(): Promise<AwardItem[]> {
+  return client.fetch(`
+    *[_type == "newsItem" && category == "award"] | order(coalesce(awardYear, 0) desc, date desc) {
+      _id, title, excerpt, excerpt_i18n, date,
+      "featuredImage": featuredImage{${IMAGE_FIELDS}},
+      awardOrganization, awardOrganization_i18n, awardYear, awardTier, awardTier_i18n,
+      awardedWine, awardedWine_i18n, awardWineLine, awardWineLine_i18n,
+      "wine": awardWine->{
+        name, slug, grapeVariety, vintage, "mainImage": mainImage{${IMAGE_FIELDS}}
+      }
     }
   `)
 }

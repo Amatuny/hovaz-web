@@ -58,6 +58,17 @@ export function EventCard({
 
   const tags = card.tags?.length ? card.tags.slice(0, 3) : []
 
+  // Tag pills (handoff §4): 24px tall, 6px top/bottom and 14px left/right
+  // padding, radius 100. Fixed height + line-height 1 so the text's own line
+  // box can't push it past 24.
+  const PILL: React.CSSProperties = {
+    height: size(24),
+    paddingInline: size(14),
+    paddingBlock: size(6),
+    lineHeight: 1,
+    borderRadius: '100px',
+  }
+
   return (
     <article
       className={`group relative overflow-hidden [container-type:inline-size] ${isStrip ? 'shrink-0 snap-start' : 'w-full'}`}
@@ -134,10 +145,9 @@ export function EventCard({
       >
         {card.badgeLabel && (
           <span
-            className="rounded-full uppercase text-white"
+            className="inline-flex items-center rounded-full uppercase text-white"
             style={{
-              paddingInline: size(14),
-              paddingBlock: size(6),
+              ...PILL,
               fontFamily: 'var(--font-sans)',
               fontWeight: 700,
               fontSize: size(10),
@@ -150,10 +160,9 @@ export function EventCard({
         )}
         {card.isPast && (
           <span
-            className="rounded-full uppercase text-white"
+            className="inline-flex items-center rounded-full uppercase text-white"
             style={{
-              paddingInline: size(14),
-              paddingBlock: size(6),
+              ...PILL,
               fontFamily: 'var(--font-sans)',
               fontWeight: 700,
               fontSize: size(10),
@@ -211,11 +220,9 @@ export function EventCard({
             {tags.map((tag) => (
               <span
                 key={tag}
-                // Figma tag pill: radius 999, padding 5/11
                 className="inline-flex items-center rounded-full uppercase"
                 style={{
-                  paddingInline: size(11),
-                  paddingBlock: size(5),
+                  ...PILL,
                   fontFamily: 'var(--font-montserrat)',
                   fontWeight: 600,
                   fontSize: size(9),
