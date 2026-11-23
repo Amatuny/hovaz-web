@@ -210,6 +210,27 @@ export const newsItem = defineType({
           'e.g. Areni Reserve 2019 — shown under the organization on the News & Awards page',
       })
     ),
+    defineField({
+      name: 'awardWine',
+      title: 'Wine (Awards page)',
+      type: 'reference',
+      to: [{ type: 'wine' }],
+      group: 'content',
+      hidden: ({ document }) => document?.category !== 'award',
+      description:
+        'The awarded wine. On the Awards page its photo and name are shown and "Discover the wine" opens its page.',
+    }),
+    ...translatable(
+      defineField({
+        name: 'awardWineLine',
+        title: 'Line Under the Wine Name (Awards page)',
+        type: 'string',
+        group: 'content',
+        hidden: ({ document }) => document?.category !== 'award',
+        description:
+          'e.g. Areni · Dilijan 2019. Leave empty to use the grape and vintage of the wine above.',
+      })
+    ),
 
     // Press specific fields
     ...translatable(

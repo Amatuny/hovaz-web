@@ -111,7 +111,10 @@ export function Navigation({ settings }: NavigationProps) {
   // and don't let "/" mark every page active.
   const isActive = (href: string) => {
     const path = href.split(/[?#]/)[0] || '/'
-    return path === '/' ? pathname === '/' : pathname.startsWith(path)
+    if (path === '/') return pathname === '/'
+    // /awards is the full list behind "News & Awards"
+    if (path === '/news' && pathname.startsWith('/awards')) return true
+    return pathname.startsWith(path)
   }
 
   const linkClass = (href: string) =>

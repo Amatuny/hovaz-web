@@ -1,16 +1,31 @@
 // src/app/wines/[slug]/page.tsx
+// Figma "wine page" (wine--reserve 3179:5258). Every size below is the
+// Figma px at the 1900px design width; mfig() gives the phone value below lg
+// and scales the desktop value with --figma-scale like the rest of the site.
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getWineBySlug, getAllWineSlugs, getOtherWines, getWinesPage } from '@/lib/sanity/queries'
+import {
+  getWineBySlug,
+  getAllWineSlugs,
+  getOtherWines,
+  getWinesPage,
+  getSiteSettings,
+} from '@/lib/sanity/queries'
 import { currentLocale, resolveWinesContent, seoToMetadata } from '@/lib/sanity/pageContent'
+import { resolveHomeContent } from '@/lib/sanity/siteContent'
 import type { TextSource } from '@/lib/sanity/localize'
 import { urlFor } from '@/lib/sanity/image'
+import { mfig } from '@/lib/figmaScale'
 import { WineCard } from '@/components/ui/WineCard'
+import { SectionHead } from '@/components/ui/SectionHead'
+import { SectionDivider } from '@/components/ui/SectionDivider'
+import { StripEndCard } from '@/components/ui/StripEndCard'
+import { TextLink } from '@/components/ui/TextLink'
+import { DragScroll } from '@/components/ui/DragScroll'
 import { JsonLd } from '@/components/sanity/JsonLd'
 import { PageTracker } from '@/components/analytics/PageTracker'
-import { DragScroll } from '@/components/ui/DragScroll'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -47,16 +62,17 @@ function formatEventDateTime(startDate?: string) {
   return `${datePart} · ${timePart}`
 }
 
+// Figma spec field: Hanken Bold 10 / 0.8px label over Hanken Medium 15 value, 4px apart
 function MetaField({ label, value }: { label: string; value?: string }) {
   if (!value) return null
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col" style={{ gap: '4px', lineHeight: 'normal' }}>
       <p
         className="uppercase"
         style={{
           fontFamily: 'var(--font-hanken)',
           fontWeight: 700,
-          fontSize: '9px',
+          fontSize: mfig(10, 10, 9),
           letterSpacing: '0.8px',
           color: '#a8a272',
         }}
@@ -67,7 +83,7 @@ function MetaField({ label, value }: { label: string; value?: string }) {
         style={{
           fontFamily: 'var(--font-hanken)',
           fontWeight: 500,
-          fontSize: '13px',
+          fontSize: mfig(15, 15, 13),
           color: '#1a1d16',
         }}
       >
@@ -77,11 +93,46 @@ function MetaField({ label, value }: { label: string; value?: string }) {
   )
 }
 
+// Figma dark story panels ("The Grape", "How We Decided"): Montserrat 12 /
+// 3px label, Playfair 30 title, Hanken 16 / 1.65 text, 16px apart
+const panelLabel: React.CSSProperties = {
+  fontFamily: 'var(--font-montserrat)',
+  fontWeight: 600,
+  fontSize: mfig(12, 12, 11),
+  letterSpacing: mfig(2, 3, 2),
+  lineHeight: 'normal',
+  color: '#e5987d',
+}
+const panelTitle: React.CSSProperties = {
+  fontFamily: 'var(--font-playfair)',
+  fontWeight: 600,
+  fontSize: mfig(24, 30, 22),
+  lineHeight: 'normal',
+  color: '#f1eeeb',
+}
+const panelText: React.CSSProperties = {
+  fontFamily: 'var(--font-hanken)',
+  fontWeight: 400,
+  fontSize: mfig(15, 16, 14),
+  lineHeight: 1.65,
+  color: '#f1eeeb',
+}
+
+// Figma story paragraphs: Hanken 16 / 1.65, muted, left-aligned in a centred 900px box
+const storyText: React.CSSProperties = {
+  fontFamily: 'var(--font-hanken)',
+  fontWeight: 400,
+  fontSize: mfig(15, 16, 14),
+  lineHeight: 1.65,
+  color: '#79726d',
+}
+
 export default async function WineDetailPage({ params }: Props) {
   const { slug } = await params
-  const [wine, doc, locale] = await Promise.all([
+  const [wine, doc, settings, locale] = await Promise.all([
     getWineBySlug(slug),
     getWinesPage(),
+    getSiteSettings(),
     currentLocale(),
   ])
   if (!wine) notFound()
@@ -89,6 +140,8 @@ export default async function WineDetailPage({ params }: Props) {
   // Fixed labels — Studio → Pages → Our Wines Page → Wine Detail Page
   const content = resolveWinesContent(doc, locale)
   const t = content.detail
+  // "Browse all wines" end card — same texts as the homepage wines strip
+  const homeWines = resolveHomeContent(settings, locale).wines
 
   const otherWines = await getOtherWines(slug)
   const wineTypes: Record<string, string> = content.cards.wineTypes
@@ -106,69 +159,70 @@ export default async function WineDetailPage({ params }: Props) {
         {/* Bottle info column (handoff §5) — 1200px, centred in the 1600
             container, its blocks stacked 82px apart (48px on mobile). */}
         <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-12 lg:gap-[82px]">
-          <div className="flex flex-col gap-6">
-            {/* Breadcrumb */}
+          {/* Breadcrumb, then the two-column row 16px below */}
+          <div className="flex flex-col gap-4">
             <nav
-              className="flex items-center gap-2"
-              style={{ fontFamily: 'var(--font-hanken)', fontSize: '12px', color: '#79726d' }}
+              className="flex items-center gap-1"
+              style={{
+                fontFamily: 'var(--font-hanken)',
+                fontSize: '13px',
+                lineHeight: 'normal',
+                color: '#a8a290',
+              }}
             >
               <Link href="/wines" className="hover:underline">
                 {t.breadcrumb}
               </Link>
               <span>/</span>
-              <span style={{ color: '#2e3a28' }}>{wine.name}</span>
+              <span style={{ color: '#4f4542' }}>{wine.name}</span>
             </nav>
 
             {/* Two-column row — photo 512 + 64 gap + description 624 = 1200,
-            tops aligned, never stacked on desktop. Both columns shrink in
-            proportion when the viewport is narrower than the design. */}
+                811 tall, tops aligned, never stacked on desktop. Both
+                columns shrink in proportion below the design width. */}
             <div className="flex flex-col gap-10 lg:flex-row lg:items-stretch lg:gap-16">
+              {/* Figma "bottle-photo": the photo fills the whole 512×811 card */}
               <div
-                className="mx-auto w-full max-w-[512px] shrink-0 rounded-[20px] p-[10px] lg:mx-0 lg:max-w-none lg:flex-[0_1_512px]"
+                className="relative mx-auto aspect-[512/811] w-full max-w-[512px] shrink-0 overflow-hidden rounded-[20px] lg:mx-0 lg:max-w-none lg:flex-[0_1_512px]"
                 style={{ backgroundColor: '#f2eddd' }}
               >
-                <div className="relative aspect-[492/791] w-full overflow-hidden rounded-[10px]">
-                  {wine.mainImage?.asset?._ref ? (
-                    <Image
-                      src={urlFor(wine.mainImage).width(1024).height(1622).url()}
-                      alt={wine.mainImage.alt ?? wine.name}
-                      fill
-                      className="object-cover"
-                      priority
-                      sizes="(max-width: 1024px) 100vw, 512px"
+                {wine.mainImage?.asset?._ref ? (
+                  <Image
+                    src={urlFor(wine.mainImage).width(1024).height(1622).url()}
+                    alt={wine.mainImage.alt ?? wine.name}
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 512px"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div
+                      className="h-64 w-32 rounded-sm"
+                      style={{ backgroundColor: 'var(--color-brand-burgundy)' }}
                     />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div
-                        className="h-64 w-32 rounded-sm"
-                        style={{ backgroundColor: 'var(--color-brand-burgundy)' }}
-                      />
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
-              {/* Description column — 624px, same height as the photo, blocks
-              spread with an "auto" gap (space-between). */}
-              <div className="flex min-w-0 flex-col gap-6 lg:flex-[0_1_624px] lg:justify-between">
+              {/* Description column — 624px, same height as the photo, its
+                  blocks spread with an "auto" gap (space-between). */}
+              <div className="flex min-w-0 flex-col gap-6 lg:flex-[0_1_624px] lg:justify-between lg:gap-5">
                 <div className="flex flex-col gap-4">
                   {wine.award && (
                     <span
-                      className="inline-flex w-fit items-center rounded-full px-3.5 py-1.5"
-                      style={{ backgroundColor: '#8e6711' }}
+                      className="inline-flex w-fit items-center rounded-full px-3.5 py-1.5 uppercase"
+                      style={{
+                        backgroundColor: '#8e6711',
+                        fontFamily: 'var(--font-hanken)',
+                        fontWeight: 700,
+                        fontSize: '10px',
+                        lineHeight: 'normal',
+                        letterSpacing: '0.8px',
+                        color: '#fdfcf8',
+                      }}
                     >
-                      <span
-                        className="uppercase"
-                        style={{
-                          fontFamily: 'var(--font-hanken)',
-                          fontWeight: 700,
-                          fontSize: '9px',
-                          letterSpacing: '0.8px',
-                          color: '#fdfcf8',
-                        }}
-                      >
-                        {wine.award}
-                      </span>
+                      {wine.award}
                     </span>
                   )}
 
@@ -177,8 +231,9 @@ export default async function WineDetailPage({ params }: Props) {
                     style={{
                       fontFamily: 'var(--font-playfair)',
                       fontWeight: 600,
-                      fontSize: '32px',
-                      letterSpacing: '0.4px',
+                      fontSize: mfig(32, 44, 30),
+                      lineHeight: 'normal',
+                      letterSpacing: '0.5px',
                       color: '#1a1d17',
                     }}
                   >
@@ -190,8 +245,8 @@ export default async function WineDetailPage({ params }: Props) {
                       style={{
                         fontFamily: 'var(--font-hanken)',
                         fontWeight: 400,
-                        fontSize: '14px',
-                        lineHeight: '22px',
+                        fontSize: mfig(15, 16, 14),
+                        lineHeight: 1.6,
                         color: '#4f4542',
                       }}
                     >
@@ -202,34 +257,33 @@ export default async function WineDetailPage({ params }: Props) {
 
                 {(Boolean(wine.pairWith?.length) || Boolean(wine.perfectFor?.length)) && (
                   <div
-                    className="flex flex-col gap-1"
-                    style={{ fontFamily: 'var(--font-hanken)', fontSize: '13px', color: '#2e3a28' }}
+                    className="flex flex-col italic"
+                    style={{
+                      fontFamily: 'var(--font-hanken)',
+                      fontSize: mfig(15, 16, 14),
+                      lineHeight: 'normal',
+                      color: '#2e3a28',
+                    }}
                   >
                     {wine.pairWith?.length ? (
                       <p>
-                        <span style={{ fontWeight: 600, fontStyle: 'italic' }}>
-                          {t.pairWithLabel}{' '}
-                        </span>
-                        <span style={{ fontWeight: 400, fontStyle: 'italic' }}>
-                          {wine.pairWith.join(' · ')}
-                        </span>
+                        <span style={{ fontWeight: 600 }}>{t.pairWithLabel} </span>
+                        <span style={{ fontWeight: 400 }}>{wine.pairWith.join(' · ')}</span>
                       </p>
                     ) : null}
                     {wine.perfectFor?.length ? (
                       <p>
-                        <span style={{ fontWeight: 600, fontStyle: 'italic' }}>
-                          {t.perfectForLabel}{' '}
-                        </span>
-                        <span style={{ fontWeight: 400, fontStyle: 'italic' }}>
-                          {wine.perfectFor.join(' · ')}
-                        </span>
+                        <span style={{ fontWeight: 600 }}>{t.perfectForLabel} </span>
+                        <span style={{ fontWeight: 400 }}>{wine.perfectFor.join(' · ')}</span>
                       </p>
                     ) : null}
                   </div>
                 )}
 
+                {/* Spec table: 2 columns 16px apart, rows 24px apart, 16px
+                    padding between the hairlines */}
                 <div
-                  className="grid grid-cols-2 gap-x-4 gap-y-3 border-y py-4"
+                  className="grid grid-cols-2 gap-x-4 gap-y-6 border-y py-4"
                   style={{ borderColor: 'rgba(26,29,23,0.1)' }}
                 >
                   <MetaField label={t.agingLabel} value={wine.agingNotes} />
@@ -242,34 +296,9 @@ export default async function WineDetailPage({ params }: Props) {
 
                 {upcomingEvents.length > 0 && (
                   <div className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <p
-                        className="uppercase"
-                        style={{
-                          fontFamily: 'var(--font-montserrat)',
-                          fontWeight: 600,
-                          fontSize: '10px',
-                          letterSpacing: '2px',
-                          color: 'rgba(93,110,82,0.92)',
-                        }}
-                      >
-                        {t.eventsEyebrow}
-                      </p>
-                      <h2
-                        className="capitalize"
-                        style={{
-                          fontFamily: 'var(--font-playfair)',
-                          fontWeight: 600,
-                          fontSize: '22px',
-                          letterSpacing: '0.3px',
-                          color: '#1a1d17',
-                          lineHeight: 1.15,
-                        }}
-                      >
-                        {t.eventsHeading}
-                      </h2>
-                    </div>
+                    <SectionHead eyebrow={t.eventsEyebrow} title={t.eventsHeading} titleSize={32} />
 
+                    {/* Event rows: white, radius 24, 22/28 padding, 12px apart */}
                     <div className="flex flex-col gap-3">
                       {upcomingEvents.map((event) => {
                         const when = formatEventDateTime(event.startDate)
@@ -277,14 +306,15 @@ export default async function WineDetailPage({ params }: Props) {
                           <Link
                             key={event._id}
                             href={`/events/${event.slug.current}`}
-                            className="flex items-center justify-between gap-4 rounded-[24px] bg-white px-6 py-4"
+                            className="flex items-center justify-between gap-4 rounded-[24px] bg-white px-5 py-4 lg:px-7 lg:py-[22px]"
+                            style={{ lineHeight: 'normal' }}
                           >
                             <div className="flex flex-col gap-1">
                               <p
                                 style={{
                                   fontFamily: 'var(--font-playfair)',
                                   fontWeight: 500,
-                                  fontSize: '15px',
+                                  fontSize: mfig(16, 18, 15),
                                   color: '#1a1d17',
                                 }}
                               >
@@ -294,7 +324,8 @@ export default async function WineDetailPage({ params }: Props) {
                                 <p
                                   style={{
                                     fontFamily: 'var(--font-hanken)',
-                                    fontSize: '12px',
+                                    fontWeight: 400,
+                                    fontSize: mfig(13, 13, 12),
                                     color: '#4f4542',
                                   }}
                                 >
@@ -308,7 +339,7 @@ export default async function WineDetailPage({ params }: Props) {
                                 style={{
                                   fontFamily: 'var(--font-hanken)',
                                   fontWeight: 500,
-                                  fontSize: '11px',
+                                  fontSize: mfig(12, 13, 12),
                                   letterSpacing: '0.5px',
                                   color: '#3d4a38',
                                 }}
@@ -320,65 +351,52 @@ export default async function WineDetailPage({ params }: Props) {
                         )
                       })}
                     </div>
-
-                    <Link
-                      href={`/events/${upcomingEvents[0].slug.current}`}
-                      className="inline-flex items-center justify-center rounded-full px-10 py-3 text-center"
-                      style={{ backgroundColor: '#2e3a28' }}
-                    >
-                      <span
-                        className="capitalize text-white"
-                        style={{
-                          fontFamily: 'var(--font-hanken)',
-                          fontWeight: 600,
-                          fontSize: '13px',
-                          letterSpacing: '1.5px',
-                        }}
-                      >
-                        {t.eventsButton}
-                      </span>
-                    </Link>
                   </div>
+                )}
+
+                {/* Figma "Button": full column width, forest pill, 12/64
+                    padding, Hanken SemiBold 16 / 2px */}
+                {upcomingEvents.length > 0 && (
+                  <Link
+                    href={`/events/${upcomingEvents[0].slug.current}`}
+                    className="inline-flex w-full items-center justify-center rounded-full px-8 py-3 text-center capitalize text-white transition-opacity duration-150 ease-out hover:opacity-90 lg:px-16"
+                    style={{
+                      backgroundColor: '#2e3a28',
+                      fontFamily: 'var(--font-hanken)',
+                      fontWeight: 600,
+                      fontSize: mfig(15, 16, 14),
+                      lineHeight: '24px',
+                      letterSpacing: mfig(1.5, 2, 1.5),
+                    }}
+                  >
+                    {t.eventsButton}
+                  </Link>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="flex items-center justify-center overflow-hidden">
-            <Image
-              src="/wines/vine-divider.svg"
-              alt=""
-              width={677}
-              height={78}
-              className="h-auto w-full max-w-[420px]"
-            />
-          </div>
+          <SectionDivider variant="vine" />
 
           {wine.storyIntro && (
-            <p
-              className="mx-auto max-w-[900px] text-center"
-              style={{
-                fontFamily: 'var(--font-hanken)',
-                fontSize: '13px',
-                lineHeight: 1.65,
-                color: '#79726d',
-              }}
-            >
+            <p className="mx-auto w-full max-w-[900px]" style={storyText}>
               {wine.storyIntro}
             </p>
           )}
 
+          {/* Figma story grid: 4 columns, rows 320 / 220 / 260, 24px gaps.
+              Photo 2×2 on the left, "The Grape" panel top right, two small
+              photos under it, "How We Decided" across the bottom row. */}
           {hasGrapeSection && (
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:grid-rows-[260px_180px_210px]">
-              <div className="relative overflow-hidden rounded-[24px] lg:col-span-2 lg:row-span-2">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:grid-rows-[320px_220px_260px] lg:gap-6">
+              <div className="relative aspect-square overflow-hidden rounded-[24px] lg:col-span-2 lg:row-span-2 lg:aspect-auto">
                 {storyImage?.asset?._ref && (
                   <Image
                     src={urlFor(storyImage).width(1000).height(1000).url()}
                     alt={storyImage.alt ?? ''}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    sizes="(max-width: 1024px) 100vw, 600px"
                   />
                 )}
                 <div
@@ -391,208 +409,102 @@ export default async function WineDetailPage({ params }: Props) {
 
               {wine.grapeStoryText && (
                 <div
-                  className="flex flex-col justify-center gap-3 rounded-[24px] p-8 lg:col-span-2"
+                  className="flex flex-col justify-center gap-4 rounded-[24px] p-8 lg:col-span-2 lg:p-16"
                   style={{ backgroundColor: '#231814' }}
                 >
-                  <p
-                    className="uppercase"
-                    style={{
-                      fontFamily: 'var(--font-montserrat)',
-                      fontWeight: 600,
-                      fontSize: '11px',
-                      letterSpacing: '2px',
-                      color: '#e5987d',
-                    }}
-                  >
+                  <p className="uppercase" style={panelLabel}>
                     {t.grapeLabel}
                   </p>
-                  {wine.grapeVariety && (
-                    <p
-                      style={{
-                        fontFamily: 'var(--font-playfair)',
-                        fontWeight: 600,
-                        fontSize: '24px',
-                        color: '#f1eeeb',
-                      }}
-                    >
-                      {wine.grapeVariety}
-                    </p>
-                  )}
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-hanken)',
-                      fontSize: '14px',
-                      lineHeight: 1.65,
-                      color: '#f1eeeb',
-                    }}
-                  >
-                    {wine.grapeStoryText}
-                  </p>
+                  {wine.grapeVariety && <p style={panelTitle}>{wine.grapeVariety}</p>}
+                  <p style={panelText}>{wine.grapeStoryText}</p>
                 </div>
               )}
 
               {storyImageA?.asset?._ref && (
-                <div className="relative overflow-hidden rounded-[24px] lg:col-start-3 lg:row-start-2">
+                <div className="relative aspect-[282/220] overflow-hidden rounded-[24px] lg:col-start-3 lg:row-start-2 lg:aspect-auto">
                   <Image
-                    src={urlFor(storyImageA).width(600).height(600).url()}
+                    src={urlFor(storyImageA).width(600).height(468).url()}
                     alt={storyImageA.alt ?? ''}
                     fill
                     className="object-cover"
-                    sizes="280px"
+                    sizes="(max-width: 1024px) 100vw, 282px"
+                  />
+                </div>
+              )}
+
+              {storyImageB?.asset?._ref && (
+                <div className="relative aspect-[282/220] overflow-hidden rounded-[24px] lg:col-start-4 lg:row-start-2 lg:aspect-auto">
+                  <Image
+                    src={urlFor(storyImageB).width(600).height(468).url()}
+                    alt={storyImageB.alt ?? ''}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 282px"
                   />
                 </div>
               )}
 
               {wine.howWeDecidedText && (
                 <div
-                  className="flex flex-col justify-center gap-3 rounded-[24px] p-8 lg:col-span-4 lg:row-start-3"
+                  className="flex flex-col justify-center gap-4 rounded-[24px] p-8 lg:col-span-4 lg:row-start-3 lg:p-16"
                   style={{ backgroundColor: '#231814' }}
                 >
-                  <p
-                    className="uppercase"
-                    style={{
-                      fontFamily: 'var(--font-montserrat)',
-                      fontWeight: 600,
-                      fontSize: '11px',
-                      letterSpacing: '2px',
-                      color: '#e5987d',
-                    }}
-                  >
+                  <p className="uppercase" style={panelLabel}>
                     {t.howWeDecidedLabel}
                   </p>
-                  {wine.howWeDecidedTitle && (
-                    <p
-                      style={{
-                        fontFamily: 'var(--font-playfair)',
-                        fontWeight: 600,
-                        fontSize: '24px',
-                        color: '#f1eeeb',
-                      }}
-                    >
-                      {wine.howWeDecidedTitle}
-                    </p>
-                  )}
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-hanken)',
-                      fontSize: '14px',
-                      lineHeight: 1.65,
-                      color: '#f1eeeb',
-                    }}
-                  >
-                    {wine.howWeDecidedText}
-                  </p>
-                </div>
-              )}
-
-              {storyImageB?.asset?._ref && (
-                <div className="relative overflow-hidden rounded-[24px] lg:col-start-4 lg:row-start-2">
-                  <Image
-                    src={urlFor(storyImageB).width(600).height(600).url()}
-                    alt={storyImageB.alt ?? ''}
-                    fill
-                    className="object-cover"
-                    sizes="280px"
-                  />
+                  {wine.howWeDecidedTitle && <p style={panelTitle}>{wine.howWeDecidedTitle}</p>}
+                  <p style={panelText}>{wine.howWeDecidedText}</p>
                 </div>
               )}
             </div>
           )}
 
+          {/* Paragraphs separated by one empty line, as in Figma */}
           {Boolean(wine.storyOutro?.length) && (
             <div
-              className="mx-auto flex max-w-[900px] flex-col gap-4 text-center"
-              style={{
-                fontFamily: 'var(--font-hanken)',
-                fontSize: '13px',
-                lineHeight: 1.65,
-                color: '#79726d',
-              }}
+              className="mx-auto flex w-full max-w-[900px] flex-col"
+              style={{ ...storyText, gap: '1.65em' }}
             >
               {wine.storyOutro?.map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
+                <p key={i} style={{ lineHeight: 'inherit' }}>
+                  {paragraph}
+                </p>
               ))}
             </div>
           )}
         </div>
         {/* end bottle info column */}
 
-        {/* Wines of the Valley teaser */}
+        {/* Figma "wine": the same strip as the homepage — section head, 350px
+            cards 32px apart ending in "Browse all wines", then the text link,
+            48px between each. */}
         {otherWines.length > 0 && (
-          <div className="flex flex-col gap-8">
-            <div className="flex max-w-[860px] flex-col gap-2">
-              <p
-                className="uppercase"
-                style={{
-                  fontFamily: 'var(--font-montserrat)',
-                  fontWeight: 600,
-                  fontSize: '10px',
-                  letterSpacing: '1.5px',
-                  color: 'rgba(93,110,82,0.92)',
-                }}
-              >
-                {t.moreEyebrow}
-              </p>
-              <h2
-                className="capitalize"
-                style={{
-                  fontFamily: 'var(--font-playfair)',
-                  fontWeight: 600,
-                  fontSize: '26px',
-                  color: '#1a1d17',
-                  lineHeight: 1.15,
-                }}
-              >
-                {t.moreHeading}
-              </h2>
-              <p
-                style={{
-                  fontFamily: 'var(--font-hanken)',
-                  fontSize: '12px',
-                  lineHeight: '19px',
-                  color: '#4f4542',
-                }}
-              >
-                {t.moreText}
-              </p>
-            </div>
+          <div className="flex flex-col" style={{ gap: mfig(32, 48) }}>
+            <SectionHead eyebrow={t.moreEyebrow} title={t.moreHeading} text={t.moreText} />
 
-            <DragScroll className="flex gap-6 pb-2">
+            <DragScroll
+              arrows
+              className="flex snap-x snap-mandatory"
+              style={{ gap: mfig(32, 32, 16) }}
+            >
               {otherWines.map((otherWine) => (
-                <div key={otherWine._id} className="shrink-0">
+                <div key={otherWine._id} className="shrink-0 snap-start">
                   <WineCard wine={otherWine} labels={content.cards} />
                 </div>
               ))}
+              <StripEndCard
+                href="/wines"
+                variant="wines"
+                heading={homeWines.endHeading}
+                button={homeWines.endButton}
+              />
             </DragScroll>
 
-            <Link
-              href="/wines"
-              className="inline-flex w-fit items-center gap-2 border-b pb-1 capitalize"
-              style={{
-                borderColor: '#2e3a28',
-                fontFamily: 'var(--font-hanken)',
-                fontWeight: 600,
-                fontSize: '13px',
-                letterSpacing: '1.5px',
-                color: '#2e3a28',
-              }}
-            >
-              {t.moreLink}
-              <Image src="/wines/explore-arrow.svg" alt="" width={15} height={7} />
-            </Link>
+            <TextLink href="/wines">{t.moreLink}</TextLink>
           </div>
         )}
 
-        {/* Closing symbol */}
-        <div className="flex items-center justify-center overflow-hidden">
-          <Image
-            src="/wines/collection-symbol.svg"
-            alt=""
-            width={667}
-            height={83}
-            className="h-auto w-full max-w-[380px]"
-          />
-        </div>
+        <SectionDivider variant="symbol" />
       </div>
 
       <JsonLd

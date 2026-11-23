@@ -1,7 +1,5 @@
 // src/components/sections/AwardsRecognition.tsx
-'use client'
-
-import { useState } from 'react'
+import Link from 'next/link'
 import { fig } from '@/lib/figmaScale'
 import type { NewsItem } from '@/types/sanity'
 import { NEWS_DEFAULTS } from '@/content/defaults'
@@ -90,8 +88,8 @@ export function AwardsRecognition({
   /** From News & Awards Page → Awards Block */
   texts?: typeof NEWS_DEFAULTS.awards
 }) {
-  const [showAll, setShowAll] = useState(false)
-  const visible = showAll ? awards : awards.slice(0, INITIAL_COUNT)
+  // The first three here; "See All Awards" opens the full list on /awards
+  const visible = awards.slice(0, INITIAL_COUNT)
 
   return (
     <div
@@ -129,28 +127,23 @@ export function AwardsRecognition({
           <AwardCard key={award._id} award={award} />
         ))}
       </div>
-      {awards.length > INITIAL_COUNT && (
-        <button
-          type="button"
-          onClick={() => setShowAll((value) => !value)}
-          aria-expanded={showAll}
-          className="cursor-pointer capitalize transition-colors hover:bg-[var(--color-brand-olive)] hover:text-[#fdfcf8]"
-          style={{
-            border: '1.5px solid var(--color-brand-olive)',
-            borderRadius: fig(60),
-            paddingInline: fig(64),
-            paddingBlock: fig(12),
-            fontFamily: 'var(--font-hanken)',
-            fontWeight: 600,
-            fontSize: fig(16),
-            lineHeight: fig(24),
-            letterSpacing: fig(2),
-            color: 'var(--color-brand-olive)',
-          }}
-        >
-          {showAll ? texts.showFewer : texts.showAll}
-        </button>
-      )}
+      <Link
+        href="/awards"
+        className="capitalize text-[var(--color-brand-olive)] transition-colors duration-200 ease-out hover:bg-[rgba(46,58,40,0.15)] active:bg-[rgba(46,58,40,0.45)] active:duration-[60ms]"
+        style={{
+          border: '1.5px solid var(--color-brand-olive)',
+          borderRadius: fig(60),
+          paddingInline: fig(64),
+          paddingBlock: fig(12),
+          fontFamily: 'var(--font-hanken)',
+          fontWeight: 600,
+          fontSize: fig(16),
+          lineHeight: fig(24),
+          letterSpacing: fig(2),
+        }}
+      >
+        {texts.showAll}
+      </Link>
     </div>
   )
 }

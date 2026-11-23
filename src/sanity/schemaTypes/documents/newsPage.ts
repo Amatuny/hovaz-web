@@ -42,9 +42,32 @@ export const newsPage = defineType({
         {
           key: 'showAll',
           title: '"See All" Button',
-          description: 'Shown when there are more than 3 awards',
+          description: 'Opens the Awards page (/awards)',
         },
-        { key: 'showFewer', title: '"Show Fewer" Button' },
+      ],
+    }),
+    textGroup({
+      name: 'awardsPage',
+      title: 'Awards Page (/awards)',
+      group: 'page',
+      description:
+        'The full awards list. Each award row comes from News & Awards items with category "Award".',
+      defaults: NEWS_DEFAULTS.awardsPage,
+      fields: [
+        { key: 'eyebrow', title: 'Small Label' },
+        { key: 'heading', title: 'Heading' },
+        { key: 'text', title: 'Intro Text', rows: 2 },
+        {
+          key: 'medalWord',
+          title: '"Medal" Word',
+          description: 'Added after the tier in each row, e.g. "Gold Medal"',
+        },
+        { key: 'discover', title: '"Discover the wine" Link' },
+        { key: 'ctaHeading', title: 'Banner Heading', rows: 2 },
+        { key: 'ctaText', title: 'Banner Text' },
+        { key: 'ctaButton', title: 'Banner Button' },
+        { key: 'metaTitle', title: 'SEO Title' },
+        { key: 'metaDescription', title: 'SEO Description', rows: 2 },
       ],
     }),
     textGroup({
@@ -99,6 +122,6 @@ export const newsPage = defineType({
   ],
 
   preview: {
-    prepare: () => ({ title: 'News & Awards Page', subtitle: '/news and articles' }),
+    prepare: () => ({ title: 'News & Awards Page', subtitle: '/news, /awards and articles' }),
   },
 })

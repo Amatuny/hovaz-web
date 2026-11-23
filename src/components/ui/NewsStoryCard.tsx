@@ -99,7 +99,7 @@ export function NewsStoryCard({
         )}
         <Link
           href={newsHref(item)}
-          className="inline-flex items-center justify-center capitalize transition-colors hover:bg-[var(--color-brand-olive)] hover:text-[#fdfcf8]"
+          className="inline-flex items-center justify-center capitalize text-[var(--color-brand-olive)] transition-colors duration-200 ease-out hover:bg-[rgba(46,58,40,0.15)] active:bg-[rgba(46,58,40,0.45)] active:duration-[60ms]"
           style={{
             border: '1.5px solid var(--color-brand-olive)',
             borderRadius: fig(60),
@@ -110,7 +110,6 @@ export function NewsStoryCard({
             fontSize: fig(16),
             lineHeight: fig(24),
             letterSpacing: fig(2),
-            color: 'var(--color-brand-olive)',
           }}
         >
           {labels.card.learnMore} →

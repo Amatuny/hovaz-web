@@ -346,6 +346,19 @@ export const NEWS_DEFAULTS = {
     showAll: 'See All Awards',
     showFewer: 'Show Fewer Awards',
   },
+  /** /awards — the full list of awards (Figma "Awards"); "See All Awards" on /news links here */
+  awardsPage: {
+    eyebrow: 'Recognition',
+    heading: 'Awards & Honors',
+    text: 'Every medal below was won by a wine from our Dilijan cellar — the founding estate where Hovaz began in 2019.',
+    medalWord: 'Medal',
+    discover: 'Discover the wine',
+    ctaHeading: 'Taste the medal winners in Dilijan Rooms and Proshyan Boutique.',
+    ctaText: 'Every award-winning wine is poured at our Reserve Tasting.',
+    ctaButton: 'Book an Experience',
+    metaTitle: 'Awards & Honors',
+    metaDescription: 'Medals and trophies won by HOVAZ wines at international competitions.',
+  },
   /** /news and each article */
   stories: {
     moreHeading: 'More Stories',
